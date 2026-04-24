@@ -112,9 +112,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                      ),
+                      child:
+                          CircularProgressIndicator(color: AppColors.primary),
                     )
                   : _buildMapAndContent(),
             ),
@@ -149,11 +148,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 hintText: 'Search properties, agents, or area',
                 hintStyle: TextStyle(color: cs.outline, fontSize: 14),
                 prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
-                suffixIcon: Icon(
-                  Icons.tune_outlined,
-                  color: cs.onSurfaceVariant,
-                  size: 22,
-                ),
+                suffixIcon: Icon(Icons.tune_outlined,
+                    color: cs.onSurfaceVariant, size: 22),
                 filled: true,
                 fillColor: cs.surfaceContainerHighest,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -167,10 +163,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
-                  ),
+                  borderSide:
+                      const BorderSide(color: AppColors.primary, width: 1.5),
                 ),
               ),
             ),
@@ -190,7 +184,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
         itemCount: _locationTags.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -215,9 +209,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 Text(
                   _locationTags[index],
                   style: TextStyle(
-                    color: index == 0 ? AppColors.primary : cs.onSurfaceVariant,
+                    color:
+                        index == 0 ? AppColors.primary : cs.onSurfaceVariant,
                     fontSize: 13,
-                    fontWeight: index == 0 ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight:
+                        index == 0 ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
               ],
@@ -271,7 +267,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         options: MapOptions(
           initialCenter: _defaultCenter,
           initialZoom: 13.0,
-          onTap: (_, _) => setState(() => _selectedProperty = null),
+          onTap: (_, __) => setState(() => _selectedProperty = null),
         ),
         children: [
           TileLayer(
@@ -306,7 +302,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                       ],
                     ),
                     child: const Center(
-                      child: Icon(Icons.home, color: AppColors.white, size: 18),
+                      child: Icon(
+                        Icons.home,
+                        color: AppColors.white,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ),
@@ -329,7 +329,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: _categories.length,
-          separatorBuilder: (_, _) => const SizedBox(width: 14),
+          separatorBuilder: (_, __) => const SizedBox(width: 14),
           itemBuilder: (context, index) {
             final cat = _categories[index];
             final isSelected = _selectedCategoryIndex == index;
@@ -354,9 +354,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                     child: Center(
                       child: Icon(
                         cat['icon'] as IconData,
-                        color: isSelected
-                            ? AppColors.white
-                            : cs.onSurfaceVariant,
+                        color: isSelected ? AppColors.white : cs.onSurfaceVariant,
                         size: 24,
                       ),
                     ),
@@ -369,9 +367,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                           ? AppColors.primary
                           : cs.onSurfaceVariant,
                       fontSize: 11,
-                      fontWeight: isSelected
-                          ? FontWeight.w700
-                          : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                 ],
@@ -393,7 +390,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
         itemCount: _filterLabels.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -455,7 +452,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: _properties.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 return _buildOverlayPropertyCard(_properties[index]);
               },
@@ -509,11 +506,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 errorBuilder: (_, _, _) => Container(
                   color: cs.surfaceContainerHighest,
                   child: Center(
-                    child: Icon(
-                      Icons.home_outlined,
-                      color: cs.outline,
-                      size: 32,
-                    ),
+                    child: Icon(Icons.home_outlined,
+                        color: cs.outline, size: 32),
                   ),
                 ),
                 loadingBuilder: (context, child, loadingProgress) {
@@ -547,7 +541,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                         ),
                       ),
                       const Spacer(),
-                      Icon(Icons.favorite_border, color: cs.outline, size: 18),
+                      Icon(Icons.favorite_border,
+                          color: cs.outline, size: 18),
                     ],
                   ),
                   const SizedBox(height: 3),
@@ -569,33 +564,25 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                       Text(
                         '${property.beds}',
                         style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
+                            color: cs.onSurfaceVariant, fontSize: 12),
                       ),
                       const SizedBox(width: 10),
-                      Icon(Icons.bathtub_outlined, color: cs.outline, size: 14),
+                      Icon(Icons.bathtub_outlined,
+                          color: cs.outline, size: 14),
                       const SizedBox(width: 3),
                       Text(
                         '${property.baths}',
                         style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
+                            color: cs.onSurfaceVariant, fontSize: 12),
                       ),
                       const SizedBox(width: 10),
-                      Icon(
-                        Icons.square_foot_outlined,
-                        color: cs.outline,
-                        size: 14,
-                      ),
+                      Icon(Icons.square_foot_outlined,
+                          color: cs.outline, size: 14),
                       const SizedBox(width: 3),
                       Text(
                         '${property.sqft} sqft',
                         style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
+                            color: cs.onSurfaceVariant, fontSize: 12),
                       ),
                     ],
                   ),
@@ -633,7 +620,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF3C7),
                   borderRadius: BorderRadius.circular(6),
@@ -650,113 +638,107 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             ],
           ),
           const SizedBox(height: 14),
-          ...featured.map(
-            (prop) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: cs.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFFDE68A)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.shadow.withValues(alpha: 0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+          ...featured.map((prop) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: cs.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: const Color(0xFFFDE68A),
                     ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: cs.shadow.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
-                      clipBehavior: Clip.antiAlias,
-                      child: prop.images.isNotEmpty
-                          ? Image.network(
-                              prop.images.first,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) => Container(
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: prop.images.isNotEmpty
+                            ? Image.network(
+                                prop.images.first,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, _, _) => Container(
+                                  color: cs.surfaceContainerHighest,
+                                  child: Icon(Icons.home_outlined,
+                                      color: AppColors.primary, size: 28),
+                                ),
+                              )
+                            : Container(
                                 color: cs.surfaceContainerHighest,
-                                child: Icon(
-                                  Icons.home_outlined,
-                                  color: AppColors.primary,
-                                  size: 28,
-                                ),
+                                child: Icon(Icons.home_outlined,
+                                    color: AppColors.primary, size: 28),
                               ),
-                            )
-                          : Container(
-                              color: cs.surfaceContainerHighest,
-                              child: Icon(
-                                Icons.home_outlined,
-                                color: AppColors.primary,
-                                size: 28,
-                              ),
-                            ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            prop.title,
-                            style: TextStyle(
-                              color: cs.onSurface,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            prop.location,
-                            style: TextStyle(
-                              color: cs.onSurfaceVariant,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text(
-                                '${prop.beds} Bed',
-                                style: TextStyle(
-                                  color: cs.onSurfaceVariant,
-                                  fontSize: 11,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '${prop.baths} Bath',
-                                style: TextStyle(
-                                  color: cs.onSurfaceVariant,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
-                    ),
-                    Text(
-                      prop.price,
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              prop.title,
+                              style: TextStyle(
+                                color: cs.onSurface,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              prop.location,
+                              style: TextStyle(
+                                color: cs.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Text(
+                                  '${prop.beds} Bed',
+                                  style: TextStyle(
+                                    color: cs.onSurfaceVariant,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${prop.baths} Bath',
+                                  style: TextStyle(
+                                    color: cs.onSurfaceVariant,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        prop.price,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+              )),
         ],
       ),
     );
@@ -769,9 +751,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     final total = _marketStats['total_properties'] ?? _properties.length;
     final forRent = _marketStats['for_rent'] ?? 0;
     final forSale = _marketStats['for_sale'] ?? 0;
-    final avgRating = (_marketStats['average_rating'] ?? 0.0).toStringAsFixed(
-      1,
-    );
+    final avgRating = (_marketStats['average_rating'] ?? 0.0).toStringAsFixed(1);
     final avgSqft = _marketStats['average_sqft'] ?? 0;
     final avgBeds = _marketStats['average_beds'] ?? 0;
 
@@ -805,47 +785,23 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             ),
             child: Column(
               children: [
-                _buildStatRow(
-                  'Listed Properties',
-                  '$total',
-                  Icons.home_outlined,
-                  AppColors.primary,
-                ),
+                _buildStatRow('Listed Properties', '$total', Icons.home_outlined,
+                    AppColors.primary),
                 Divider(height: 24, color: cs.outlineVariant),
-                _buildStatRow(
-                  'For Rent',
-                  '$forRent',
-                  Icons.vpn_key_outlined,
-                  const Color(0xFF22C55E),
-                ),
+                _buildStatRow('For Rent', '$forRent', Icons.vpn_key_outlined,
+                    const Color(0xFF22C55E)),
                 Divider(height: 24, color: cs.outlineVariant),
-                _buildStatRow(
-                  'For Sale',
-                  '$forSale',
-                  Icons.sell_outlined,
-                  const Color(0xFFF59E0B),
-                ),
+                _buildStatRow('For Sale', '$forSale', Icons.sell_outlined,
+                    const Color(0xFFF59E0B)),
                 Divider(height: 24, color: cs.outlineVariant),
-                _buildStatRow(
-                  'Avg Rating',
-                  avgRating,
-                  Icons.star_outline,
-                  const Color(0xFFF59E0B),
-                ),
+                _buildStatRow('Avg Rating', avgRating, Icons.star_outline,
+                    const Color(0xFFF59E0B)),
                 Divider(height: 24, color: cs.outlineVariant),
-                _buildStatRow(
-                  'Avg Size',
-                  '$avgSqft sqft',
-                  Icons.square_foot,
-                  AppColors.primary,
-                ),
+                _buildStatRow('Avg Size', '$avgSqft sqft', Icons.square_foot,
+                    AppColors.primary),
                 Divider(height: 24, color: cs.outlineVariant),
-                _buildStatRow(
-                  'Avg Beds',
-                  '$avgBeds',
-                  Icons.bed_outlined,
-                  const Color(0xFF6366F1),
-                ),
+                _buildStatRow('Avg Beds', '$avgBeds', Icons.bed_outlined,
+                    const Color(0xFF6366F1)),
               ],
             ),
           ),
@@ -855,11 +811,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   }
 
   Widget _buildStatRow(
-    String label,
-    String value,
-    IconData icon,
-    Color iconColor,
-  ) {
+      String label, String value, IconData icon, Color iconColor) {
     final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
@@ -983,11 +935,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                           Row(
                             children: [
                               if (agent.rating > 0) ...[
-                                const Icon(
-                                  Icons.star,
-                                  color: Color(0xFFF59E0B),
-                                  size: 14,
-                                ),
+                                const Icon(Icons.star,
+                                    color: Color(0xFFF59E0B), size: 14),
                                 const SizedBox(width: 3),
                                 Text(
                                   agent.rating.toString(),
@@ -1000,9 +949,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                                 const SizedBox(width: 12),
                               ],
                               Text(
-                                agent.deals > 0
-                                    ? '${agent.deals} deals'
-                                    : '${agent.propertyCount} properties',
+                                agent.deals > 0 ? '${agent.deals} deals' : '${agent.propertyCount} properties',
                                 style: TextStyle(
                                   color: cs.onSurfaceVariant,
                                   fontSize: 12,
@@ -1022,9 +969,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
+                            horizontal: 14, vertical: 8),
                         textStyle: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -1091,10 +1036,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               final lower = svc.name.toLowerCase();
               IconData icon = Icons.miscellaneous_services_outlined;
               for (final entry in _svcIconMap.entries) {
-                if (lower.contains(entry.key)) {
-                  icon = entry.value;
-                  break;
-                }
+                if (lower.contains(entry.key)) { icon = entry.value; break; }
               }
               return Column(
                 children: [

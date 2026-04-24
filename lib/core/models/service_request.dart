@@ -8,6 +8,14 @@ class ServiceRequest {
   final String statusMessage;
   final int? etaMinutes;
   final String? description;
+  final String? scheduledTime;
+  final String? assignedAgentId;
+  final String? assignedAgentUserId;
+  final String? assignedAgentName;
+  final double? assignedAgentRating;
+  final int? assignedAgentDeals;
+  final String? assignedAgentPhone;
+  final String? assignedAgentAvatarUrl;
   final DateTime createdAt;
 
   String get shortNumber {
@@ -33,6 +41,13 @@ class ServiceRequest {
     return '$displayCategory Request';
   }
 
+  bool get hasAssignedAgent => assignedAgentId != null && assignedAgentName != null;
+
+  String get agentInitials {
+    if (assignedAgentName == null) return '?';
+    return assignedAgentName!.split(' ').map((n) => n.isNotEmpty ? n[0] : '').join();
+  }
+
   ServiceRequest copyWith({String? categoryName}) {
     return ServiceRequest(
       id: id,
@@ -44,6 +59,14 @@ class ServiceRequest {
       statusMessage: statusMessage,
       etaMinutes: etaMinutes,
       description: description,
+      scheduledTime: scheduledTime,
+      assignedAgentId: assignedAgentId,
+      assignedAgentUserId: assignedAgentUserId,
+      assignedAgentName: assignedAgentName,
+      assignedAgentRating: assignedAgentRating,
+      assignedAgentDeals: assignedAgentDeals,
+      assignedAgentPhone: assignedAgentPhone,
+      assignedAgentAvatarUrl: assignedAgentAvatarUrl,
       createdAt: createdAt,
     );
   }
@@ -58,6 +81,14 @@ class ServiceRequest {
     this.statusMessage = '',
     this.etaMinutes,
     this.description,
+    this.scheduledTime,
+    this.assignedAgentId,
+    this.assignedAgentUserId,
+    this.assignedAgentName,
+    this.assignedAgentRating,
+    this.assignedAgentDeals,
+    this.assignedAgentPhone,
+    this.assignedAgentAvatarUrl,
     required this.createdAt,
   });
 
@@ -72,6 +103,14 @@ class ServiceRequest {
       statusMessage: json['status_message'] as String? ?? '',
       etaMinutes: json['eta_minutes'] as int?,
       description: json['description'] as String?,
+      scheduledTime: json['scheduled_time'] as String?,
+      assignedAgentId: json['assigned_agent_id'] as String?,
+      assignedAgentUserId: json['assigned_agent_user_id'] as String?,
+      assignedAgentName: json['assigned_agent_name'] as String?,
+      assignedAgentRating: (json['assigned_agent_rating'] as num?)?.toDouble(),
+      assignedAgentDeals: json['assigned_agent_deals'] as int?,
+      assignedAgentPhone: json['assigned_agent_phone'] as String?,
+      assignedAgentAvatarUrl: json['assigned_agent_avatar_url'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }

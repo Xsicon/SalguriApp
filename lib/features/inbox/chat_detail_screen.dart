@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/chat_message.dart';
 import '../../services/api_service.dart';
 import '../../services/supabase_service.dart';
@@ -112,8 +113,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     } catch (e) {
       debugPrint('Error sending message: $e');
       if (mounted) {
+        final l = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to send message')),
+          SnackBar(content: Text(l.tr('failedToSendMessage'))),
         );
       }
     } finally {
@@ -144,14 +146,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   String _dateLabel(DateTime date, DateTime today) {
+    final l = AppLocalizations.of(context);
     if (date.year == today.year && date.month == today.month && date.day == today.day) {
-      return 'TODAY';
+      return l.tr('todayLabel');
     }
     final yesterday = today.subtract(const Duration(days: 1));
     if (date.year == yesterday.year &&
         date.month == yesterday.month &&
         date.day == yesterday.day) {
-      return 'YESTERDAY';
+      return l.tr('yesterdayLabel');
     }
     return DateFormat('MMM d, yyyy').format(date).toUpperCase();
   }
@@ -159,6 +162,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: cs.surface,
       body: SafeArea(
@@ -168,9 +172,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-                  : _buildMessageList(cs),
+                  : _buildMessageList(cs, l),
             ),
-            _buildInputBar(cs),
+            _buildInputBar(cs, l),
           ],
         ),
       ),
@@ -215,24 +219,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.videocam_outlined, color: cs.onSurface),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.more_vert, color: cs.onSurface),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageList(ColorScheme cs) {
+  Widget _buildMessageList(ColorScheme cs, AppLocalizations l) {
     if (_messages.isEmpty) {
       return Center(
         child: Text(
-          'No messages yet. Say hello!',
+          l.tr('noMessagesYet'),
           style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
         ),
       );
@@ -421,7 +417,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget _buildInputBar(ColorScheme cs) {
+  Widget _buildInputBar(ColorScheme cs, AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
@@ -447,7 +443,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 controller: _messageController,
                 onSubmitted: (_) => _sendMessage(),
                 decoration: InputDecoration(
-                  hintText: 'Type a message...',
+                  hintText: l.tr('typeMessage'),
                   hintStyle: TextStyle(color: cs.outline, fontSize: 14),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 8),

@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../services/supabase_service.dart';
 import '../dashboard/dashboard_screen.dart';
 import 'forgot_password_screen.dart';
@@ -44,9 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -54,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -65,9 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFF0D9488),
-                  Color(0xFF0F766E),
-                  Color(0xFF115E59),
+                  Color(0xFF2563EB),
+                  Color(0xFF1D4ED8),
+                  Color(0xFF1E40AF),
                 ],
               ),
             ),
@@ -85,9 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
-                          ),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
@@ -101,10 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    const Center(
+                    Center(
                       child: Text(
-                        'SALGURI',
-                        style: TextStyle(
+                        l.tr('salguri'),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -113,9 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    const Text(
-                      'Welcome\nBack',
-                      style: TextStyle(
+                    Text(
+                      l.tr('welcomeBack_title'),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 34,
                         fontWeight: FontWeight.w800,
@@ -125,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue to your account',
+                      l.tr('signInSubtitle'),
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 15,
@@ -160,11 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _FieldLabel(text: 'Email Address'),
+                        _FieldLabel(text: l.tr('emailAddress')),
                         const SizedBox(height: 8),
                         _buildEmailField(),
                         const SizedBox(height: 20),
-                        const _FieldLabel(text: 'Password'),
+                        _FieldLabel(text: l.tr('password')),
                         const SizedBox(height: 8),
                         _buildPasswordField(),
                         const SizedBox(height: 12),
@@ -191,25 +193,27 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildEmailField() {
+    final l = AppLocalizations.of(context);
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       validator: (v) {
-        if (v == null || v.trim().isEmpty) return 'Email is required';
-        if (!v.contains('@')) return 'Enter a valid email address';
+        if (v == null || v.trim().isEmpty) return l.tr('emailRequired');
+        if (!v.contains('@')) return l.tr('emailInvalid');
         return null;
       },
       style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
-      decoration: _inputDecoration('name@example.com'),
+      decoration: _inputDecoration(l.tr('emailHint')),
     );
   }
 
   Widget _buildPasswordField() {
+    final l = AppLocalizations.of(context);
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
       validator: (v) {
-        if (v == null || v.isEmpty) return 'Password is required';
+        if (v == null || v.isEmpty) return l.tr('passwordRequired');
         return null;
       },
       style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
@@ -220,18 +224,13 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: const EdgeInsets.only(right: 14),
             child: Icon(
-              _obscurePassword
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
+              _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
               color: AppColors.textMuted,
               size: 22,
             ),
           ),
         ),
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 40,
-          minHeight: 40,
-        ),
+        suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       ),
     );
   }
@@ -245,9 +244,9 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
           );
         },
-        child: const Text(
-          'Forgot Password?',
-          style: TextStyle(
+        child: Text(
+          AppLocalizations.of(context).tr('forgotPassword'),
+          style: const TextStyle(
             color: AppColors.primary,
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -267,9 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
           shadowColor: AppColors.primary.withValues(alpha: 0.3),
           textStyle: const TextStyle(
@@ -282,12 +279,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ? const SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(
-                  color: AppColors.white,
-                  strokeWidth: 2.5,
-                ),
+                child: CircularProgressIndicator(color: AppColors.white, strokeWidth: 2.5),
               )
-            : const Text('Sign In'),
+            : Text(AppLocalizations.of(context).tr('signIn')),
       ),
     );
   }
@@ -299,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'or continue with',
+            AppLocalizations.of(context).tr('orContinueWith'),
             style: TextStyle(color: AppColors.textMuted, fontSize: 13),
           ),
         ),
@@ -311,21 +305,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSocialButtons() {
     return Row(
       children: [
-        Expanded(
-          child: _buildSocialButton(
-            icon: Icons.g_mobiledata_rounded,
-            label: 'Google',
-            onTap: () {},
-          ),
-        ),
+        Expanded(child: _buildSocialButton(icon: Icons.g_mobiledata_rounded, label: AppLocalizations.of(context).tr('google'), onTap: () {})),
         const SizedBox(width: 14),
-        Expanded(
-          child: _buildSocialButton(
-            icon: Icons.apple_rounded,
-            label: 'Apple',
-            onTap: () {},
-          ),
-        ),
+        Expanded(child: _buildSocialButton(icon: Icons.apple_rounded, label: AppLocalizations.of(context).tr('apple'), onTap: () {})),
       ],
     );
   }
@@ -348,10 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Icon(icon, size: 22, color: AppColors.textSecondary),
           const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          ),
+          Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -363,9 +342,9 @@ class _LoginScreenState extends State<LoginScreen> {
         TextSpan(
           style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
           children: [
-            const TextSpan(text: "Don't have an account?  "),
+            TextSpan(text: AppLocalizations.of(context).tr('dontHaveAccount')),
             TextSpan(
-              text: 'Sign Up',
+              text: AppLocalizations.of(context).tr('signUp'),
               style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,

@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/service_request.dart';
 import '../../services/api_service.dart';
+import '../inbox/chat_detail_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Tracking step model
@@ -45,31 +48,14 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
   late final Animation<double> _pulseAnimation;
   late final AnimationController _progressController;
 
-  Timer? _etaTimer;
-  late int _remainingMinutes;
-  int _currentStep = 1; // 0-based: 0=confirmed, 1=assigned, 2=on the way, 3=arrived, 4=completed
-
-  // Simulated provider info
-  final _providerName = 'Ahmed Hassan';
-  final _providerRating = 4.9;
-  final _providerJobs = 142;
+  Timer? _pollTimer;
+  late ServiceRequest _request;
+  bool _isPolling = false;
 
   @override
   void initState() {
     super.initState();
-    _remainingMinutes = widget.request.etaMinutes ?? 25;
-
-    // Determine initial step from status
-    switch (widget.request.status) {
-      case 'pending':
-        _currentStep = 0;
-      case 'in_progress':
-        _currentStep = 2;
-      case 'completed':
-        _currentStep = 4;
-      default:
-        _currentStep = 1;
-    }
+    _request = widget.request;
 
     _pulseController = AnimationController(
       vsync: this,
@@ -84,85 +70,108 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
       duration: const Duration(seconds: 2),
     )..forward();
 
-    // Simulate live updates
-    _startSimulation();
+    // Start polling the backend for real status updates
+    _startPolling();
   }
 
-  void _startSimulation() {
-    _etaTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      setState(() {
-        if (_remainingMinutes > 1) _remainingMinutes--;
-        if (_currentStep < 4) {
-          // Advance step occasionally
-          if (_remainingMinutes % 5 == 0 && _currentStep < 3) {
-            _currentStep++;
-          }
-        }
-      });
+  int get _currentStep {
+    switch (_request.status) {
+      case 'pending':
+        return 0;
+      case 'assigned':
+        return 1;
+      case 'in_progress':
+        return 2;
+      case 'arrived':
+        return 3;
+      case 'completed':
+        return 4;
+      case 'cancelled':
+        return -1;
+      default:
+        return 0;
+    }
+  }
+
+  void _startPolling() {
+    // Poll every 10 seconds for status updates
+    _pollTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      _fetchLatestStatus();
     });
+  }
+
+  Future<void> _fetchLatestStatus() async {
+    if (_isPolling || !mounted) return;
+    _isPolling = true;
+    try {
+      final updated = await ApiService.getServiceRequestById(_request.id);
+      if (!mounted) return;
+      if (updated.status != _request.status ||
+          updated.etaMinutes != _request.etaMinutes ||
+          updated.statusMessage != _request.statusMessage) {
+        setState(() {
+          _request = updated;
+        });
+      }
+      // Stop polling if terminal state
+      if (updated.status == 'completed' || updated.status == 'cancelled') {
+        _pollTimer?.cancel();
+      }
+    } catch (e) {
+      debugPrint('Polling error: $e');
+    } finally {
+      _isPolling = false;
+    }
   }
 
   @override
   void dispose() {
-    _etaTimer?.cancel();
+    _pollTimer?.cancel();
     _pulseController.dispose();
     _progressController.dispose();
     super.dispose();
   }
 
-  List<_TrackingStep> get _steps {
-    final now = DateTime.now();
+  List<_TrackingStep> _steps(AppLocalizations l) {
     final fmt = _formatTimeOfDay;
     return [
       _TrackingStep(
-        title: 'Request Confirmed',
-        subtitle: 'Your service request has been received',
+        title: l.tr('requestConfirmed'),
+        subtitle: l.tr('requestReceived'),
         icon: Icons.check_circle_outline,
         isCompleted: _currentStep > 0,
         isActive: _currentStep == 0,
-        time: fmt(TimeOfDay.fromDateTime(widget.request.createdAt.toLocal())),
+        time: fmt(TimeOfDay.fromDateTime(_request.createdAt.toLocal())),
       ),
       _TrackingStep(
-        title: 'Provider Assigned',
-        subtitle: '$_providerName is handling your request',
+        title: l.tr('providerAssigned'),
+        subtitle: _request.hasAssignedAgent
+            ? '${_request.assignedAgentName} ${l.tr('handlingRequest')}'
+            : l.tr('handlingRequest'),
         icon: Icons.person_pin_outlined,
         isCompleted: _currentStep > 1,
         isActive: _currentStep == 1,
-        time: _currentStep >= 1
-            ? fmt(TimeOfDay.fromDateTime(
-                widget.request.createdAt.add(const Duration(minutes: 3)).toLocal()))
-            : null,
       ),
       _TrackingStep(
-        title: 'On the Way',
-        subtitle: 'Provider is heading to your location',
+        title: l.tr('onTheWay'),
+        subtitle: l.tr('headingToLocation'),
         icon: Icons.directions_car_outlined,
         isCompleted: _currentStep > 2,
         isActive: _currentStep == 2,
-        time: _currentStep >= 2
-            ? fmt(TimeOfDay.fromDateTime(
-                now.subtract(Duration(minutes: _remainingMinutes))))
-            : null,
       ),
       _TrackingStep(
-        title: 'Arrived',
-        subtitle: 'Provider has arrived at your property',
+        title: l.tr('arrived'),
+        subtitle: l.tr('arrivedAtProperty'),
         icon: Icons.location_on_outlined,
         isCompleted: _currentStep > 3,
         isActive: _currentStep == 3,
-        time: _currentStep >= 3 ? fmt(TimeOfDay.fromDateTime(now)) : null,
       ),
       _TrackingStep(
-        title: 'Service Completed',
-        subtitle: 'The job has been finished successfully',
+        title: l.tr('serviceCompleted'),
+        subtitle: l.tr('jobFinished'),
         icon: Icons.verified_outlined,
         isCompleted: _currentStep > 4,
         isActive: _currentStep == 4,
-        time: null,
       ),
     ];
   }
@@ -177,11 +186,12 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
-        title: const Text('Track Service'),
+        title: Text(l.tr('trackService')),
         centerTitle: true,
         backgroundColor: cs.surface,
         surfaceTintColor: Colors.transparent,
@@ -191,22 +201,27 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              children: [
-                _buildStatusHeader(cs),
-                const SizedBox(height: 20),
-                _buildEtaCard(cs),
-                const SizedBox(height: 20),
-                _buildProviderCard(cs),
-                const SizedBox(height: 24),
-                _buildTrackingTimeline(cs),
-                const SizedBox(height: 24),
-                _buildRequestDetails(cs),
-              ],
+            child: RefreshIndicator(
+              onRefresh: _fetchLatestStatus,
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                children: [
+                  _buildStatusHeader(cs, l),
+                  const SizedBox(height: 20),
+                  _buildEtaCard(cs, l),
+                  if (_request.hasAssignedAgent) ...[
+                    const SizedBox(height: 20),
+                    _buildProviderCard(cs, l),
+                  ],
+                  const SizedBox(height: 24),
+                  _buildTrackingTimeline(cs, l),
+                  const SizedBox(height: 24),
+                  _buildRequestDetails(cs, l),
+                ],
+              ),
             ),
           ),
-          _buildBottomActions(cs),
+          _buildBottomActions(cs, l),
         ],
       ),
     );
@@ -214,15 +229,30 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
 
   // ---------- Status Header ----------
 
-  Widget _buildStatusHeader(ColorScheme cs) {
-    final step = _steps[_currentStep.clamp(0, _steps.length - 1)];
+  Widget _buildStatusHeader(ColorScheme cs, AppLocalizations l) {
+    final steps = _steps(l);
+    final stepIndex = _currentStep.clamp(0, steps.length - 1);
+    final step = _request.status == 'cancelled'
+        ? _TrackingStep(
+            title: l.tr('cancelled'),
+            subtitle: _request.statusMessage.isNotEmpty
+                ? _request.statusMessage
+                : 'Request cancelled',
+            icon: Icons.cancel_outlined,
+          )
+        : steps[stepIndex];
+
+    final isCancelled = _request.status == 'cancelled';
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0D9488), Color(0xFF0F766E)],
+          colors: isCancelled
+              ? [const Color(0xFFEF4444), const Color(0xFFDC2626)]
+              : [const Color(0xFF2563EB), const Color(0xFF1D4ED8)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -284,8 +314,13 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
 
   // ---------- ETA Card ----------
 
-  Widget _buildEtaCard(ColorScheme cs) {
-    final progress = _currentStep / (_steps.length - 1);
+  Widget _buildEtaCard(ColorScheme cs, AppLocalizations l) {
+    final steps = _steps(l);
+    final progress = _currentStep < 0 ? 0.0 : _currentStep / (steps.length - 1);
+    final eta = _request.etaMinutes;
+    final isTerminal =
+        _request.status == 'completed' || _request.status == 'cancelled';
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -322,7 +357,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Estimated Arrival',
+                      l.tr('estimatedArrival'),
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
                         fontSize: 13,
@@ -331,9 +366,15 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      _currentStep >= 3
-                          ? 'Provider has arrived'
-                          : '$_remainingMinutes min remaining',
+                      _request.status == 'completed'
+                          ? l.tr('serviceCompleted')
+                          : _request.status == 'cancelled'
+                              ? l.tr('cancelled')
+                              : _request.status == 'arrived'
+                                  ? l.tr('providerArrived')
+                                  : eta != null
+                                      ? '$eta ${l.tr('minRemaining')}'
+                                      : l.tr('calculatingEta'),
                       style: TextStyle(
                         color: cs.onSurface,
                         fontSize: 18,
@@ -343,49 +384,50 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   ],
                 ),
               ),
-              // Live badge
-              AnimatedBuilder(
-                animation: _pulseAnimation,
-                builder: (context, _) => Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppColors.success
-                        .withValues(alpha: 0.08 + _pulseAnimation.value * 0.08),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: AppColors.success,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.success
-                                  .withValues(alpha: _pulseAnimation.value * 0.5),
-                              blurRadius: 4,
-                            ),
-                          ],
+              // Live badge (only when actively tracking)
+              if (!isTerminal)
+                AnimatedBuilder(
+                  animation: _pulseAnimation,
+                  builder: (context, _) => Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.success
+                          .withValues(alpha: 0.08 + _pulseAnimation.value * 0.08),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: AppColors.success,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.success
+                                    .withValues(alpha: _pulseAnimation.value * 0.5),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      const Text(
-                        'LIVE',
-                        style: TextStyle(
-                          color: AppColors.success,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
+                        const SizedBox(width: 5),
+                        Text(
+                          l.tr('live'),
+                          style: const TextStyle(
+                            color: AppColors.success,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -405,11 +447,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Step ${_currentStep + 1} of ${_steps.length}',
+                '${l.tr('step')} ${(_currentStep + 1).clamp(1, steps.length)} ${l.tr('of')} ${steps.length}',
                 style: TextStyle(color: cs.outline, fontSize: 12),
               ),
               Text(
-                '${(progress * 100).toInt()}% complete',
+                '${(progress * 100).toInt()}${l.tr('percentComplete')}',
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 12,
@@ -423,9 +465,54 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
     );
   }
 
+  // ---------- Provider Actions ----------
+
+  Future<void> _openChat() async {
+    final agentUserId = _request.assignedAgentUserId;
+    final agentName = _request.assignedAgentName;
+    if (agentUserId == null || agentName == null) return;
+
+    try {
+      final conversation = await ApiService.getOrCreateConversation(
+        otherUserId: agentUserId,
+        otherDisplayName: agentName,
+        otherAvatarUrl: _request.assignedAgentAvatarUrl,
+        otherRole: 'agent',
+      );
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ChatDetailScreen(
+            conversationId: conversation.id,
+            name: agentName,
+            avatarUrl: _request.assignedAgentAvatarUrl,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to open chat: $e'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  Future<void> _makeCall() async {
+    final phone = _request.assignedAgentPhone;
+    if (phone == null) return;
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   // ---------- Provider Card ----------
 
-  Widget _buildProviderCard(ColorScheme cs) {
+  Widget _buildProviderCard(ColorScheme cs, AppLocalizations l) {
+    final name = _request.assignedAgentName ?? '';
+    final rating = _request.assignedAgentRating ?? 0.0;
+    final deals = _request.assignedAgentDeals ?? 0;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -444,7 +531,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'YOUR PROVIDER',
+            l.tr('yourProvider'),
             style: TextStyle(
               color: cs.outline,
               fontSize: 11,
@@ -469,7 +556,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 ),
                 child: Center(
                   child: Text(
-                    _providerName.split(' ').map((n) => n[0]).join(),
+                    _request.agentInitials,
                     style: const TextStyle(
                       color: Color(0xFFF59E0B),
                       fontSize: 18,
@@ -484,7 +571,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _providerName,
+                      name,
                       style: TextStyle(
                         color: cs.onSurface,
                         fontSize: 16,
@@ -498,7 +585,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                             color: Color(0xFFF59E0B), size: 16),
                         const SizedBox(width: 3),
                         Text(
-                          '$_providerRating',
+                          '$rating',
                           style: TextStyle(
                             color: cs.onSurface,
                             fontSize: 13,
@@ -516,7 +603,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '$_providerJobs jobs completed',
+                          '$deals ${l.tr('jobsCompleted')}',
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
                             fontSize: 13,
@@ -534,9 +621,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: _request.assignedAgentUserId != null
+                      ? () => _openChat()
+                      : null,
                   icon: const Icon(Icons.chat_outlined, size: 18),
-                  label: const Text('Message'),
+                  label: Text(l.tr('message')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: BorderSide(color: cs.outlineVariant),
@@ -552,9 +641,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: _request.assignedAgentPhone != null
+                      ? () => _makeCall()
+                      : null,
                   icon: const Icon(Icons.phone_outlined, size: 18),
-                  label: const Text('Call'),
+                  label: Text(l.tr('call')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -577,13 +668,13 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
 
   // ---------- Tracking Timeline ----------
 
-  Widget _buildTrackingTimeline(ColorScheme cs) {
-    final steps = _steps;
+  Widget _buildTrackingTimeline(ColorScheme cs, AppLocalizations l) {
+    final steps = _steps(l);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'TRACKING TIMELINE',
+          l.tr('trackingTimeline'),
           style: TextStyle(
             color: cs.outline,
             fontSize: 11,
@@ -741,12 +832,12 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
 
   // ---------- Request Details ----------
 
-  Widget _buildRequestDetails(ColorScheme cs) {
+  Widget _buildRequestDetails(ColorScheme cs, AppLocalizations l) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REQUEST DETAILS',
+          l.tr('requestDetails'),
           style: TextStyle(
             color: cs.outline,
             fontSize: 11,
@@ -771,19 +862,30 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           ),
           child: Column(
             children: [
-              _buildDetailRow('Request ID', widget.request.shortNumber, cs),
+              _buildDetailRow(l.tr('requestId'), _request.shortNumber, cs),
               Divider(color: cs.outlineVariant, height: 24),
-              _buildDetailRow('Category', widget.request.displayCategory, cs),
-              if (widget.request.description != null &&
-                  widget.request.description!.isNotEmpty) ...[
+              _buildDetailRow(l.tr('category'), _request.displayCategory, cs),
+              if (_request.description != null &&
+                  _request.description!.isNotEmpty) ...[
                 Divider(color: cs.outlineVariant, height: 24),
                 _buildDetailRow(
-                    'Description', widget.request.description!, cs),
+                    l.tr('description'), _request.description!, cs),
+              ],
+              if (_request.scheduledTime != null &&
+                  _request.scheduledTime!.isNotEmpty) ...[
+                Divider(color: cs.outlineVariant, height: 24),
+                _buildDetailRow(
+                    l.tr('scheduleTime'), _request.scheduledTime!, cs),
               ],
               Divider(color: cs.outlineVariant, height: 24),
-              _buildDetailRow('Status',
-                  widget.request.status.replaceAll('_', ' ').toUpperCase(), cs,
+              _buildDetailRow(l.tr('status'),
+                  _request.status.replaceAll('_', ' ').toUpperCase(), cs,
                   valueColor: AppColors.primary),
+              if (_request.etaMinutes != null) ...[
+                Divider(color: cs.outlineVariant, height: 24),
+                _buildDetailRow(l.tr('estimatedArrival'),
+                    '${_request.etaMinutes} min', cs),
+              ],
             ],
           ),
         ),
@@ -823,7 +925,10 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
 
   // ---------- Bottom Actions ----------
 
-  Widget _buildBottomActions(ColorScheme cs) {
+  Widget _buildBottomActions(ColorScheme cs, AppLocalizations l) {
+    final isTerminal =
+        _request.status == 'completed' || _request.status == 'cancelled';
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       decoration: BoxDecoration(
@@ -851,42 +956,44 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 textStyle: const TextStyle(
                     fontSize: 14, fontWeight: FontWeight.w700),
               ),
-              child: const Text('BACK'),
+              child: Text(l.tr('back')),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                _showCancelDialog(cs);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEF4444),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          if (!isTerminal) ...[
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  _showCancelDialog(cs, l);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFEF4444),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w700),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w700),
+                child: Text(l.tr('cancelRequest')),
               ),
-              child: const Text('CANCEL REQUEST'),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  void _showCancelDialog(ColorScheme cs) {
+  void _showCancelDialog(ColorScheme cs, AppLocalizations l) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Cancel Service Request?',
+          l.tr('cancelServiceRequest'),
           style: TextStyle(
             color: cs.onSurface,
             fontWeight: FontWeight.w700,
@@ -894,8 +1001,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           ),
         ),
         content: Text(
-          'Are you sure you want to cancel this service request? '
-          'A cancellation fee may apply if the provider is already on the way.',
+          l.tr('cancelServiceConfirm'),
           style: TextStyle(
             color: cs.onSurfaceVariant,
             fontSize: 14,
@@ -906,7 +1012,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Keep Request',
+              l.tr('keepRequest'),
               style: TextStyle(
                 color: cs.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
@@ -918,31 +1024,46 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
               Navigator.of(ctx).pop();
               try {
                 await ApiService.updateServiceRequestStatus(
-                  widget.request.id,
+                  _request.id,
                   'cancelled',
                   statusMessage: 'Cancelled by user',
                 );
                 if (!mounted) return;
+                setState(() {
+                  _request = ServiceRequest(
+                    id: _request.id,
+                    userId: _request.userId,
+                    requestNumber: _request.requestNumber,
+                    category: _request.category,
+                    categoryName: _request.categoryName,
+                    status: 'cancelled',
+                    statusMessage: 'Cancelled by user',
+                    etaMinutes: _request.etaMinutes,
+                    description: _request.description,
+                    scheduledTime: _request.scheduledTime,
+                    createdAt: _request.createdAt,
+                  );
+                });
+                _pollTimer?.cancel();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Service request cancelled'),
+                  SnackBar(
+                    content: Text(l.tr('serviceRequestCancelled')),
                     backgroundColor: AppColors.primary,
                   ),
                 );
-                Navigator.of(context).pop(true);
               } catch (e) {
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Failed to cancel: $e'),
+                    content: Text('${l.tr('failedToCancel')} $e'),
                     backgroundColor: const Color(0xFFEF4444),
                   ),
                 );
               }
             },
-            child: const Text(
-              'Cancel Request',
-              style: TextStyle(
+            child: Text(
+              l.tr('cancelRequestAction'),
+              style: const TextStyle(
                 color: Color(0xFFEF4444),
                 fontWeight: FontWeight.w700,
               ),

@@ -8,7 +8,9 @@ import '../../core/models/rental.dart';
 import '../../core/models/service_category.dart';
 import '../../core/models/service_request.dart';
 import '../../services/api_service.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../services/supabase_service.dart';
+import '../../main.dart';
 import '../profile/profile_tab.dart';
 import '../property/properties_screen.dart';
 import '../property/property_details_screen.dart';
@@ -22,27 +24,12 @@ import '../explore/saved_items_screen.dart';
 import '../rental/pay_rent_screen.dart';
 
 const _quickActions = [
-  {
-    'icon': Icons.search_rounded,
-    'label': 'Search',
-    'gradient': [0xFF0D9488, 0xFF14B8A6],
-  },
-  {
-    'icon': Icons.favorite_rounded,
-    'label': 'Saved',
-    'gradient': [0xFFEF4444, 0xFFF87171],
-  },
-  {
-    'icon': Icons.build_rounded,
-    'label': 'Support',
-    'gradient': [0xFFF59E0B, 0xFFFBBF24],
-  },
-  {
-    'icon': Icons.mail_rounded,
-    'label': 'Inbox',
-    'gradient': [0xFF6366F1, 0xFF818CF8],
-  },
+  {'icon': Icons.search_rounded, 'label': 'Search', 'gradient': [0xFF2563EB, 0xFF3B82F6]},
+  {'icon': Icons.favorite_rounded, 'label': 'Saved', 'gradient': [0xFFEF4444, 0xFFF87171]},
+  {'icon': Icons.build_rounded, 'label': 'Support', 'gradient': [0xFFF59E0B, 0xFFFBBF24]},
+  {'icon': Icons.mail_rounded, 'label': 'Inbox', 'gradient': [0xFF6366F1, 0xFF818CF8]},
 ];
+
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -51,7 +38,7 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   int _currentNavIndex = 0;
 
   // Data from Salguri schema
@@ -59,6 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Rental? _activeRental;
   List<ServiceRequest> _serviceRequests = [];
   bool _isLoading = true;
+  bool _rentPaidLocally = false;
 
   String get _userName {
     final meta = SupabaseService.currentUser?.userMetadata;
@@ -71,16 +59,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return parts.first;
   }
 
-  String get _greeting {
+  String _greeting(AppLocalizations l) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return l.tr('goodMorning');
+    if (hour < 17) return l.tr('goodAfternoon');
+    return l.tr('goodEvening');
   }
 
   @override
   void initState() {
     super.initState();
+    _loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // A route was popped back to this screen — reload data
     _loadData();
   }
 
@@ -100,9 +106,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return name != null ? req.copyWith(categoryName: name) : req;
       }).toList();
 
+      var rental = results[1] as Rental?;
+      if (_rentPaidLocally && rental != null) {
+        rental = rental.copyWith(isPaid: true);
+      }
+
       setState(() {
         _properties = results[0] as List<Property>;
-        _activeRental = results[1] as Rental?;
+        _activeRental = rental;
         _serviceRequests = requests;
         _isLoading = false;
       });
@@ -161,12 +172,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---------- Hero Header with Gradient ----------
 
   Widget _buildHeroHeader() {
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0D9488), Color(0xFF0F766E), Color(0xFF115E59)],
+          colors: [
+            Color(0xFF2563EB),
+            Color(0xFF1D4ED8),
+            Color(0xFF1E40AF),
+          ],
         ),
       ),
       child: SafeArea(
@@ -197,9 +213,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        _firstName.isNotEmpty
-                            ? _firstName[0].toUpperCase()
-                            : 'U',
+                        _firstName.isNotEmpty ? _firstName[0].toUpperCase() : 'U',
                         style: const TextStyle(
                           color: Color(0xFF92400E),
                           fontSize: 18,
@@ -209,9 +223,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    'Salguri',
-                    style: TextStyle(
+                  Text(
+                    l.tr('appName'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -245,10 +259,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             decoration: BoxDecoration(
                               color: AppColors.accent,
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFF0D9488),
-                                width: 1.5,
-                              ),
+                              border: Border.all(color: const Color(0xFF2563EB), width: 1.5),
                             ),
                           ),
                         ),
@@ -260,7 +271,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 24),
               // Greeting
               Text(
-                '$_greeting,',
+                '${_greeting(l)},',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 15,
@@ -279,7 +290,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Welcome back to your home dashboard',
+                l.tr('welcomeBack'),
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
@@ -296,17 +307,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---------- Quick Actions ----------
 
   Widget _buildQuickActions() {
+    final l = AppLocalizations.of(context);
+    final quickActionLabels = {
+      'Search': l.tr('search'),
+      'Saved': l.tr('saved'),
+      'Support': l.tr('support'),
+      'Inbox': l.tr('inbox'),
+    };
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: _buildGlassCard(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: (_quickActions).map((action) {
+            final key = action['label'] as String;
             return GestureDetector(
-              onTap: () => _onQuickAction(action['label'] as String),
+              onTap: () => _onQuickAction(key),
               child: _buildQuickActionItem(
                 icon: action['icon'] as IconData,
-                label: action['label'] as String,
+                label: quickActionLabels[key] ?? key,
                 gradientColors: (action['gradient'] as List<int>)
                     .map((c) => Color(c))
                     .toList(),
@@ -343,7 +362,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          child: Center(child: Icon(icon, color: Colors.white, size: 24)),
+          child: Center(
+            child: Icon(icon, color: Colors.white, size: 24),
+          ),
         ),
         const SizedBox(height: 10),
         Text(
@@ -363,9 +384,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 'Search':
         setState(() => _currentNavIndex = 1);
       case 'Saved':
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => const SavedItemsScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SavedItemsScreen()),
+        );
       case 'Inbox':
         setState(() => _currentNavIndex = 3);
       case 'Support':
@@ -384,9 +405,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildCurrentRental() {
     if (_activeRental == null) return const SizedBox.shrink();
     final rental = _activeRental!;
-    final dueDateFormatted = DateFormat(
-      'MMM d, yyyy',
-    ).format(rental.nextDueDate);
+    final dueDateFormatted = DateFormat('MMM d, yyyy').format(rental.nextDueDate);
     final rentFormatted = '\$${rental.monthlyRent.toStringAsFixed(0)}/mo';
     final leaseLabel = rental.leaseStatus.toUpperCase();
 
@@ -420,9 +439,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             rental.location,
                             style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontSize: 13,
                             ),
                           ),
@@ -440,17 +457,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildInfoColumn(
-                        'MONTHLY RENT',
-                        rentFormatted,
-                        isHighlight: true,
-                      ),
+                      child: _buildInfoColumn('MONTHLY RENT', rentFormatted, isHighlight: true),
                     ),
                     Expanded(
-                      child: _buildInfoColumn(
-                        'NEXT DUE DATE',
-                        dueDateFormatted,
-                      ),
+                      child: _buildInfoColumn('NEXT DUE DATE', dueDateFormatted),
                     ),
                   ],
                 ),
@@ -473,12 +483,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
+                        onPressed: () async {
+                          final paid = await Navigator.of(context).push<bool>(
                             MaterialPageRoute(
                               builder: (_) => PayRentScreen(rental: rental),
                             ),
                           );
+                          if (paid == true && mounted) {
+                            _rentPaidLocally = true;
+                            setState(() {
+                              _activeRental = _activeRental?.copyWith(isPaid: true);
+                            });
+                          }
                         },
                         child: const Text('PAY RENT'),
                       ),
@@ -500,21 +516,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (name.contains('electric')) return Icons.electrical_services;
     if (name.contains('plumb')) return Icons.plumbing;
     if (name.contains('clean')) return Icons.cleaning_services;
-    if (name.contains('ac') || name.contains('hvac') || name.contains('air')) {
+    if (name.contains('ac') || name.contains('hvac') || name.contains('air'))
       return Icons.ac_unit;
-    }
     if (name.contains('paint')) return Icons.format_paint_outlined;
-    if (name.contains('lock') || name.contains('secur')) {
+    if (name.contains('lock') || name.contains('secur'))
       return Icons.lock_outlined;
-    }
     return Icons.build_outlined;
   }
 
   Widget _buildActiveRequests() {
     if (_serviceRequests.isEmpty) return const SizedBox.shrink();
-    final pendingCount = _serviceRequests
-        .where((r) => r.status == 'pending')
-        .length;
+    final pendingCount =
+        _serviceRequests.where((r) => r.status == 'pending').length;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
@@ -527,18 +540,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             trailingColor: AppColors.error,
           ),
           const SizedBox(height: 14),
-          ..._serviceRequests.map(
-            (req) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildRequestCard(req),
-            ),
-          ),
+          ..._serviceRequests.map((req) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildRequestCard(req),
+              )),
         ],
       ),
     );
   }
 
   Widget _buildRequestCard(ServiceRequest req) {
+    final l = AppLocalizations.of(context);
     return _buildGlassCard(
       child: Column(
         children: [
@@ -603,9 +615,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: Text(
                               req.statusMessage,
                               style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 13,
                               ),
                             ),
@@ -628,22 +638,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.access_time_rounded,
-                    color: AppColors.primary,
-                    size: 18,
-                  ),
+                  const Icon(Icons.access_time_rounded, color: AppColors.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Estimated arrival',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 13,
-                    ),
+                    l.tr('estimatedArrival'),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
                   ),
                   const Spacer(),
                   Text(
-                    '${req.etaMinutes} min',
+                    '${req.etaMinutes} ${l.tr('min')}',
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 15,
@@ -666,7 +669,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 );
                 if (cancelled == true) _loadData();
               },
-              child: const Text('TRACK LIVE'),
+              child: Text(l.tr('trackLive')),
             ),
           ),
         ],
@@ -677,6 +680,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---------- Recommended Properties ----------
 
   Widget _buildRecommendedProperties() {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
       child: Column(
@@ -686,7 +690,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recommended',
+                l.tr('recommended'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 19,
@@ -698,17 +702,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   MaterialPageRoute(builder: (_) => const PropertiesScreen()),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 7,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                   decoration: BoxDecoration(
                     color: AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'See all',
-                    style: TextStyle(
+                  child: Text(
+                    l.tr('seeAll'),
+                    style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -724,11 +725,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Center(
                 child: Text(
-                  'No properties available',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.outline,
-                    fontSize: 14,
-                  ),
+                  l.tr('noPropertiesAvailable'),
+                  style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 14),
                 ),
               ),
             )
@@ -739,7 +737,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 scrollDirection: Axis.horizontal,
                 clipBehavior: Clip.none,
                 itemCount: _properties.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 16),
+                separatorBuilder: (_, __) => const SizedBox(width: 16),
                 itemBuilder: (context, index) {
                   final prop = _properties[index];
                   return GestureDetector(
@@ -789,11 +787,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   errorBuilder: (_, _, _) => Container(
                     color: cs.surfaceContainerHighest,
                     child: Center(
-                      child: Icon(
-                        Icons.home_outlined,
-                        color: cs.outline,
-                        size: 40,
-                      ),
+                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40),
                     ),
                   ),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -819,10 +813,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.black.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(10),
@@ -844,10 +835,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 top: 12,
                 left: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
@@ -883,11 +871,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.location_on_rounded,
-                      color: AppColors.primary,
-                      size: 15,
-                    ),
+                    const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 15),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -905,10 +889,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 12),
                 // Stats row
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(10),
@@ -918,15 +899,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       _buildPropertyStat(Icons.bed_rounded, '${property.beds}'),
                       Container(width: 1, height: 16, color: cs.outlineVariant),
-                      _buildPropertyStat(
-                        Icons.bathtub_rounded,
-                        '${property.baths}',
-                      ),
+                      _buildPropertyStat(Icons.bathtub_rounded, '${property.baths}'),
                       Container(width: 1, height: 16, color: cs.outlineVariant),
-                      _buildPropertyStat(
-                        Icons.star_rounded,
-                        property.rating.toString(),
-                      ),
+                      _buildPropertyStat(Icons.star_rounded, property.rating.toString()),
                     ],
                   ),
                 ),
@@ -959,17 +934,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---------- Bottom Action Buttons ----------
 
   Widget _buildBottomActions() {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
       child: Column(
         children: [
-          _buildActionRow(Icons.grid_view_rounded, 'View All Properties', () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const PropertiesScreen()));
+          _buildActionRow(Icons.grid_view_rounded, l.tr('viewAllProperties'), () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PropertiesScreen()),
+            );
           }),
           const SizedBox(height: 12),
-          _buildActionRow(Icons.handyman_rounded, 'See All Services', () {
+          _buildActionRow(Icons.handyman_rounded, l.tr('seeAllServices'), () {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => ServiceRequestScreen(rental: _activeRental),
@@ -996,9 +972,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(
-                child: Icon(icon, color: AppColors.primary, size: 20),
-              ),
+              child: Center(child: Icon(icon, color: AppColors.primary, size: 20)),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -1019,11 +993,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: AppColors.primary,
-                  size: 14,
-                ),
+                child: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.primary, size: 14),
               ),
             ),
           ],
@@ -1035,6 +1005,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // ---------- Bottom Nav ----------
 
   Widget _buildBottomNav() {
+    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
@@ -1053,31 +1024,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() => _currentNavIndex = i);
           if (i == 0) _loadData();
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home_rounded),
+            label: l.tr('home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search_rounded),
-            activeIcon: Icon(Icons.search_rounded),
-            label: 'Search',
+            icon: const Icon(Icons.search_rounded),
+            activeIcon: const Icon(Icons.search_rounded),
+            label: l.tr('search'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            activeIcon: Icon(Icons.explore_rounded),
-            label: 'Explore',
+            icon: const Icon(Icons.explore_outlined),
+            activeIcon: const Icon(Icons.explore_rounded),
+            label: l.tr('explore'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline_rounded),
-            activeIcon: Icon(Icons.chat_bubble_rounded),
-            label: 'Inbox',
+            icon: const Icon(Icons.chat_bubble_outline_rounded),
+            activeIcon: const Icon(Icons.chat_bubble_rounded),
+            label: l.tr('inbox'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_rounded),
-            activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline_rounded),
+            activeIcon: const Icon(Icons.person_rounded),
+            label: l.tr('profile'),
           ),
         ],
       ),
@@ -1108,11 +1079,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildSectionHeader(
-    String title, {
-    String? trailing,
-    Color? trailingColor,
-  }) {
+  Widget _buildSectionHeader(String title, {String? trailing, Color? trailingColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -1128,9 +1095,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
-              color: (trailingColor ?? AppColors.primary).withValues(
-                alpha: 0.1,
-              ),
+              color: (trailingColor ?? AppColors.primary).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -1175,11 +1140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildInfoColumn(
-    String label,
-    String value, {
-    bool isHighlight = false,
-  }) {
+  Widget _buildInfoColumn(String label, String value, {bool isHighlight = false}) {
     final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

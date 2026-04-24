@@ -21,7 +21,7 @@ class RentalDocument {
     return RentalDocument(
       id: json['id'] as String,
       rentalId: json['rental_id'] as String,
-      userId: json['user_id'] as String,
+      userId: json['user_id'] as String? ?? '',
       fileName: json['file_name'] as String,
       fileUrl: json['file_url'] as String? ?? '',
       description: json['description'] as String? ?? '',

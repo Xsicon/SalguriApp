@@ -37,6 +37,28 @@ class Rental {
     this.imageUrl = '',
   });
 
+  Rental copyWith({bool? isPaid}) {
+    return Rental(
+      id: id,
+      userId: userId,
+      propertyId: propertyId,
+      address: address,
+      location: location,
+      monthlyRent: monthlyRent,
+      nextDueDate: nextDueDate,
+      isPaid: isPaid ?? this.isPaid,
+      leaseStatus: leaseStatus,
+      beds: beds,
+      baths: baths,
+      sqft: sqft,
+      leaseStart: leaseStart,
+      leaseEnd: leaseEnd,
+      leaseTerm: leaseTerm,
+      securityDeposit: securityDeposit,
+      imageUrl: imageUrl,
+    );
+  }
+
   factory Rental.fromJson(Map<String, dynamic> json) {
     return Rental(
       id: json['id'] as String,

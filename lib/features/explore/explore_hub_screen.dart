@@ -172,11 +172,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               errorBuilder: (_, _, _) => Container(
                 color: cs.surfaceContainerHighest,
                 child: Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: cs.outline,
-                    size: 48,
-                  ),
+                  child: Icon(Icons.image_outlined, color: cs.outline, size: 48),
                 ),
               ),
               loadingBuilder: (context, child, loadingProgress) {
@@ -207,10 +203,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               top: 14,
               left: 14,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(6),
@@ -245,11 +238,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        color: AppColors.white60,
-                        size: 14,
-                      ),
+                      const Icon(Icons.location_on_outlined, color: AppColors.white60, size: 14),
                       const SizedBox(width: 4),
                       Text(
                         'Downtown, Mogadishu',
@@ -293,10 +282,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             child: GestureDetector(
               onTap: () => setState(() => _selectedTab = index),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : cs.surface,
                   borderRadius: BorderRadius.circular(20),
@@ -332,7 +318,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           itemCount: _categories.length,
-          separatorBuilder: (_, _) => const SizedBox(width: 16),
+          separatorBuilder: (_, __) => const SizedBox(width: 16),
           itemBuilder: (context, index) {
             final cat = _categories[index];
             final isSelected = _selectedCategory == index;
@@ -349,18 +335,14 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                           : cs.surfaceContainerHighest,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary
-                            : cs.outlineVariant,
+                        color: isSelected ? AppColors.primary : cs.outlineVariant,
                         width: isSelected ? 2 : 1,
                       ),
                     ),
                     child: Center(
                       child: Icon(
                         cat['icon'] as IconData,
-                        color: isSelected
-                            ? AppColors.white
-                            : cs.onSurfaceVariant,
+                        color: isSelected ? AppColors.white : cs.onSurfaceVariant,
                         size: 24,
                       ),
                     ),
@@ -369,13 +351,9 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                   Text(
                     cat['label'] as String,
                     style: TextStyle(
-                      color: isSelected
-                          ? AppColors.primary
-                          : cs.onSurfaceVariant,
+                      color: isSelected ? AppColors.primary : cs.onSurfaceVariant,
                       fontSize: 11,
-                      fontWeight: isSelected
-                          ? FontWeight.w700
-                          : FontWeight.w500,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                 ],
@@ -548,7 +526,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: _trendingProperties.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 14),
+                separatorBuilder: (_, __) => const SizedBox(width: 14),
                 itemBuilder: (context, index) {
                   final prop = _trendingProperties[index];
                   return GestureDetector(
@@ -598,11 +576,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                   errorBuilder: (_, _, _) => Container(
                     color: cs.surfaceContainerHighest,
                     child: Center(
-                      child: Icon(
-                        Icons.home_outlined,
-                        color: cs.outline,
-                        size: 40,
-                      ),
+                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40),
                     ),
                   ),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -623,10 +597,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 top: 10,
                 right: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(6),
@@ -693,15 +664,9 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 // Bed + Bath
                 Row(
                   children: [
-                    _buildPropertyStat(
-                      Icons.bed_outlined,
-                      '${property.beds} Bed',
-                    ),
+                    _buildPropertyStat(Icons.bed_outlined, '${property.beds} Bed'),
                     const SizedBox(width: 14),
-                    _buildPropertyStat(
-                      Icons.bathtub_outlined,
-                      '${property.baths} Bath',
-                    ),
+                    _buildPropertyStat(Icons.bathtub_outlined, '${property.baths} Bath'),
                   ],
                 ),
               ],
@@ -877,7 +842,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _topAgents.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 16),
+              separatorBuilder: (_, __) => const SizedBox(width: 16),
               itemBuilder: (context, index) {
                 final agent = _topAgents[index];
                 return GestureDetector(
@@ -932,11 +897,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
-                                Icons.star,
-                                color: Color(0xFFF59E0B),
-                                size: 12,
-                              ),
+                              const Icon(Icons.star, color: Color(0xFFF59E0B), size: 12),
                               const SizedBox(width: 2),
                               Text(
                                 agent.rating.toString(),

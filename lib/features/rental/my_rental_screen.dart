@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/maintenance_request.dart';
 import '../../core/models/rental.dart';
-import '../../core/models/rental_document.dart';
 import '../../services/api_service.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../services/service_request_screen.dart';
 import 'pay_rent_screen.dart';
 
 class MyRentalScreen extends StatefulWidget {
@@ -19,14 +20,15 @@ class MyRentalScreen extends StatefulWidget {
 
 class _MyRentalScreenState extends State<MyRentalScreen> {
   List<MaintenanceRequest> _maintenanceRequests = [];
-  List<RentalDocument> _documents = [];
   bool _isLoading = true;
+  late Rental _rental;
 
-  Rental get rental => widget.rental;
+  Rental get rental => _rental;
 
   @override
   void initState() {
     super.initState();
+    _rental = widget.rental;
     _loadRentalDetails();
   }
 
@@ -40,13 +42,10 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
     }
     setState(() => _isLoading = true);
     try {
-      final results = await Future.wait([
-        ApiService.getMaintenanceRequests(rental.id),
-        ApiService.getRentalDocuments(rental.id),
-      ]);
+      final requests = await ApiService.getMaintenanceRequests(rental.id);
+
       setState(() {
-        _maintenanceRequests = results[0] as List<MaintenanceRequest>;
-        _documents = results[1] as List<RentalDocument>;
+        _maintenanceRequests = requests;
         _isLoading = false;
       });
     } catch (e) {
@@ -58,12 +57,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: cs.surface,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context, cs),
+            _buildHeader(context, cs, l),
             Expanded(
               child: _isLoading
                   ? const Center(
@@ -77,14 +77,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildPropertyHero(cs),
-                            _buildRentStatusCard(cs),
-                            _buildQuickInfoGrid(cs),
-                            _buildLeaseSummary(cs),
-                            _buildMaintenance(context, cs),
-                            _buildDocuments(cs),
+                            _buildPropertyHero(cs, l),
+                            _buildRentStatusCard(cs, l),
+                            _buildQuickInfoGrid(cs, l),
+                            _buildLeaseSummary(cs, l),
+                            _buildMaintenance(context, cs, l),
                             const SizedBox(height: 16),
-                            _buildCancelRental(cs),
+                            _buildCancelRental(cs, l),
                             const SizedBox(height: 32),
                           ],
                         ),
@@ -99,7 +98,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   // ---------- Header ----------
 
-  Widget _buildHeader(BuildContext context, ColorScheme cs) {
+  Widget _buildHeader(BuildContext context, ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Row(
@@ -110,7 +109,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
           ),
           Expanded(
             child: Text(
-              'My Rental',
+              l.tr('myRental'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
@@ -130,7 +129,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   // ---------- Property Hero ----------
 
-  Widget _buildPropertyHero(ColorScheme cs) {
+  Widget _buildPropertyHero(ColorScheme cs, AppLocalizations l) {
     final imageUrl = rental.imageUrl.isNotEmpty
         ? rental.imageUrl
         : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800';
@@ -186,7 +185,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '${rental.leaseStatus.toUpperCase()} LEASE',
+                  '${rental.leaseStatus.toUpperCase()} ${l.tr('lease')}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 11,
@@ -237,7 +236,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   // ---------- Rent Status Card ----------
 
-  Widget _buildRentStatusCard(ColorScheme cs) {
+  Widget _buildRentStatusCard(ColorScheme cs, AppLocalizations l) {
     final dueFormatted =
         DateFormat('MMM d, yyyy').format(rental.nextDueDate);
     final daysUntilDue =
@@ -273,9 +272,9 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Rent Status',
-                      style: TextStyle(
+                    Text(
+                      l.tr('rentStatus'),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -317,7 +316,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                     color: Colors.white70, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  'Due: $dueFormatted',
+                  '${l.tr('due')} $dueFormatted',
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -329,13 +328,20 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PayRentScreen(rental: rental),
-                  ),
-                ),
+                onPressed: () async {
+                  final paid = await Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      builder: (_) => PayRentScreen(rental: rental),
+                    ),
+                  );
+                  if (paid == true && mounted) {
+                    setState(() {
+                      _rental = rental.copyWith(isPaid: true);
+                    });
+                  }
+                },
                 icon: const Icon(Icons.payments_outlined, size: 20),
-                label: const Text('Pay Rent Now'),
+                label: Text(l.tr('payRentNow')),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: AppColors.primary,
@@ -359,7 +365,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   // ---------- Quick Info Grid ----------
 
-  Widget _buildQuickInfoGrid(ColorScheme cs) {
+  Widget _buildQuickInfoGrid(ColorScheme cs, AppLocalizations l) {
     final bedsLabel = rental.beds > 0 ? '${rental.beds} Beds' : '--';
     final bathsLabel = rental.baths > 0
         ? '${rental.baths % 1 == 0 ? rental.baths.toInt() : rental.baths} Baths'
@@ -372,11 +378,11 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(
         children: [
-          _buildInfoTile(cs, Icons.bed_outlined, bedsLabel, 'ROOMS'),
+          _buildInfoTile(cs, Icons.bed_outlined, bedsLabel, l.tr('rooms')),
           const SizedBox(width: 10),
-          _buildInfoTile(cs, Icons.bathtub_outlined, bathsLabel, 'TOILETS'),
+          _buildInfoTile(cs, Icons.bathtub_outlined, bathsLabel, l.tr('toilets')),
           const SizedBox(width: 10),
-          _buildInfoTile(cs, Icons.square_foot_outlined, sqftLabel, 'SQ FT'),
+          _buildInfoTile(cs, Icons.square_foot_outlined, sqftLabel, l.tr('sqFt')),
         ],
       ),
     );
@@ -423,7 +429,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   // ---------- Lease Summary ----------
 
-  Widget _buildLeaseSummary(ColorScheme cs) {
+  Widget _buildLeaseSummary(ColorScheme cs, AppLocalizations l) {
     final dateFormat = DateFormat('MMM dd, yyyy');
     final startDate = rental.leaseStart != null
         ? dateFormat.format(rental.leaseStart!)
@@ -443,7 +449,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Lease Summary',
+                l.tr('leaseSummary'),
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 18,
@@ -451,7 +457,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 ),
               ),
               Text(
-                'View All',
+                l.tr('viewAll'),
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 14,
@@ -471,13 +477,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             ),
             child: Column(
               children: [
-                _buildLeaseRow(cs, 'Lease Term', rental.leaseTerm),
+                _buildLeaseRow(cs, l.tr('leaseTerm'), rental.leaseTerm),
                 _leaseRowDivider(cs),
-                _buildLeaseRow(cs, 'Start Date', startDate),
+                _buildLeaseRow(cs, l.tr('startDate'), startDate),
                 _leaseRowDivider(cs),
-                _buildLeaseRow(cs, 'End Date', endDate),
+                _buildLeaseRow(cs, l.tr('endDate'), endDate),
                 _leaseRowDivider(cs),
-                _buildLeaseRow(cs, 'Security Deposit', depositLabel),
+                _buildLeaseRow(cs, l.tr('securityDeposit'), depositLabel),
               ],
             ),
           ),
@@ -554,7 +560,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
     }
   }
 
-  Widget _buildMaintenance(BuildContext context, ColorScheme cs) {
+  Widget _buildMaintenance(BuildContext context, ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
       child: Column(
@@ -563,7 +569,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Maintenance',
+                l.tr('maintenance'),
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 18,
@@ -571,14 +577,20 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ServiceRequestScreen(rental: rental),
+                    ),
+                  );
+                },
                 child: Row(
                   children: [
                     const Icon(Icons.add, color: AppColors.primary, size: 18),
                     const SizedBox(width: 4),
-                    const Text(
-                      'New Request',
-                      style: TextStyle(
+                    Text(
+                      l.tr('newRequest'),
+                      style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -606,7 +618,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                       color: cs.outline, size: 36),
                   const SizedBox(height: 8),
                   Text(
-                    'No maintenance requests',
+                    l.tr('noMaintenanceRequests'),
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
                       fontSize: 14,
@@ -707,133 +719,9 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
     );
   }
 
-  // ---------- Documents ----------
-
-  Widget _buildDocuments(ColorScheme cs) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Documents',
-            style: TextStyle(
-              color: cs.onSurface,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (_documents.isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.05)),
-              ),
-              child: Column(
-                children: [
-                  Icon(Icons.folder_open_outlined,
-                      color: cs.outline, size: 36),
-                  const SizedBox(height: 8),
-                  Text(
-                    'No documents available',
-                    style: TextStyle(
-                      color: cs.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.05)),
-              ),
-              child: Column(
-                children: _documents.asMap().entries.map((entry) {
-                  final isLast = entry.key == _documents.length - 1;
-                  final doc = entry.value;
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFEE2E2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.picture_as_pdf,
-                                color: Color(0xFFEF4444),
-                                size: 22,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    doc.fileName,
-                                    style: TextStyle(
-                                      color: cs.onSurface,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  if (doc.description.isNotEmpty) ...[
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      doc.description,
-                                      style: TextStyle(
-                                        color: cs.onSurfaceVariant,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            Icon(Icons.download_outlined,
-                                color: cs.onSurfaceVariant, size: 22),
-                          ],
-                        ),
-                      ),
-                      if (!isLast)
-                        Divider(
-                          height: 1,
-                          indent: 14,
-                          endIndent: 14,
-                          color: cs.outlineVariant
-                              .withValues(alpha: 0.3),
-                        ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
   // ---------- Cancel Rental ----------
 
-  Widget _buildCancelRental(ColorScheme cs) {
+  Widget _buildCancelRental(ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SizedBox(
@@ -841,7 +729,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
         child: OutlinedButton.icon(
           onPressed: () => _showCancelConfirmation(),
           icon: const Icon(Icons.cancel_outlined, size: 18),
-          label: const Text('Cancel Rental'),
+          label: Text(l.tr('cancelRental')),
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.error,
             side: const BorderSide(color: AppColors.error),
@@ -860,23 +748,24 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
   }
 
   void _showCancelConfirmation() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Cancel Rental'),
-        content: const Text('Are you sure you want to cancel this rental? This action cannot be undone.'),
+        title: Text(l.tr('cancelRental')),
+        content: Text(l.tr('cancelRentalConfirm')),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('No, Keep It'),
+            child: Text(l.tr('noKeepIt')),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               _cancelRental();
             },
-            child: Text('Yes, Cancel', style: TextStyle(color: AppColors.error)),
+            child: Text(l.tr('yesCancel'), style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -884,12 +773,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
   }
 
   Future<void> _cancelRental() async {
+    final l = AppLocalizations.of(context);
     try {
       await ApiService.cancelRental(rental.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Rental cancelled successfully'),
+        SnackBar(
+          content: Text(l.tr('rentalCancelled')),
           backgroundColor: AppColors.primary,
         ),
       );

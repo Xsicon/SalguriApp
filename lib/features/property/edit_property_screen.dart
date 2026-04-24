@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/models/agent.dart';
@@ -52,6 +54,9 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   late final TextEditingController _locationController;
   late final Set<String> _selectedAmenities;
 
+  // Location pin
+  late LatLng _selectedLocation;
+
   // Step 3 – Images (existing URLs)
   late List<String> _imageUrls;
 
@@ -73,6 +78,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     _locationController = TextEditingController(text: p.location);
     _selectedAmenities = Set<String>.from(p.amenities);
 
+    _selectedLocation = LatLng(p.latitude, p.longitude);
     _imageUrls = List<String>.from(p.images);
     _selectedAgent = p.agent;
 
@@ -161,6 +167,8 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
         'location': _locationController.text.trim(),
         'amenities': _selectedAmenities.toList(),
         'images': _imageUrls,
+        'latitude': _selectedLocation.latitude,
+        'longitude': _selectedLocation.longitude,
         if (_selectedAgent != null) 'agent_id': _selectedAgent!.id,
       };
 
@@ -362,6 +370,8 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
           const SizedBox(height: 16),
           _buildTextField(controller: _locationController, label: 'Location', hint: 'e.g. Hodan, Mogadishu', cs: cs),
           const SizedBox(height: 16),
+          _buildLocationPicker(cs),
+          const SizedBox(height: 16),
           _buildAgentSelector(cs),
           const SizedBox(height: 24),
           _buildAmenitiesSelector(cs),
@@ -469,6 +479,79 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   }
 
   // --- Shared widgets ---
+
+  Widget _buildLocationPicker(ColorScheme cs) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Pin Location',
+          style: TextStyle(
+            color: cs.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Tap on the map to set the property location',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 12,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 200,
+          width: double.infinity,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: cs.outlineVariant),
+          ),
+          child: FlutterMap(
+            options: MapOptions(
+              initialCenter: _selectedLocation,
+              initialZoom: 13,
+              onTap: (tapPosition, point) {
+                setState(() => _selectedLocation = point);
+              },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.salguri.app',
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: _selectedLocation,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.location_on,
+                      color: AppColors.primary,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Lat: ${_selectedLocation.latitude.toStringAsFixed(5)}, '
+          'Lng: ${_selectedLocation.longitude.toStringAsFixed(5)}',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildSectionLabel(String text, ColorScheme cs) {
     return Text(

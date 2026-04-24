@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/l10n/app_localizations.dart';
+import '../../core/l10n/locale_notifier.dart';
 import '../../core/theme/theme_notifier.dart';
 import '../../services/api_service.dart';
 import '../../services/supabase_service.dart';
@@ -22,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _pushNotifications = true;
   String _language = 'English (US)';
 
-  final List<String> _propertyTypes = ['Villa', 'Commercial', 'Services'];
   final Set<String> _selectedPropertyTypes = {};
 
   bool _isSaving = false;
@@ -71,6 +73,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _onSave() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isSaving = true);
+    final l = AppLocalizations.of(context);
     try {
       // Update Supabase auth metadata
       await SupabaseService.client.auth.updateUser(
@@ -91,13 +94,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
+        SnackBar(content: Text(l.tr('profileUpdated'))),
       );
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update profile: $e')),
+        SnackBar(content: Text('${l.tr('failedUpdateProfile')} $e')),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -107,6 +110,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: cs.surfaceContainerLowest,
       appBar: AppBar(
@@ -115,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Edit Profile',
+          l.tr('editProfile'),
           style: TextStyle(
             color: cs.onSurface,
             fontSize: 18,
@@ -137,14 +141,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  _buildPersonalInfoSection(cs),
+                  _buildPersonalInfoSection(cs, l),
                   const SizedBox(height: 24),
-                  _buildPreferencesSection(cs),
+                  _buildPreferencesSection(cs, l),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            _buildSaveButton(),
+            _buildSaveButton(l),
             const SizedBox(height: 32),
           ],
         ),
@@ -215,42 +219,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ---------- Personal Information ----------
 
-  Widget _buildPersonalInfoSection(ColorScheme cs) {
+  Widget _buildPersonalInfoSection(ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle(cs, 'PERSONAL INFORMATION'),
+          _buildSectionTitle(cs, l.tr('personalInformation')),
           const SizedBox(height: 12),
-          _buildLabel(cs, 'Full Name'),
+          _buildLabel(cs, l.tr('fullName')),
           const SizedBox(height: 8),
           TextFormField(
             controller: _fullNameCtrl,
             style: TextStyle(fontSize: 16, color: cs.onSurface),
             validator: (v) =>
                 (v == null || v.trim().isEmpty) ? 'Name is required' : null,
-            decoration: _inputDecoration('Enter your full name'),
+            decoration: _inputDecoration(l.tr('enterFullName')),
           ),
           const SizedBox(height: 16),
-          _buildLabel(cs, 'Phone Number'),
+          _buildLabel(cs, l.tr('phoneNumber')),
           const SizedBox(height: 8),
           TextFormField(
             controller: _phoneCtrl,
             readOnly: true,
             style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
-            decoration: _inputDecoration('Phone number').copyWith(
+            decoration: _inputDecoration(l.tr('phoneNumberHint')).copyWith(
               suffixIcon: Icon(Icons.lock_outline, color: cs.outline, size: 20),
             ),
           ),
           const SizedBox(height: 16),
-          _buildLabel(cs, 'Email Address'),
+          _buildLabel(cs, l.tr('emailAddress')),
           const SizedBox(height: 8),
           TextFormField(
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(fontSize: 16, color: cs.onSurface),
-            decoration: _inputDecoration('Enter your email address'),
+            decoration: _inputDecoration(l.tr('enterEmail')),
           ),
         ],
       ),
@@ -259,22 +263,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ---------- Preferences ----------
 
-  Widget _buildPreferencesSection(ColorScheme cs) {
+  Widget _buildPreferencesSection(ColorScheme cs, AppLocalizations l) {
     final isDark = themeNotifier.value == ThemeMode.dark;
+    final propertyTypes = [
+      l.tr('villa'),
+      l.tr('commercial'),
+      l.tr('services'),
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle(cs, 'PREFERENCES'),
+          _buildSectionTitle(cs, l.tr('preferences')),
           const SizedBox(height: 12),
           // Property type chips
-          _buildLabel(cs, 'Property Type Preferences'),
+          _buildLabel(cs, l.tr('propertyTypePreferences')),
           const SizedBox(height: 10),
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: _propertyTypes.map((type) {
+            children: propertyTypes.map((type) {
               final selected = _selectedPropertyTypes.contains(type);
               return ChoiceChip(
                 label: Text(type),
@@ -324,7 +333,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _buildToggleRow(
                   cs: cs,
                   icon: Icons.notifications_outlined,
-                  label: 'Push Notifications',
+                  label: l.tr('pushNotifications'),
                   value: _pushNotifications,
                   onChanged: (v) => setState(() => _pushNotifications = v),
                 ),
@@ -336,7 +345,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _buildToggleRow(
                   cs: cs,
                   icon: Icons.dark_mode_outlined,
-                  label: 'Dark Mode',
+                  label: l.tr('darkMode'),
                   value: isDark,
                   onChanged: (v) {
                     themeNotifier.value =
@@ -349,7 +358,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   indent: 52,
                   color: cs.surfaceContainerHighest,
                 ),
-                _buildLanguageRow(cs),
+                _buildLanguageRow(cs, l),
               ],
             ),
           ),
@@ -360,10 +369,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ---------- Language Row ----------
 
-  Widget _buildLanguageRow(ColorScheme cs) {
+  Widget _buildLanguageRow(ColorScheme cs, AppLocalizations l) {
     return InkWell(
       onTap: () async {
-        final languages = ['English (US)', 'Khmer', 'Chinese'];
+        final languages = ['English (US)', 'Somali'];
         final picked = await showModalBottomSheet<String>(
           context: context,
           shape: const RoundedRectangleBorder(
@@ -385,7 +394,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Select Language',
+                    l.tr('selectLanguage'),
                     style: TextStyle(
                       color: cs.onSurface,
                       fontSize: 16,
@@ -409,6 +418,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
         );
         if (picked != null && picked != _language) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('app_language', picked);
+          localeNotifier.value = picked == 'Somali'
+              ? const Locale('so')
+              : const Locale('en');
           setState(() => _language = picked);
         }
       },
@@ -421,7 +435,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                'Language',
+                l.tr('language'),
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 14,
@@ -447,7 +461,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ---------- Save Button ----------
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
@@ -479,7 +493,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     color: AppColors.white,
                   ),
                 )
-              : const Text('Save Changes'),
+              : Text(l.tr('saveChanges')),
         ),
       ),
     );

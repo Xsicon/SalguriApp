@@ -4,10 +4,10 @@ class AppColors {
   AppColors._();
 
   // ─── Primary Palette ────────────────────────────────────────────────────────
-  static const Color primary = Color(0xFF0D9488);       // Deep Teal
-  static const Color primaryDark = Color(0xFF0F766E);    // Darker teal
-  static const Color primaryLight = Color(0xFF5EEAD4);   // Light teal
-  static const Color primarySoft = Color(0xFFCCFBF1);   // Very soft teal
+  static const Color primary = Color(0xFF2563EB);       // Blue
+  static const Color primaryDark = Color(0xFF1D4ED8);    // Darker blue
+  static const Color primaryLight = Color(0xFF93C5FD);   // Light blue
+  static const Color primarySoft = Color(0xFFDBEAFE);   // Very soft blue
 
   // ─── Accent ─────────────────────────────────────────────────────────────────
   static const Color accent = Color(0xFFF59E0B);         // Warm Gold

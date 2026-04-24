@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/conversation.dart';
 import '../../services/api_service.dart';
 import '../../services/supabase_service.dart';
@@ -17,7 +18,6 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   String _selectedFilter = 'All';
-  final _filters = ['All', 'Agents', 'Landlords', 'Providers'];
   final _searchController = TextEditingController();
 
   List<Conversation> _conversations = [];
@@ -46,9 +46,7 @@ class _InboxScreenState extends State<InboxScreen> {
 
   Future<void> _loadConversations() async {
     try {
-      debugPrint(
-        'Loading conversations... userId=${SupabaseService.currentUser?.id}',
-      );
+      debugPrint('Loading conversations... userId=${SupabaseService.currentUser?.id}');
       final convs = await ApiService.getConversations();
       debugPrint('Loaded ${convs.length} conversations');
       if (mounted) {
@@ -143,11 +141,12 @@ class _InboxScreenState extends State<InboxScreen> {
     if (dt == null) return '';
     final now = DateTime.now();
     final diff = now.difference(dt);
+    final l = AppLocalizations.of(context);
 
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays == 1) return 'Yesterday';
+    if (diff.inMinutes < 1) return l.tr('justNow');
+    if (diff.inMinutes < 60) return '${diff.inMinutes}${l.tr('mAgo')}';
+    if (diff.inHours < 24) return '${diff.inHours}${l.tr('hAgo')}';
+    if (diff.inDays == 1) return l.tr('yesterday');
     if (diff.inDays < 7) {
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       return days[dt.weekday - 1];
@@ -158,22 +157,19 @@ class _InboxScreenState extends State<InboxScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: cs.surface,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(cs),
-            _buildSearchBar(cs),
-            _buildFilterChips(cs),
+            _buildHeader(cs, l),
+            _buildSearchBar(cs, l),
+            _buildFilterChips(cs, l),
             Expanded(
               child: _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                      ),
-                    )
-                  : _buildConversationList(cs),
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                  : _buildConversationList(cs, l),
             ),
           ],
         ),
@@ -186,7 +182,7 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  Widget _buildHeader(ColorScheme cs) {
+  Widget _buildHeader(ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
@@ -196,11 +192,11 @@ class _InboxScreenState extends State<InboxScreen> {
               onTap: widget.onBack,
               child: Icon(Icons.arrow_back, color: cs.onSurface),
             ),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Messages',
+              l.tr('messages'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
           ),
           Icon(Icons.more_vert, color: cs.onSurface),
@@ -209,14 +205,14 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  Widget _buildSearchBar(ColorScheme cs) {
+  Widget _buildSearchBar(ColorScheme cs, AppLocalizations l) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: TextField(
         controller: _searchController,
         onChanged: (_) => setState(() {}),
         decoration: InputDecoration(
-          hintText: 'Search conversations...',
+          hintText: l.tr('searchConversations'),
           hintStyle: TextStyle(color: cs.outline, fontSize: 15),
           prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
           suffixIcon: _searchController.text.isNotEmpty
@@ -230,10 +226,8 @@ class _InboxScreenState extends State<InboxScreen> {
               : null,
           filled: true,
           fillColor: cs.surfaceContainerHighest,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -244,31 +238,30 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  Widget _buildFilterChips(ColorScheme cs) {
+  Widget _buildFilterChips(ColorScheme cs, AppLocalizations l) {
+    final filters = [l.tr('all'), l.tr('agents'), l.tr('landlords'), l.tr('providers')];
+    final filterKeys = ['All', 'Agents', 'Landlords', 'Providers'];
     return SizedBox(
       height: 44,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _filters.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemCount: filters.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final filter = _filters[index];
-          final isSelected = filter == _selectedFilter;
+          final isSelected = filterKeys[index] == _selectedFilter;
           return GestureDetector(
-            onTap: () => setState(() => _selectedFilter = filter),
+            onTap: () => setState(() => _selectedFilter = filterKeys[index]),
             child: Container(
               height: 36,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary
-                    : cs.surfaceContainerHighest,
+                color: isSelected ? AppColors.primary : cs.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(20),
               ),
               alignment: Alignment.center,
               child: Text(
-                filter,
+                filters[index],
                 style: TextStyle(
                   color: isSelected ? AppColors.white : cs.onSurfaceVariant,
                   fontSize: 14,
@@ -282,7 +275,7 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  Widget _buildConversationList(ColorScheme cs) {
+  Widget _buildConversationList(ColorScheme cs, AppLocalizations l) {
     if (_errorMessage != null) {
       return Center(
         child: Padding(
@@ -292,28 +285,11 @@ class _InboxScreenState extends State<InboxScreen> {
             children: [
               Icon(Icons.error_outline, size: 48, color: cs.error),
               const SizedBox(height: 12),
-              Text(
-                'Error loading conversations',
-                style: TextStyle(
-                  color: cs.error,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text(l.tr('errorLoadingConversations'), style: TextStyle(color: cs.error, fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
-              Text(
-                _errorMessage!,
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
-                textAlign: TextAlign.center,
-              ),
+              Text(_errorMessage!, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13), textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() => _isLoading = true);
-                  _loadConversations();
-                },
-                child: const Text('Retry'),
-              ),
+              ElevatedButton(onPressed: () { setState(() => _isLoading = true); _loadConversations(); }, child: Text(l.tr('retry'))),
             ],
           ),
         ),
@@ -328,12 +304,12 @@ class _InboxScreenState extends State<InboxScreen> {
             Icon(Icons.chat_bubble_outline, size: 48, color: cs.outline),
             const SizedBox(height: 12),
             Text(
-              'No conversations yet',
+              l.tr('noConversationsYet'),
               style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              'User: ${SupabaseService.currentUser?.id ?? "not logged in"}',
+              'User: ${SupabaseService.currentUser?.id ?? l.tr('notLoggedIn')}',
               style: TextStyle(color: cs.outline, fontSize: 11),
             ),
           ],
@@ -388,9 +364,7 @@ class _InboxScreenState extends State<InboxScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           border: hasUnread
-              ? const Border(
-                  left: BorderSide(color: AppColors.primary, width: 4),
-                )
+              ? const Border(left: BorderSide(color: AppColors.primary, width: 4))
               : null,
         ),
         child: Row(
@@ -429,9 +403,7 @@ class _InboxScreenState extends State<InboxScreen> {
                           other?.displayName ?? 'Unknown',
                           style: TextStyle(
                             fontSize: 15,
-                            fontWeight: hasUnread
-                                ? FontWeight.w700
-                                : FontWeight.w500,
+                            fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w500,
                             color: cs.onSurface,
                           ),
                           maxLines: 1,
@@ -443,9 +415,7 @@ class _InboxScreenState extends State<InboxScreen> {
                         _formatTime(conv.lastMessageAt),
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight: hasUnread
-                              ? FontWeight.w700
-                              : FontWeight.w400,
+                          fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w400,
                           color: hasUnread ? AppColors.primary : cs.outline,
                         ),
                       ),
@@ -503,11 +473,15 @@ class _UserPickerSheet extends StatelessWidget {
   final List<Map<String, dynamic>> users;
   final void Function(Map<String, dynamic> user) onUserSelected;
 
-  const _UserPickerSheet({required this.users, required this.onUserSelected});
+  const _UserPickerSheet({
+    required this.users,
+    required this.onUserSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.4,
@@ -526,7 +500,7 @@ class _UserPickerSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'New Message',
+            l.tr('newMessage'),
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -539,7 +513,7 @@ class _UserPickerSheet extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  'No other users found',
+                  l.tr('noOtherUsersFound'),
                   style: TextStyle(color: cs.onSurfaceVariant),
                 ),
               ),
@@ -557,9 +531,8 @@ class _UserPickerSheet extends StatelessWidget {
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 24,
-                      backgroundImage: avatarUrl != null
-                          ? NetworkImage(avatarUrl)
-                          : null,
+                      backgroundImage:
+                          avatarUrl != null ? NetworkImage(avatarUrl) : null,
                       backgroundColor: cs.surfaceContainerHighest,
                       child: avatarUrl == null
                           ? Text(
@@ -580,10 +553,7 @@ class _UserPickerSheet extends StatelessWidget {
                     ),
                     subtitle: Text(
                       role[0].toUpperCase() + role.substring(1),
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
                     ),
                     onTap: () => onUserSelected(user),
                   );

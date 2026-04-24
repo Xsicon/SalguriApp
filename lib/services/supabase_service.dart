@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/models/chat_message.dart';
@@ -36,11 +37,10 @@ class SupabaseService {
     required String password,
     String? fullName,
   }) async {
-    return client.auth.signUp(
-      email: email,
-      password: password,
-      data: {'full_name': ?fullName},
-    );
+    final data = <String, dynamic>{};
+    if (fullName != null) data['full_name'] = fullName;
+
+    return client.auth.signUp(email: email, password: password, data: data);
   }
 
   static Future<AuthResponse> verifyEmailOTP({
@@ -84,6 +84,33 @@ class SupabaseService {
         .from('chat')
         .upload(path, Uri.parse(filePath).toFilePath() as dynamic);
     return client.storage.from('chat').getPublicUrl(path);
+  }
+
+  /// Upload a profile avatar and save the URL to user metadata.
+  static Future<String> uploadProfileAvatar(File imageFile) async {
+    final userId = currentUser!.id;
+    final ext = imageFile.path.split('.').last.toLowerCase();
+    final contentType = ext == 'jpg' ? 'image/jpeg' : 'image/$ext';
+    final filename = 'avatar_${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final path = 'property-images/$userId/avatars/$filename';
+    final bytes = await imageFile.readAsBytes();
+
+    await client.storage
+        .from('properties')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(contentType: contentType),
+        );
+
+    final publicUrl = client.storage.from('properties').getPublicUrl(path);
+
+    // Persist the URL in Supabase user metadata
+    await client.auth.updateUser(
+      UserAttributes(data: {'avatar_url': publicUrl}),
+    );
+
+    return publicUrl;
   }
 
   // ─── Realtime ──────────────────────────────────────────────────────────────

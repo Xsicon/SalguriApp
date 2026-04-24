@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../services/api_service.dart';
-import 'payment_processing_screen.dart';
+import 'service_booking_confirmation_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Public data transfer object — passed from ServiceRequestScreen
@@ -12,79 +13,21 @@ class CheckoutServiceItem {
   final double price;
   final IconData icon;
   final String categoryId;
+  final String categoryName;
 
   const CheckoutServiceItem({
     required this.name,
     required this.price,
     required this.icon,
     required this.categoryId,
+    required this.categoryName,
   });
 }
-
-// ---------------------------------------------------------------------------
-// Internal state helpers
-// ---------------------------------------------------------------------------
 
 class _TimeSlot {
   final String label;
   bool isSelected;
   _TimeSlot(this.label) : isSelected = false;
-}
-
-enum _PaymentMethod { evcPlus, zaad, sahal, creditCard }
-
-extension _PaymentMethodExt on _PaymentMethod {
-  String get label {
-    switch (this) {
-      case _PaymentMethod.evcPlus:
-        return 'EVC Plus';
-      case _PaymentMethod.zaad:
-        return 'Zaad';
-      case _PaymentMethod.sahal:
-        return 'Sahal';
-      case _PaymentMethod.creditCard:
-        return 'Credit Card';
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case _PaymentMethod.evcPlus:
-        return const Color(0xFFE53935);
-      case _PaymentMethod.zaad:
-        return const Color(0xFF1565C0);
-      case _PaymentMethod.sahal:
-        return const Color(0xFF2E7D32);
-      case _PaymentMethod.creditCard:
-        return const Color(0xFF607D8B);
-    }
-  }
-
-  String? get ussdCode {
-    switch (this) {
-      case _PaymentMethod.evcPlus:
-        return '*712#';
-      case _PaymentMethod.zaad:
-        return '*880#';
-      case _PaymentMethod.sahal:
-        return '*888#';
-      case _PaymentMethod.creditCard:
-        return null;
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case _PaymentMethod.evcPlus:
-        return Icons.phone_android_outlined;
-      case _PaymentMethod.zaad:
-        return Icons.phone_android_outlined;
-      case _PaymentMethod.sahal:
-        return Icons.phone_android_outlined;
-      case _PaymentMethod.creditCard:
-        return Icons.credit_card_outlined;
-    }
-  }
 }
 
 // Provider name per category
@@ -100,12 +43,16 @@ String _providerFor(String categoryId) {
 }
 
 // Generate 3 time slots starting from next rounded hour
-List<_TimeSlot> _generateSlots() {
+List<_TimeSlot> _generateSlots(AppLocalizations l) {
   final now = DateTime.now();
   // Round up to next 30-min mark
   final startMinute = now.minute < 30 ? 30 : 60;
-  var base = DateTime(now.year, now.month, now.day, now.hour)
-      .add(Duration(minutes: startMinute));
+  var base = DateTime(
+    now.year,
+    now.month,
+    now.day,
+    now.hour,
+  ).add(Duration(minutes: startMinute));
 
   final slots = <_TimeSlot>[];
   for (int i = 0; i < 3; i++) {
@@ -115,7 +62,7 @@ List<_TimeSlot> _generateSlots() {
     final period = hour < 12 ? 'AM' : 'PM';
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     final isToday = t.day == now.day;
-    final dayLabel = isToday ? 'Today' : 'Tomorrow';
+    final dayLabel = isToday ? l.tr('today') : l.tr('tomorrow');
     slots.add(_TimeSlot('$dayLabel, $displayHour:$minute $period'));
   }
   slots.first.isSelected = true;
@@ -151,33 +98,45 @@ class ServiceCheckoutScreen extends StatefulWidget {
 }
 
 class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
-  _PaymentMethod _selectedMethod = _PaymentMethod.evcPlus;
   bool _isSubmitting = false;
 
   // Each item gets its own set of time slots
-  late final List<List<_TimeSlot>> _itemSlots;
+  List<List<_TimeSlot>>? _itemSlots;
 
   static const double _platformFeeRate = 0.025; // 2.5%
 
-  @override
-  void initState() {
-    super.initState();
-    _itemSlots = List.generate(widget.items.length, (_) => _generateSlots());
-  }
+  double get _subtotal => widget.items.fold(0.0, (s, i) => s + i.price);
 
-  double get _subtotal =>
-      widget.items.fold(0.0, (s, i) => s + i.price);
-
-  double get _platformFee => double.parse(
-        (_subtotal * _platformFeeRate).toStringAsFixed(2),
-      );
+  double get _platformFee =>
+      double.parse((_subtotal * _platformFeeRate).toStringAsFixed(2));
 
   double get _total =>
       _subtotal + widget.urgencySurcharge + widget.serviceFee + _platformFee;
 
+  String get _requestCategory {
+    final categoryNames = <String>{
+      for (final item in widget.items) item.categoryName,
+    };
+    return categoryNames.join(', ');
+  }
+
+  List<List<_TimeSlot>> _getItemSlots(AppLocalizations l) {
+    _itemSlots ??= List.generate(widget.items.length, (_) => _generateSlots(l));
+    return _itemSlots!;
+  }
+
+  List<String> _selectedSlotLabels() {
+    final itemSlots = _itemSlots ?? <List<_TimeSlot>>[];
+    return itemSlots
+        .map((slots) => slots.firstWhere((slot) => slot.isSelected).label)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
+    final itemSlots = _getItemSlots(l);
 
     return Scaffold(
       backgroundColor: cs.surfaceContainerLowest,
@@ -186,11 +145,15 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: cs.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: cs.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Checkout',
+          l.tr('confirmBooking'),
           style: TextStyle(
             color: cs.onSurface,
             fontSize: 17,
@@ -206,19 +169,19 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionLabel('ORDER SUMMARY', cs),
+                  _buildSectionLabel(l.tr('orderSummary'), cs),
                   const SizedBox(height: 12),
                   ...List.generate(widget.items.length, (i) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14),
-                      child: _buildServiceCard(widget.items[i], _itemSlots[i], cs),
+                      child: _buildServiceCard(
+                        widget.items[i],
+                        itemSlots[i],
+                        cs,
+                      ),
                     );
                   }),
                   const SizedBox(height: 8),
-                  _buildSectionLabel('PAYMENT METHOD', cs),
-                  const SizedBox(height: 12),
-                  _buildPaymentGrid(cs),
-                  const SizedBox(height: 24),
                   _buildPriceBreakdown(cs),
                   const SizedBox(height: 100),
                 ],
@@ -256,6 +219,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
     List<_TimeSlot> slots,
     ColorScheme cs,
   ) {
+    final l = AppLocalizations.of(context);
     final isUrgent = widget.urgencyLabel != 'Standard';
     final urgencyColor = widget.urgencyLabel == 'Emergency'
         ? const Color(0xFFEF4444)
@@ -267,8 +231,8 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
     final eta = widget.urgencyLabel == 'Emergency'
         ? '30 mins'
         : widget.urgencyLabel == 'Urgent'
-            ? '45 mins'
-            : '1–2 hours';
+        ? '45 mins'
+        : '1–2 hours';
 
     return Container(
       decoration: BoxDecoration(
@@ -324,7 +288,9 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: urgencyBg,
                                 borderRadius: BorderRadius.circular(6),
@@ -352,18 +318,27 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.star_rounded,
-                              color: Color(0xFFF59E0B), size: 14),
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Color(0xFFF59E0B),
+                            size: 14,
+                          ),
                           const SizedBox(width: 3),
                           Text(
                             '4.8 (94 reviews)',
                             style: TextStyle(
-                                color: cs.onSurfaceVariant, fontSize: 12),
+                              color: cs.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
                           ),
                           const SizedBox(width: 6),
-                          Text('•',
-                              style: TextStyle(
-                                  color: cs.onSurfaceVariant, fontSize: 12)),
+                          Text(
+                            '•',
+                            style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'ETA: $eta',
@@ -386,15 +361,13 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
             decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: cs.outlineVariant),
-              ),
+              border: Border(top: BorderSide(color: cs.outlineVariant)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'SCHEDULE TIME',
+                  l.tr('scheduleTime'),
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
                     fontSize: 11,
@@ -408,7 +381,8 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: slots.length,
-                    separatorBuilder: (context, index) => const SizedBox(width: 8),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 8),
                     itemBuilder: (context, idx) {
                       final slot = slots[idx];
                       return GestureDetector(
@@ -421,7 +395,9 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 10),
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: slot.isSelected
                                 ? AppColors.primary.withValues(alpha: 0.06)
@@ -460,93 +436,11 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // Payment Method
-  // ---------------------------------------------------------------------------
-
-  Widget _buildPaymentGrid(ColorScheme cs) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.6,
-      children: _PaymentMethod.values.map((method) {
-        final isSelected = _selectedMethod == method;
-        return GestureDetector(
-          onTap: () => setState(() => _selectedMethod = method),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColors.primary.withValues(alpha: 0.05)
-                  : cs.surface,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isSelected ? AppColors.primary : cs.outlineVariant,
-                width: isSelected ? 2 : 1,
-              ),
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          color: method.color.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(method.icon,
-                              color: method.color, size: 20),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        method.label,
-                        style: TextStyle(
-                          color: isSelected ? AppColors.primary : cs.onSurface,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (isSelected)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Icon(Icons.check_rounded,
-                            color: Colors.white, size: 12),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
   // Price Breakdown
   // ---------------------------------------------------------------------------
 
   Widget _buildPriceBreakdown(ColorScheme cs) {
+    final l = AppLocalizations.of(context);
     final hasUrgencySurcharge = widget.urgencySurcharge > 0;
 
     return Container(
@@ -567,7 +461,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PRICE BREAKDOWN',
+            l.tr('priceBreakdown'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 12,
@@ -576,7 +470,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _priceRow('Subtotal', '\$${_subtotal.toStringAsFixed(2)}', cs),
+          _priceRow(l.tr('subtotal'), '\$${_subtotal.toStringAsFixed(2)}', cs),
           if (hasUrgencySurcharge)
             _priceRow(
               '${widget.urgencyLabel} Fee',
@@ -586,12 +480,12 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
               icon: Icons.info_outline_rounded,
             ),
           _priceRow(
-            'Service Fee',
+            l.tr('serviceFee'),
             '+\$${widget.serviceFee.toStringAsFixed(2)}',
             cs,
           ),
           _priceRow(
-            'Platform Fee (2.5%)',
+            l.tr('platformFee'),
             '+\$${_platformFee.toStringAsFixed(2)}',
             cs,
           ),
@@ -600,7 +494,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Amount',
+                l.tr('totalAmount'),
                 style: TextStyle(
                   color: cs.onSurface,
                   fontSize: 15,
@@ -636,14 +530,13 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         children: [
           Row(
             children: [
-              Text(label,
-                  style:
-                      TextStyle(color: cs.onSurfaceVariant, fontSize: 14)),
+              Text(
+                label,
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+              ),
               if (icon != null) ...[
                 const SizedBox(width: 4),
-                Icon(icon,
-                    size: 14,
-                    color: valueColor ?? cs.onSurfaceVariant),
+                Icon(icon, size: 14, color: valueColor ?? cs.onSurfaceVariant),
               ],
             ],
           ),
@@ -665,6 +558,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _buildBottomBar(ColorScheme cs) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
@@ -680,39 +574,50 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: _isSubmitting ? null : () async {
-              setState(() => _isSubmitting = true);
-              try {
-                final req = await ApiService.createServiceRequest(
-                  category: widget.items.first.categoryId,
-                  description: widget.description,
-                  urgency: widget.urgencyLabel,
-                  totalAmount: _total,
-                  paymentMethod: _selectedMethod.label,
-                );
-                if (!mounted) return;
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PaymentProcessingScreen(
-                      paymentMethodLabel: _selectedMethod.label,
-                      ussdCode: _selectedMethod.ussdCode,
+          onPressed: _isSubmitting
+              ? null
+              : () async {
+                  setState(() => _isSubmitting = true);
+                  try {
+                    final req = await ApiService.createServiceRequest(
+                      category: _requestCategory,
+                      description: widget.description,
+                      urgency: widget.urgencyLabel,
                       totalAmount: _total,
-                      serviceRequestId: req.id,
-                    ),
-                  ),
-                );
-              } catch (e, st) {
-                debugPrint('=== createServiceRequest ERROR ===');
-                debugPrint('Error: $e');
-                debugPrint('Stack: $st');
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-                );
-              } finally {
-                if (mounted) setState(() => _isSubmitting = false);
-              }
-            },
+                      paymentMethod: 'Booking',
+                      scheduledTime: _selectedSlotLabels().join(' | '),
+                    );
+                    if (!mounted) return;
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ServiceBookingConfirmationScreen(
+                          requestNumber: req.shortNumber,
+                          propertyAddress: widget.propertyAddress,
+                          propertySubtitle: widget.propertySubtitle,
+                          serviceNames: widget.items
+                              .map((item) => item.name)
+                              .toList(),
+                          scheduledTimes: _selectedSlotLabels(),
+                          totalAmount: _total,
+                          serviceRequestId: req.id,
+                        ),
+                      ),
+                    );
+                  } catch (e, st) {
+                    debugPrint('=== createServiceRequest ERROR ===');
+                    debugPrint('Error: $e');
+                    debugPrint('Stack: $st');
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  } finally {
+                    if (mounted) setState(() => _isSubmitting = false);
+                  }
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
@@ -730,7 +635,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('CONFIRM & PAY \$${_total.toStringAsFixed(2)}'),
+              Text('${l.tr('bookNow')} \$${_total.toStringAsFixed(2)}'),
               const SizedBox(width: 8),
               const Icon(Icons.arrow_forward_rounded, size: 18),
             ],

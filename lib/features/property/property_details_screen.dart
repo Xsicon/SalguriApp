@@ -6,9 +6,9 @@ import 'package:latlong2/latlong.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
 import '../../services/api_service.dart';
-import '../../services/supabase_service.dart';
+// import '../../services/supabase_service.dart'; // Disabled – landlord feature
 import 'contact_agent_screen.dart';
-import 'edit_property_screen.dart';
+// import 'edit_property_screen.dart'; // Disabled – landlord feature
 import 'rent_property_screen.dart';
 import 'schedule_showing_screen.dart';
 
@@ -821,10 +821,11 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   // ---------- Bottom Action Buttons ----------
 
-  bool get _isOwner {
-    final currentUserId = SupabaseService.currentUser?.id;
-    return p.ownerUserId != null && p.ownerUserId == currentUserId;
-  }
+  // Disabled – landlord feature (kept for business app)
+  // bool get _isOwner {
+  //   final currentUserId = SupabaseService.currentUser?.id;
+  //   return p.ownerUserId != null && p.ownerUserId == currentUserId;
+  // }
 
   Widget _buildBottomActions() {
     final cs = Theme.of(context).colorScheme;
@@ -845,11 +846,10 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           ),
         ],
       ),
-      child: _isOwner
-          ? _buildOwnerActions()
-          : _isRented
-              ? _buildRentedBanner()
-              : _buildVisitorActions(),
+      // Owner actions disabled – landlord feature (kept for business app)
+      child: _isRented
+          ? _buildRentedBanner()
+          : _buildVisitorActions(),
     );
   }
 
@@ -879,71 +879,43 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     );
   }
 
-  Widget _buildOwnerActions() {
-    return Row(
-      children: [
-        // Edit button
-        Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () async {
-              final updated = await Navigator.of(context).push<bool>(
-                MaterialPageRoute(
-                  builder: (_) => EditPropertyScreen(property: p),
-                ),
-              );
-              if (updated == true && mounted) {
-                Navigator.of(context).pop();
-              }
-            },
-            icon: const Icon(Icons.edit_outlined, size: 18),
-            label: const Text('EDIT'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              textStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Contact / Manage button
-        Expanded(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ContactAgentScreen(property: p),
-                ),
-              );
-            },
-            icon: const Icon(Icons.chat_outlined, size: 18),
-            label: const Text('MESSAGES'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              elevation: 0,
-              textStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Disabled – landlord feature (kept for business app)
+  // Widget _buildOwnerActions() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: OutlinedButton.icon(
+  //           onPressed: () async {
+  //             final updated = await Navigator.of(context).push<bool>(
+  //               MaterialPageRoute(
+  //                 builder: (_) => EditPropertyScreen(property: p),
+  //               ),
+  //             );
+  //             if (updated == true && mounted) {
+  //               Navigator.of(context).pop();
+  //             }
+  //           },
+  //           icon: const Icon(Icons.edit_outlined, size: 18),
+  //           label: const Text('EDIT'),
+  //         ),
+  //       ),
+  //       const SizedBox(width: 12),
+  //       Expanded(
+  //         child: ElevatedButton.icon(
+  //           onPressed: () {
+  //             Navigator.of(context).push(
+  //               MaterialPageRoute(
+  //                 builder: (_) => ContactAgentScreen(property: p),
+  //               ),
+  //             );
+  //           },
+  //           icon: const Icon(Icons.chat_outlined, size: 18),
+  //           label: const Text('MESSAGES'),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildVisitorActions() {
     return Row(

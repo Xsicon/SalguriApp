@@ -17,28 +17,41 @@ import '../core/models/service_request.dart';
 /// Supabase is used only for Auth + Storage + Realtime.
 class ApiService {
   // Change this to your deployed API URL in production.
-  static const String _baseUrl = 'http://192.168.1.21:5000/api';
+  static const String _baseUrl = 'http://192.168.1.11:5000/api';
 
-  static String? get _token =>
-      Supabase.instance.client.auth.currentSession?.accessToken;
+  static Future<String?> _freshToken() async {
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session == null) return null;
+    if (session.isExpired) {
+      final res = await Supabase.instance.client.auth.refreshSession();
+      return res.session?.accessToken;
+    }
+    return session.accessToken;
+  }
 
-  static Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-    if (_token != null) 'Authorization': 'Bearer $_token',
-  };
+  static Future<Map<String, String>> _freshHeaders() async {
+    final token = await _freshToken();
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
+
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
 
   static Future<dynamic> _get(String path) async {
-    final res = await http.get(Uri.parse('$_baseUrl$path'), headers: _headers);
+    final headers = await _freshHeaders();
+    final res = await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
     _checkStatus(res);
     return jsonDecode(res.body);
   }
 
   static Future<dynamic> _post(String path, Map<String, dynamic> body) async {
+    final headers = await _freshHeaders();
     final res = await http.post(
       Uri.parse('$_baseUrl$path'),
-      headers: _headers,
+      headers: headers,
       body: jsonEncode(body),
     );
     _checkStatus(res);
@@ -47,9 +60,10 @@ class ApiService {
   }
 
   static Future<dynamic> _patch(String path, Map<String, dynamic> body) async {
+    final headers = await _freshHeaders();
     final res = await http.patch(
       Uri.parse('$_baseUrl$path'),
-      headers: _headers,
+      headers: headers,
       body: jsonEncode(body),
     );
     _checkStatus(res);
@@ -59,9 +73,7 @@ class ApiService {
 
   static void _checkStatus(http.Response res) {
     if (res.statusCode >= 400) {
-      debugPrint(
-        '[ApiService] ${res.statusCode} ${res.request?.url}: ${res.body}',
-      );
+      debugPrint('[ApiService] ${res.statusCode} ${res.request?.url}: ${res.body}');
       throw Exception('API error ${res.statusCode}: ${res.body}');
     }
   }
@@ -89,18 +101,16 @@ class ApiService {
     int? maxSqft,
     List<String>? amenities,
   }) async {
-    final data =
-        await _post('/properties/filter', {
-              'search': ?search,
-              'districts': ?districts,
-              'property_type': ?propertyType,
-              'min_beds': ?minBeds,
-              'min_baths': ?minBaths,
-              'min_sqft': ?minSqft,
-              'max_sqft': ?maxSqft,
-              'amenities': ?amenities,
-            })
-            as List;
+    final data = await _post('/properties/filter', {
+      if (search != null) 'search': search,
+      if (districts != null) 'districts': districts,
+      if (propertyType != null) 'property_type': propertyType,
+      if (minBeds != null) 'min_beds': minBeds,
+      if (minBaths != null) 'min_baths': minBaths,
+      if (minSqft != null) 'min_sqft': minSqft,
+      if (maxSqft != null) 'max_sqft': maxSqft,
+      if (amenities != null) 'amenities': amenities,
+    }) as List;
     return data.map((e) => Property.fromJson(e)).toList();
   }
 
@@ -114,10 +124,7 @@ class ApiService {
     return Property.fromJson(data);
   }
 
-  static Future<Property> updateProperty(
-    String id,
-    Map<String, dynamic> body,
-  ) async {
+  static Future<Property> updateProperty(String id, Map<String, dynamic> body) async {
     final data = await _patch('/properties/$id', body);
     return Property.fromJson(data);
   }
@@ -167,7 +174,7 @@ class ApiService {
   static Future<Rental?> getActiveRental() async {
     final res = await http.get(
       Uri.parse('$_baseUrl/rentals/active'),
-      headers: _headers,
+      headers: await _freshHeaders(),
     );
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     _checkStatus(res);
@@ -177,22 +184,26 @@ class ApiService {
   static Future<void> cancelRental(String rentalId) async {
     final res = await http.delete(
       Uri.parse('$_baseUrl/rentals/$rentalId'),
-      headers: _headers,
+      headers: await _freshHeaders(),
     );
     _checkStatus(res);
   }
 
   static Future<List<MaintenanceRequest>> getMaintenanceRequests(
-    String rentalId,
-  ) async {
+      String rentalId) async {
     final data = await _get('/maintenance/rental/$rentalId') as List;
     return data.map((e) => MaintenanceRequest.fromJson(e)).toList();
   }
 
   static Future<List<RentalDocument>> getRentalDocuments(
-    String rentalId,
-  ) async {
+      String rentalId) async {
     final data = await _get('/rentals/$rentalId/documents') as List;
+    return data.map((e) => RentalDocument.fromJson(e)).toList();
+  }
+
+  static Future<List<RentalDocument>> seedRentalDocuments(
+      String rentalId) async {
+    final data = await _post('/rentals/$rentalId/documents/seed', {}) as List;
     return data.map((e) => RentalDocument.fromJson(e)).toList();
   }
 
@@ -210,7 +221,23 @@ class ApiService {
     });
   }
 
+  static Future<List<Map<String, dynamic>>> getRentPayments(
+      String rentalId) async {
+    final data = await _get('/rentals/$rentalId/payments') as List;
+    return List<Map<String, dynamic>>.from(data);
+  }
+
   // ─── Service Requests ──────────────────────────────────────────────────────
+
+  static Future<List<ServiceRequest>> getAllServiceRequests() async {
+    final data = await _get('/servicerequests') as List;
+    return data.map((e) => ServiceRequest.fromJson(e)).toList();
+  }
+
+  static Future<ServiceRequest> getServiceRequestById(String id) async {
+    final data = await _get('/servicerequests/$id');
+    return ServiceRequest.fromJson(data);
+  }
 
   static Future<List<ServiceRequest>> getActiveServiceRequests() async {
     final data = await _get('/servicerequests/active') as List;
@@ -223,6 +250,7 @@ class ApiService {
     required String urgency,
     required double totalAmount,
     required String paymentMethod,
+    String? scheduledTime,
   }) async {
     final data = await _post('/servicerequests', {
       'category': category,
@@ -230,6 +258,7 @@ class ApiService {
       'urgency': urgency,
       'total_amount': totalAmount,
       'payment_method': paymentMethod,
+      if (scheduledTime != null) 'scheduled_time': scheduledTime,
     });
     return ServiceRequest.fromJson(data);
   }
@@ -241,16 +270,14 @@ class ApiService {
   }) async {
     await _patch('/servicerequests/$id/status', {
       'status': status,
-      'status_message': ?statusMessage,
+      if (statusMessage != null) 'status_message': statusMessage,
     });
   }
 
-  static Future<List<ServiceCategory>> getServiceCategories({
-    bool? popular,
-  }) async {
-    final path = popular != null
-        ? '/servicecategories?popular=$popular'
-        : '/servicecategories';
+  static Future<List<ServiceCategory>> getServiceCategories(
+      {bool? popular}) async {
+    final path =
+        popular != null ? '/servicecategories?popular=$popular' : '/servicecategories';
     final data = await _get(path) as List;
     return data.map((e) => ServiceCategory.fromJson(e)).toList();
   }
@@ -276,19 +303,16 @@ class ApiService {
     final data = await _post('/conversations', {
       'other_user_id': otherUserId,
       'other_display_name': otherDisplayName,
-      'other_avatar_url': ?otherAvatarUrl,
+      if (otherAvatarUrl != null) 'other_avatar_url': otherAvatarUrl,
       'other_role': otherRole,
     });
     return _conversationFromApi(data);
   }
 
-  static Future<List<ChatMessage>> getMessages(
-    String conversationId, {
-    int limit = 50,
-  }) async {
+  static Future<List<ChatMessage>> getMessages(String conversationId,
+      {int limit = 50}) async {
     final data =
-        await _get('/conversations/$conversationId/messages?limit=$limit')
-            as List;
+        await _get('/conversations/$conversationId/messages?limit=$limit') as List;
     return data.map((e) => ChatMessage.fromJson(e)).toList();
   }
 
@@ -299,7 +323,7 @@ class ApiService {
   }) async {
     final data = await _post('/conversations/$conversationId/messages', {
       'content': content,
-      'image_url': ?imageUrl,
+      if (imageUrl != null) 'image_url': imageUrl,
     });
     return ChatMessage.fromJson(data);
   }
@@ -315,9 +339,7 @@ class ApiService {
 
   // ─── Saved Items ──────────────────────────────────────────────────────────
 
-  static Future<List<Map<String, dynamic>>> getSavedItems({
-    String? collection,
-  }) async {
+  static Future<List<Map<String, dynamic>>> getSavedItems({String? collection}) async {
     final path = collection != null
         ? '/saveditems?collection=$collection'
         : '/saveditems';
@@ -336,7 +358,7 @@ class ApiService {
   }) async {
     final data = await _post('/saveditems', {
       'property_id': propertyId,
-      'collection': ?collection,
+      if (collection != null) 'collection': collection,
     });
     return Map<String, dynamic>.from(data);
   }
@@ -344,7 +366,7 @@ class ApiService {
   static Future<void> unsaveItem(String propertyId) async {
     final res = await http.delete(
       Uri.parse('$_baseUrl/saveditems/$propertyId'),
-      headers: _headers,
+      headers: await _freshHeaders(),
     );
     _checkStatus(res);
   }
@@ -374,7 +396,7 @@ class ApiService {
       'requested_date': requestedDate.toIso8601String(),
       'requested_time': requestedTime,
       'number_of_people': numberOfPeople,
-      'notes': ?notes,
+      if (notes != null) 'notes': notes,
       'confirm_by': confirmBy,
     });
     return Map<String, dynamic>.from(data);
@@ -383,7 +405,7 @@ class ApiService {
   static Future<void> cancelShowing(String showingId) async {
     final res = await http.delete(
       Uri.parse('$_baseUrl/showings/$showingId'),
-      headers: _headers,
+      headers: await _freshHeaders(),
     );
     _checkStatus(res);
   }
@@ -393,7 +415,7 @@ class ApiService {
   static Future<Map<String, dynamic>?> getProfile() async {
     final res = await http.get(
       Uri.parse('$_baseUrl/profile'),
-      headers: _headers,
+      headers: await _freshHeaders(),
     );
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     _checkStatus(res);
@@ -407,11 +429,11 @@ class ApiService {
   }) async {
     final res = await http.put(
       Uri.parse('$_baseUrl/profile'),
-      headers: _headers,
+      headers: await _freshHeaders(),
       body: jsonEncode({
-        'full_name': ?fullName,
-        'email': ?email,
-        'avatar_url': ?avatarUrl,
+        if (fullName != null) 'full_name': fullName,
+        if (email != null) 'email': email,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
       }),
     );
     _checkStatus(res);

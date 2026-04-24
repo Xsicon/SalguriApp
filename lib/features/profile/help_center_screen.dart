@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -12,128 +13,90 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  static const _faqCategories = [
-    _FaqCategory(
-      icon: Icons.home_work_outlined,
-      title: 'Getting Started',
-      faqs: [
-        _FaqItem(
-          question: 'How do I create an account?',
-          answer:
-              'To create an account, tap "Sign Up" on the login screen. You can register '
-              'using your email address. Fill in your details, verify your email, and '
-              'you\'re ready to explore properties on Salguri.',
+  List<_FaqCategory> _faqCategories(AppLocalizations l) => [
+        _FaqCategory(
+          icon: Icons.home_work_outlined,
+          title: l.tr('gettingStarted'),
+          faqs: [
+            _FaqItem(
+              question: l.tr('howCreateAccount'),
+              answer: l.tr('ansCreateAccount'),
+            ),
+            _FaqItem(
+              question: l.tr('howSearchProperties'),
+              answer: l.tr('ansSearchProperties'),
+            ),
+            _FaqItem(
+              question: l.tr('isSalguriFree'),
+              answer: l.tr('ansSalguriFree'),
+            ),
+          ],
         ),
-        _FaqItem(
-          question: 'How do I search for properties?',
-          answer:
-              'Use the search bar on the Home tab to find properties by location, type, '
-              'or price range. You can also browse featured listings and use filters '
-              'to narrow down results by bedrooms, bathrooms, and property type.',
+        _FaqCategory(
+          icon: Icons.apartment_outlined,
+          title: l.tr('rentingLeasing'),
+          faqs: [
+            _FaqItem(
+              question: l.tr('howPayRent'),
+              answer: l.tr('ansPayRent'),
+            ),
+            _FaqItem(
+              question: l.tr('howSubmitMaintenance'),
+              answer: l.tr('ansSubmitMaintenance'),
+            ),
+            _FaqItem(
+              question: l.tr('canRenewLease'),
+              answer: l.tr('ansRenewLease'),
+            ),
+          ],
         ),
-        _FaqItem(
-          question: 'Is Salguri free to use?',
-          answer:
-              'Salguri is free to download and browse listings. Property owners can list '
-              'properties with a standard plan, and PRO members get access to premium '
-              'features including priority listing and advanced analytics.',
+        _FaqCategory(
+          icon: Icons.real_estate_agent_outlined,
+          title: l.tr('listingProperty'),
+          faqs: [
+            _FaqItem(
+              question: l.tr('howListProperty'),
+              answer: l.tr('ansListProperty'),
+            ),
+            _FaqItem(
+              question: l.tr('howLongToGoLive'),
+              answer: l.tr('ansHowLongToGoLive'),
+            ),
+            _FaqItem(
+              question: l.tr('canEditListing'),
+              answer: l.tr('ansCanEditListing'),
+            ),
+          ],
         ),
-      ],
-    ),
-    _FaqCategory(
-      icon: Icons.apartment_outlined,
-      title: 'Renting & Leasing',
-      faqs: [
-        _FaqItem(
-          question: 'How do I pay rent through the app?',
-          answer:
-              'Navigate to the Rental tab, select your active lease, and tap "Pay Rent." '
-              'You can pay using mobile money (EVC Plus, Zaad, Sahal) or bank transfer. '
-              'You\'ll receive a confirmation once your payment is processed.',
+        _FaqCategory(
+          icon: Icons.payment_outlined,
+          title: l.tr('paymentsBilling'),
+          faqs: [
+            _FaqItem(
+              question: l.tr('whatPaymentMethods'),
+              answer: l.tr('ansPaymentMethods'),
+            ),
+            _FaqItem(
+              question: l.tr('howGetReceipt'),
+              answer: l.tr('ansGetReceipt'),
+            ),
+          ],
         ),
-        _FaqItem(
-          question: 'How do I submit a maintenance request?',
-          answer:
-              'Go to your active rental, tap "Maintenance Request," describe the issue, '
-              'attach photos if needed, and submit. Your landlord will be notified '
-              'immediately and you can track the status in real time.',
+        _FaqCategory(
+          icon: Icons.security_outlined,
+          title: l.tr('accountSecurity'),
+          faqs: [
+            _FaqItem(
+              question: l.tr('howResetPassword'),
+              answer: l.tr('ansResetPassword'),
+            ),
+            _FaqItem(
+              question: l.tr('howDeleteAccount'),
+              answer: l.tr('ansDeleteAccount'),
+            ),
+          ],
         ),
-        _FaqItem(
-          question: 'Can I renew my lease through the app?',
-          answer:
-              'Yes. When your lease is approaching its end date, you\'ll receive a '
-              'notification with renewal options. You can review and accept new terms '
-              'directly within the app.',
-        ),
-      ],
-    ),
-    _FaqCategory(
-      icon: Icons.real_estate_agent_outlined,
-      title: 'Listing a Property',
-      faqs: [
-        _FaqItem(
-          question: 'How do I list my property?',
-          answer:
-              'Tap the "+" button on the Home tab, fill in your property details '
-              'including photos, location, pricing, and amenities. Review your listing '
-              'and publish it. Your property will be visible to all Salguri users.',
-        ),
-        _FaqItem(
-          question: 'How long does it take for my listing to go live?',
-          answer:
-              'Most listings are published instantly. In some cases, our team may '
-              'review listings to ensure quality and accuracy, which can take up '
-              'to 24 hours.',
-        ),
-        _FaqItem(
-          question: 'Can I edit my listing after publishing?',
-          answer:
-              'Yes. Go to "My Properties" in your profile, select the listing you '
-              'want to modify, and tap "Edit." Changes are saved immediately.',
-        ),
-      ],
-    ),
-    _FaqCategory(
-      icon: Icons.payment_outlined,
-      title: 'Payments & Billing',
-      faqs: [
-        _FaqItem(
-          question: 'What payment methods are accepted?',
-          answer:
-              'Salguri supports EVC Plus, Zaad, Sahal (mobile money), and bank '
-              'transfers. We are working on adding more payment options to serve '
-              'you better.',
-        ),
-        _FaqItem(
-          question: 'How do I get a receipt for my payment?',
-          answer:
-              'After each successful payment, a receipt is automatically generated '
-              'and available in your transaction history. You can also download or '
-              'share receipts directly from the app.',
-        ),
-      ],
-    ),
-    _FaqCategory(
-      icon: Icons.security_outlined,
-      title: 'Account & Security',
-      faqs: [
-        _FaqItem(
-          question: 'How do I reset my password?',
-          answer:
-              'On the login screen, tap "Forgot Password" and enter your registered '
-              'email. You\'ll receive a password reset link. Follow the instructions '
-              'to create a new password.',
-        ),
-        _FaqItem(
-          question: 'How do I delete my account?',
-          answer:
-              'Go to Profile > Personal Information > Delete Account. Please note '
-              'that this action is permanent and all your data, listings, and '
-              'transaction history will be removed.',
-        ),
-      ],
-    ),
-  ];
+      ];
 
   @override
   void dispose() {
@@ -141,11 +104,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     super.dispose();
   }
 
-  List<_FaqCategory> get _filteredCategories {
-    if (_searchQuery.isEmpty) return _faqCategories;
+  List<_FaqCategory> _filteredCategories(AppLocalizations l) {
+    final categories = _faqCategories(l);
+    if (_searchQuery.isEmpty) return categories;
     final q = _searchQuery.toLowerCase();
     final result = <_FaqCategory>[];
-    for (final cat in _faqCategories) {
+    for (final cat in categories) {
       final matched = cat.faqs
           .where((f) =>
               f.question.toLowerCase().contains(q) ||
@@ -165,12 +129,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final filtered = _filteredCategories;
+    final l = AppLocalizations.of(context);
+    final filtered = _filteredCategories(l);
 
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
-        title: const Text('Help Center'),
+        title: Text(l.tr('helpCenter')),
         centerTitle: true,
         backgroundColor: cs.surface,
         surfaceTintColor: Colors.transparent,
@@ -186,7 +151,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
               decoration: InputDecoration(
-                hintText: 'Search for help...',
+                hintText: l.tr('searchForHelp'),
                 hintStyle: TextStyle(color: cs.outline, fontSize: 14),
                 prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
                 suffixIcon: _searchQuery.isNotEmpty
@@ -213,7 +178,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           // Content
           Expanded(
             child: filtered.isEmpty
-                ? _buildEmptyState(cs)
+                ? _buildEmptyState(cs, l)
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                     itemCount: filtered.length,
@@ -223,13 +188,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ),
 
           // Contact support
-          _buildContactSupport(cs),
+          _buildContactSupport(cs, l),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState(ColorScheme cs) {
+  Widget _buildEmptyState(ColorScheme cs, AppLocalizations l) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -237,7 +202,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           Icon(Icons.search_off, size: 56, color: cs.outline),
           const SizedBox(height: 12),
           Text(
-            'No results found',
+            l.tr('noResultsFound'),
             style: TextStyle(
               color: cs.onSurface,
               fontSize: 16,
@@ -246,7 +211,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Try a different search term',
+            l.tr('tryDifferentSearch'),
             style: TextStyle(color: cs.outline, fontSize: 13),
           ),
         ],
@@ -310,7 +275,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     );
   }
 
-  Widget _buildContactSupport(ColorScheme cs) {
+  Widget _buildContactSupport(ColorScheme cs, AppLocalizations l) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -327,7 +292,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       child: Column(
         children: [
           Text(
-            'Still need help?',
+            l.tr('stillNeedHelp'),
             style: TextStyle(
               color: cs.onSurface,
               fontSize: 15,
@@ -336,7 +301,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Our support team is here to assist you',
+            l.tr('supportTeamHere'),
             style: TextStyle(color: cs.outline, fontSize: 13),
           ),
           const SizedBox(height: 12),
@@ -346,7 +311,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 child: OutlinedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.email_outlined, size: 18),
-                  label: const Text('Email Us'),
+                  label: Text(l.tr('emailUs')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primarySoft),
@@ -366,7 +331,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.chat_outlined, size: 18),
-                  label: const Text('Live Chat'),
+                  label: Text(l.tr('liveChat')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/property.dart';
+import '../../core/models/service_request.dart';
 import '../../services/api_service.dart';
 
 class SavedItemsScreen extends StatefulWidget {
@@ -13,18 +15,11 @@ class SavedItemsScreen extends StatefulWidget {
 class _SavedItemsScreenState extends State<SavedItemsScreen> {
   int _selectedTab = 0;
   List<Property> _savedProperties = [];
+  List<Property> _savedLots = [];
+  List<ServiceRequest> _serviceRequests = [];
   List<String> _collections = [];
+  Map<String, int> _collectionCounts = {};
   bool _isLoading = true;
-
-  final _tabs = const ['Properties', 'Services', 'Lots', 'Lists'];
-
-  // Demo saved searches
-  final _savedSearches = const [
-    {'label': '3+ Beds, Hodan', 'icon': Icons.bed_outlined},
-    {'label': 'Under \$200k', 'icon': Icons.attach_money},
-    {'label': 'Near Beach, 2+ Bath', 'icon': Icons.bathtub_outlined},
-    {'label': 'New Construction', 'icon': Icons.construction},
-  ];
 
   static const _collectionIcons = <String, IconData>{
     'default': Icons.favorite_outline,
@@ -36,28 +31,54 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSavedItems();
+    _loadAllData();
   }
 
-  Future<void> _loadSavedItems() async {
+  Future<void> _loadAllData() async {
     setState(() => _isLoading = true);
     try {
       final results = await Future.wait([
         ApiService.getSavedItems(),
         ApiService.getSavedCollections(),
+        ApiService.getActiveServiceRequests(),
       ]);
+
       final items = results[0] as List<Map<String, dynamic>>;
       final collections = results[1] as List<String>;
+      final services = results[2] as List<ServiceRequest>;
 
-      final properties = items
+      final allProperties = items
           .where((item) => item['property'] != null)
           .map((item) => Property.fromJson(item['property']))
           .toList();
 
+      final properties = allProperties
+          .where((p) => p.type.toLowerCase() != 'land')
+          .toList();
+      final lots = allProperties
+          .where((p) => p.type.toLowerCase() == 'land')
+          .toList();
+
+      // Build collection counts
+      final counts = <String, int>{
+        for (final c in collections) c: 0,
+      };
+      for (final item in items) {
+        // Try both possible key names
+        final col = (item['collection'] ?? item['Collection'])?.toString() ?? 'default';
+        counts[col] = (counts[col] ?? 0) + 1;
+      }
+      debugPrint('Collections: $collections');
+      debugPrint('Items collection fields: ${items.map((i) => i['collection'] ?? i['Collection']).toList()}');
+      debugPrint('Counts: $counts');
+
       if (!mounted) return;
       setState(() {
         _savedProperties = properties;
+        _savedLots = lots;
+        _serviceRequests = services;
         _collections = collections;
+        _collectionCounts = counts;
         _isLoading = false;
       });
     } catch (e) {
@@ -65,26 +86,31 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
       if (!mounted) return;
       setState(() {
         _savedProperties = [];
+        _savedLots = [];
+        _serviceRequests = [];
         _collections = [];
+        _collectionCounts = {};
         _isLoading = false;
       });
     }
   }
 
   Future<void> _unsaveProperty(Property property) async {
+    final l = AppLocalizations.of(context);
     try {
       await ApiService.unsaveItem(property.id);
       setState(() {
         _savedProperties.removeWhere((p) => p.id == property.id);
+        _savedLots.removeWhere((p) => p.id == property.id);
       });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Removed from saved items')),
+        SnackBar(content: Text(l.tr('removedFromSaved'))),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to remove: $e')),
+        SnackBar(content: Text('${l.tr('failedToRemove')} $e')),
       );
     }
   }
@@ -92,14 +118,15 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: cs.surfaceContainerLowest,
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(),
+            _buildAppBar(l),
             Divider(height: 1, color: cs.surfaceContainerHighest),
-            _buildTabRow(),
+            _buildTabRow(l),
             Expanded(
               child: _isLoading
                   ? const Center(
@@ -108,16 +135,8 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     )
                   : RefreshIndicator(
                       color: AppColors.primary,
-                      onRefresh: _loadSavedItems,
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverToBoxAdapter(child: _buildCollectionsSection()),
-                          SliverToBoxAdapter(child: _buildPropertyGrid()),
-                          SliverToBoxAdapter(
-                              child: _buildRecentSavedSearches()),
-                          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-                        ],
-                      ),
+                      onRefresh: _loadAllData,
+                      child: _buildTabContent(l),
                     ),
             ),
           ],
@@ -126,9 +145,24 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     );
   }
 
-  // ---------- App Bar ----------
+  Widget _buildTabContent(AppLocalizations l) {
+    switch (_selectedTab) {
+      case 0:
+        return _buildPropertiesTab(l);
+      case 1:
+        return _buildServicesTab(l);
+      case 2:
+        return _buildLotsTab(l);
+      case 3:
+        return _buildListsTab(l);
+      default:
+        return _buildPropertiesTab(l);
+    }
+  }
 
-  Widget _buildAppBar() {
+  // ──────────── App Bar ────────────
+
+  Widget _buildAppBar(AppLocalizations l) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -141,7 +175,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           ),
           Expanded(
             child: Text(
-              'Saved Items',
+              l.tr('savedItems'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
@@ -161,10 +195,11 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     );
   }
 
-  // ---------- Tab Row ----------
+  // ──────────── Tab Row ────────────
 
-  Widget _buildTabRow() {
+  Widget _buildTabRow(AppLocalizations l) {
     final cs = Theme.of(context).colorScheme;
+    final tabs = [l.tr('properties'), l.tr('services'), l.tr('lots'), l.tr('lists')];
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Container(
@@ -174,7 +209,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
-          children: List.generate(_tabs.length, (index) {
+          children: List.generate(tabs.length, (index) {
             final isSelected = _selectedTab == index;
             return Expanded(
               child: GestureDetector(
@@ -197,7 +232,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      _tabs[index],
+                      tabs[index],
                       style: TextStyle(
                         color: isSelected ? AppColors.white : cs.onSurfaceVariant,
                         fontSize: 13,
@@ -214,195 +249,36 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     );
   }
 
-  // ---------- Collections Section ----------
+  // ══════════════════════════════════════════════════════════════════════════════
+  // TAB 0 — Properties
+  // ══════════════════════════════════════════════════════════════════════════════
 
-  Widget _buildCollectionsSection() {
+  Widget _buildPropertiesTab(AppLocalizations l) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: _buildPropertyGrid(l)),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ],
+    );
+  }
+
+  Widget _buildPropertyGrid(AppLocalizations l) {
     final cs = Theme.of(context).colorScheme;
+    if (_savedProperties.isEmpty) {
+      return _buildEmptyState(
+        icon: Icons.favorite_border,
+        title: l.tr('noSavedProperties'),
+        subtitle: l.tr('propertiesSavedAppearHere'),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Your Collections',
-                style: TextStyle(
-                  color: cs.onSurface,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                'SEE ALL',
-                style: const TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            height: 110,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildCreateListCard(),
-                const SizedBox(width: 12),
-                ..._collections.map((name) => Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: _buildCollectionCard(
-                        name: name,
-                        count: _savedProperties.length,
-                        icon: _collectionIcons[name] ?? Icons.folder_outlined,
-                      ),
-                    )),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCreateListCard() {
-    final cs = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        width: 100,
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            style: BorderStyle.solid,
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.add,
-                color: AppColors.primary,
-                size: 24,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Create List',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCollectionCard({
-    required String name,
-    required int count,
-    required IconData icon,
-  }) {
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      width: 120,
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: cs.primaryContainer,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
-          ),
-          const SizedBox(height: 8),
           Text(
-            name,
-            style: TextStyle(
-              color: cs.onSurface,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            '$count items',
-            style: TextStyle(
-              color: cs.onSurfaceVariant,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------- Property Grid ----------
-
-  Widget _buildPropertyGrid() {
-    final cs = Theme.of(context).colorScheme;
-    if (_savedProperties.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Center(
-          child: Column(
-            children: [
-              Icon(Icons.favorite_border, color: cs.outline, size: 48),
-              const SizedBox(height: 12),
-              Text(
-                'No saved properties yet',
-                style: TextStyle(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${_savedProperties.length} Saved Properties',
+            '${_savedProperties.length} ${l.tr('savedProperties')}',
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 14,
@@ -421,7 +297,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
             ),
             itemCount: _savedProperties.length,
             itemBuilder: (context, index) {
-              return _buildSavedPropertyCard(_savedProperties[index], index);
+              return _buildSavedPropertyCard(_savedProperties[index]);
             },
           ),
         ],
@@ -429,12 +305,9 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     );
   }
 
-  Widget _buildSavedPropertyCard(Property property, int index) {
+  Widget _buildSavedPropertyCard(Property property) {
     final cs = Theme.of(context).colorScheme;
-    // Alternate button labels for variety
-    final buttonLabels = ['Request', 'Schedule', 'Notify', 'Details', 'Request', 'Schedule'];
-    final buttonLabel = buttonLabels[index % buttonLabels.length];
-
+    final l = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
@@ -452,7 +325,6 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image with heart icon
           Stack(
             children: [
               SizedBox(
@@ -482,7 +354,6 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                   },
                 ),
               ),
-              // Heart / unsave icon
               Positioned(
                 top: 8,
                 right: 8,
@@ -505,14 +376,12 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
               ),
             ],
           ),
-          // Info section
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Price
                   Text(
                     property.price,
                     style: const TextStyle(
@@ -522,7 +391,6 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     ),
                   ),
                   const SizedBox(height: 3),
-                  // Title
                   Text(
                     property.title,
                     style: TextStyle(
@@ -534,7 +402,6 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
-                  // Location
                   Text(
                     property.location,
                     style: TextStyle(
@@ -546,49 +413,38 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
-                  // Bed / Bath / Sqft
                   Row(
                     children: [
                       Icon(Icons.bed_outlined, color: cs.outline, size: 13),
                       const SizedBox(width: 2),
-                      Text(
-                        '${property.beds}',
-                        style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      Text('${property.beds}',
+                          style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500)),
                       const SizedBox(width: 8),
                       Icon(Icons.bathtub_outlined, color: cs.outline, size: 13),
                       const SizedBox(width: 2),
-                      Text(
-                        '${property.baths}',
-                        style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      Text('${property.baths}',
+                          style: TextStyle(
+                              color: cs.onSurfaceVariant,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500)),
                       const SizedBox(width: 8),
                       Icon(Icons.square_foot_outlined,
                           color: cs.outline, size: 13),
                       const SizedBox(width: 2),
                       Flexible(
-                        child: Text(
-                          '${property.sqft}',
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: Text('${property.sqft}',
+                            style: TextStyle(
+                                color: cs.onSurfaceVariant,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500),
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),
                   const Spacer(),
-                  // Action button
                   SizedBox(
                     width: double.infinity,
                     height: 32,
@@ -607,7 +463,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      child: Text(buttonLabel),
+                      child: Text(l.tr('viewDetails')),
                     ),
                   ),
                 ],
@@ -619,73 +475,642 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     );
   }
 
-  // ---------- Recent Saved Searches ----------
+  // ══════════════════════════════════════════════════════════════════════════════
+  // TAB 1 — Services
+  // ══════════════════════════════════════════════════════════════════════════════
 
-  Widget _buildRecentSavedSearches() {
+  Widget _buildServicesTab(AppLocalizations l) {
     final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    if (_serviceRequests.isEmpty) {
+      return ListView(
         children: [
+          _buildEmptyState(
+            icon: Icons.build_outlined,
+            title: l.tr('noServiceRequests'),
+            subtitle: l.tr('serviceRequestsAppearHere'),
+          ),
+        ],
+      );
+    }
+
+    final active = _serviceRequests
+        .where((s) =>
+            s.status == 'pending' ||
+            s.status == 'accepted' ||
+            s.status == 'in_progress')
+        .toList();
+    final past = _serviceRequests
+        .where((s) =>
+            s.status == 'completed' ||
+            s.status == 'cancelled')
+        .toList();
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      children: [
+        if (active.isNotEmpty) ...[
           Text(
-            'Recent Saved Searches',
+            '${active.length} ${l.tr('active')}',
             style: TextStyle(
-              color: cs.onSurface,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
+              color: cs.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: _savedSearches.map((search) {
-              return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: cs.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: cs.outlineVariant),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.shadow.withValues(alpha: 0.04),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      search['icon'] as IconData,
-                      color: AppColors.primary,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      search['label'] as String,
-                      style: TextStyle(
-                        color: cs.onSurface,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.close,
-                      color: cs.outline,
-                      size: 14,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+          const SizedBox(height: 12),
+          ...active.map((sr) => _buildServiceRequestCard(sr, cs, l)),
+        ],
+        if (past.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          Text(
+            '${past.length} ${l.tr('past')}',
+            style: TextStyle(
+              color: cs.onSurfaceVariant,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...past.map((sr) => _buildServiceRequestCard(sr, cs, l)),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildServiceRequestCard(ServiceRequest sr, ColorScheme cs, AppLocalizations l) {
+    final isActive = sr.status == 'pending' ||
+        sr.status == 'accepted' ||
+        sr.status == 'in_progress';
+
+    final statusColor = switch (sr.status) {
+      'pending' => const Color(0xFFF59E0B),
+      'accepted' || 'in_progress' => AppColors.primary,
+      'completed' => const Color(0xFF22C55E),
+      'cancelled' => const Color(0xFFEF4444),
+      _ => cs.onSurfaceVariant,
+    };
+
+    final statusBg = switch (sr.status) {
+      'pending' => const Color(0xFFFEF3C7),
+      'accepted' || 'in_progress' => AppColors.primarySoft,
+      'completed' => const Color(0xFFDCFCE7),
+      'cancelled' => const Color(0xFFFEE2E2),
+      _ => cs.surfaceContainerHighest,
+    };
+
+    final statusLabel = switch (sr.status) {
+      'pending' => l.tr('pending'),
+      'accepted' => l.tr('accepted'),
+      'in_progress' => l.tr('inProgress'),
+      'completed' => l.tr('completed'),
+      'cancelled' => l.tr('cancelled'),
+      _ => sr.status,
+    };
+
+    final categoryIcon = switch (sr.displayCategory.toLowerCase()) {
+      String c when c.contains('electric') => Icons.electrical_services,
+      String c when c.contains('plumb') => Icons.plumbing,
+      String c when c.contains('clean') => Icons.cleaning_services_outlined,
+      String c when c.contains('paint') => Icons.format_paint_outlined,
+      String c when c.contains('ac') || c.contains('hvac') => Icons.ac_unit,
+      _ => Icons.build_outlined,
+    };
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: cs.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: cs.shadow.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : cs.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              categoryIcon,
+              color: isActive ? AppColors.primary : cs.onSurfaceVariant,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sr.displayTitle,
+                  style: TextStyle(
+                    color: cs.onSurface,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${sr.shortNumber}  •  ${sr.displayCategory}',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                if (sr.etaMinutes != null && isActive) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.schedule, color: cs.outline, size: 13),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${l.tr('eta')} ${sr.etaMinutes} min',
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: statusBg,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              statusLabel,
+              style: TextStyle(
+                color: statusColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // TAB 2 — Lots (Land)
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  Widget _buildLotsTab(AppLocalizations l) {
+    final cs = Theme.of(context).colorScheme;
+    if (_savedLots.isEmpty) {
+      return ListView(
+        children: [
+          _buildEmptyState(
+            icon: Icons.terrain_outlined,
+            title: l.tr('noSavedLots'),
+            subtitle: l.tr('lotsAppearHere'),
+          ),
+        ],
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      children: [
+        Text(
+          '${_savedLots.length} ${l.tr('savedLots')}',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ..._savedLots.map((lot) => _buildLotCard(lot, cs, l)),
+      ],
+    );
+  }
+
+  Widget _buildLotCard(Property lot, ColorScheme cs, AppLocalizations l) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: cs.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: cs.shadow.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120,
+            height: 110,
+            child: Image.network(
+              lot.images.isNotEmpty ? lot.images.first : '',
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => Container(
+                color: cs.surfaceContainerHighest,
+                child: Center(
+                  child: Icon(Icons.terrain_outlined,
+                      color: cs.outline, size: 32),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lot.price,
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    lot.title,
+                    style: TextStyle(
+                      color: cs.onSurface,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on_outlined,
+                          color: cs.outline, size: 13),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          lot.location,
+                          style: TextStyle(
+                            color: cs.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(Icons.square_foot_outlined,
+                          color: cs.outline, size: 13),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${lot.sqft} ${l.tr('sqft')}',
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => _unsaveProperty(lot),
+                        child: Icon(Icons.favorite,
+                            color: const Color(0xFFEF4444), size: 20),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // TAB 3 — Lists (Collections)
+  // ══════════════════════════════════════════════════════════════════════════════
+
+  Widget _buildListsTab(AppLocalizations l) {
+    final cs = Theme.of(context).colorScheme;
+    if (_collections.isEmpty) {
+      return ListView(
+        children: [
+          _buildEmptyState(
+            icon: Icons.list_alt_outlined,
+            title: l.tr('noListsYet'),
+            subtitle: l.tr('createListToOrganize'),
+          ),
+        ],
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      children: [
+        Text(
+          '${_collections.length} ${l.tr('lists')}',
+          style: TextStyle(
+            color: cs.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 14),
+        ..._collections.map((name) => _buildListTile(name, cs, l)),
+      ],
+    );
+  }
+
+  Widget _buildListTile(String name, ColorScheme cs, AppLocalizations l) {
+    final count = _collectionCounts[name] ?? 0;
+    final icon = _collectionIcons[name] ?? Icons.folder_outlined;
+
+    return GestureDetector(
+      onTap: () => _openCollection(name),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: cs.outlineVariant),
+          boxShadow: [
+            BoxShadow(
+              color: cs.shadow.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: cs.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: AppColors.primary, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name == 'default' ? l.tr('favorites') : name,
+                    style: TextStyle(
+                      color: cs.onSurface,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '$count ${count == 1 ? l.tr('item') : l.tr('items')}',
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: cs.outline, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openCollection(String name) async {
+    final l = AppLocalizations.of(context);
+    try {
+      final items = await ApiService.getSavedItems(collection: name);
+      final properties = items
+          .where((item) => item['property'] != null)
+          .map((item) => Property.fromJson(item['property']))
+          .toList();
+
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => _CollectionDetailScreen(
+            name: name == 'default' ? l.tr('favorites') : name,
+            properties: properties,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${l.tr('failedToLoadList')} $e')),
+      );
+    }
+  }
+
+  // ──────────── Shared Helpers ────────────
+
+  Widget _buildEmptyState({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 60),
+      child: Center(
+        child: Column(
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerHighest,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: cs.outline, size: 36),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: TextStyle(
+                color: cs.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: cs.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// Collection Detail Screen (shown when tapping a list)
+// ════════════════════════════════════════════════════════════════════════════════
+
+class _CollectionDetailScreen extends StatelessWidget {
+  final String name;
+  final List<Property> properties;
+
+  const _CollectionDetailScreen({
+    required this.name,
+    required this.properties,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: cs.surfaceContainerLowest,
+      appBar: AppBar(
+        title: Text(name,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        centerTitle: true,
+        backgroundColor: cs.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: properties.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.folder_open_outlined, color: cs.outline, size: 48),
+                  const SizedBox(height: 12),
+                  Text(
+                    l.tr('listIsEmpty'),
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: properties.length,
+              itemBuilder: (context, index) {
+                final p = properties[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: cs.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: cs.outlineVariant),
+                    boxShadow: [
+                      BoxShadow(
+                        color: cs.shadow.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 110,
+                        height: 100,
+                        child: Image.network(
+                          p.images.isNotEmpty ? p.images.first : '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => Container(
+                            color: cs.surfaceContainerHighest,
+                            child: Center(
+                              child: Icon(Icons.home_outlined,
+                                  color: cs.outline, size: 28),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                p.price,
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                p.title,
+                                style: TextStyle(
+                                  color: cs.onSurface,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                p.location,
+                                style: TextStyle(
+                                  color: cs.onSurfaceVariant,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }

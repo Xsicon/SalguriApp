@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../services/supabase_service.dart';
+import '../profile/terms_of_service_screen.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -36,8 +38,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please agree to the Terms of Service and Privacy Policy'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).tr('agreeRequired')),
         ),
       );
       return;
@@ -56,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created! Please check your email to confirm, then log in.')),
+        SnackBar(content: Text(AppLocalizations.of(context).tr('accountCreated'))),
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -109,13 +111,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).maybePop(),
+            onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
             iconSize: 24,
           ),
           Expanded(
             child: Text(
-              'CREATE ACCOUNT',
+              AppLocalizations.of(context).tr('createAccount'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
@@ -141,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Join Salguri',
+            AppLocalizations.of(context).tr('joinSalguri'),
             style: TextStyle(
               color: cs.onSurface,
               fontSize: 26,
@@ -151,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Start your real estate journey today',
+            AppLocalizations.of(context).tr('startJourney'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
               fontSize: 14,
@@ -173,50 +175,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _FieldLabel(text: 'Full Name'),
+            _FieldLabel(text: AppLocalizations.of(context).tr('fullName')),
             const SizedBox(height: 8),
             _buildTextField(
               controller: _nameController,
-              hint: 'e.g. Abdi Mohamed',
+              hint: AppLocalizations.of(context).tr('fullNameHint'),
               keyboardType: TextInputType.name,
               textCapitalization: TextCapitalization.words,
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+                  (v == null || v.trim().isEmpty) ? AppLocalizations.of(context).tr('nameRequired') : null,
             ),
             const SizedBox(height: 20),
-            _FieldLabel(text: 'Email Address'),
+            _FieldLabel(text: AppLocalizations.of(context).tr('emailAddress')),
             const SizedBox(height: 8),
             _buildTextField(
               controller: _emailController,
-              hint: 'name@example.com',
+              hint: AppLocalizations.of(context).tr('emailHint'),
               keyboardType: TextInputType.emailAddress,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Email is required';
-                if (!v.contains('@')) return 'Enter a valid email address';
+                if (v == null || v.trim().isEmpty) return AppLocalizations.of(context).tr('emailRequired');
+                if (!v.contains('@')) return AppLocalizations.of(context).tr('emailInvalid');
                 return null;
               },
             ),
             const SizedBox(height: 20),
-            _FieldLabel(text: 'Password'),
+            _FieldLabel(text: AppLocalizations.of(context).tr('password')),
             const SizedBox(height: 8),
             _buildPasswordField(
               controller: _passwordController,
               obscure: _obscurePassword,
               onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
               validator: (v) {
-                if (v == null || v.length < 6) return 'Password must be at least 6 characters';
+                if (v == null || v.length < 6) return AppLocalizations.of(context).tr('passwordMinLength');
                 return null;
               },
             ),
             const SizedBox(height: 20),
-            _FieldLabel(text: 'Confirm Password'),
+            _FieldLabel(text: AppLocalizations.of(context).tr('confirmPassword')),
             const SizedBox(height: 8),
             _buildPasswordField(
               controller: _confirmPasswordController,
               obscure: _obscureConfirmPassword,
               onToggle: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
               validator: (v) {
-                if (v != _passwordController.text) return 'Passwords do not match';
+                if (v != _passwordController.text) return AppLocalizations.of(context).tr('passwordsNoMatch');
                 return null;
               },
             ),
@@ -306,17 +308,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextSpan(
                 style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14, height: 1.4),
                 children: [
-                  const TextSpan(text: 'I agree to the '),
+                  TextSpan(text: AppLocalizations.of(context).tr('agreeToTerms')),
                   TextSpan(
-                    text: 'Terms of Service',
+                    text: AppLocalizations.of(context).tr('termsOfService'),
                     style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()..onTap = () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const TermsOfServiceScreen()),
+                      );
+                    },
                   ),
                   const TextSpan(text: ' and '),
                   TextSpan(
-                    text: 'Privacy Policy',
+                    text: AppLocalizations.of(context).tr('privacyPolicy'),
                     style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()..onTap = () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const TermsOfServiceScreen()),
+                      );
+                    },
                   ),
                   const TextSpan(text: '.'),
                 ],
@@ -351,7 +361,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 24,
                 child: CircularProgressIndicator(color: AppColors.white, strokeWidth: 2.5),
               )
-            : const Text('CREATE ACCOUNT'),
+            : Text(AppLocalizations.of(context).tr('createAccount')),
       ),
     );
   }
@@ -367,9 +377,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           TextSpan(
             style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
             children: [
-              const TextSpan(text: 'Already have an account?  '),
+              TextSpan(text: AppLocalizations.of(context).tr('alreadyHaveAccount')),
               TextSpan(
-                text: 'Log In',
+                text: AppLocalizations.of(context).tr('logIn'),
                 style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {

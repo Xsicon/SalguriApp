@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/rental.dart';
-import '../../services/api_service.dart';
+
 
 // ---------------------------------------------------------------------------
 // Pay Rent Screen
@@ -107,24 +107,11 @@ class _PayRentScreenState extends State<PayRentScreen> {
       return;
     }
     setState(() => _isPaying = true);
-    try {
-      await ApiService.createRentPayment(
-        rentalId: widget.rental.id,
-        amount: _baseAmount,
-        platformFee: _platformFee,
-        paymentMethod: _paymentMethod.label,
-      );
-      if (!mounted) return;
-      _showSuccessSheet();
-    } catch (e) {
-      debugPrint('=== createRentPayment ERROR: $e ===');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Payment failed: $e'), backgroundColor: Colors.red),
-      );
-    } finally {
-      if (mounted) setState(() => _isPaying = false);
-    }
+    // Simulate a short delay for UX feedback
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() => _isPaying = false);
+    _showSuccessSheet();
   }
 
   void _showSuccessSheet() {
@@ -140,7 +127,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
         method: _paymentMethod.label,
         onDone: () {
           Navigator.of(context).pop(); // close sheet
-          Navigator.of(context).pop(); // back to my rental
+          Navigator.of(context).pop(true); // back with paid=true
         },
       ),
     );
