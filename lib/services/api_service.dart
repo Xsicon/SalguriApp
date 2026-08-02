@@ -7,6 +7,7 @@ import '../core/models/conversation.dart';
 import '../core/models/maintenance_request.dart';
 import '../core/models/agent.dart';
 import '../core/models/property.dart';
+import '../core/models/document_template.dart';
 import '../core/models/rental.dart';
 import '../core/models/rental_document.dart';
 import '../core/models/service_category.dart';
@@ -17,7 +18,7 @@ import '../core/models/service_request.dart';
 /// Supabase is used only for Auth + Storage + Realtime.
 class ApiService {
   // Change this to your deployed API URL in production.
-  static const String _baseUrl = 'http://192.168.1.11:5000/api';
+  static const String _baseUrl = 'http://192.168.1.63:5000/api';
 
   static Future<String?> _freshToken() async {
     final session = Supabase.instance.client.auth.currentSession;
@@ -40,20 +41,35 @@ class ApiService {
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
 
+  /// Without a timeout, a request to an unreachable backend hangs forever
+  /// with no error and no visible feedback — indistinguishable from the app
+  /// being broken. This turns that into a clear, actionable failure instead.
+  static const _timeout = Duration(seconds: 15);
+  static Future<http.Response> _withTimeout(Future<http.Response> request) {
+    return request.timeout(
+      _timeout,
+      onTimeout: () => throw Exception(
+        'Could not reach the server. Check that this device is on the same '
+        'network as the backend and that it is running.',
+      ),
+    );
+  }
+
   static Future<dynamic> _get(String path) async {
     final headers = await _freshHeaders();
-    final res = await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
+    final res = await _withTimeout(
+        http.get(Uri.parse('$_baseUrl$path'), headers: headers));
     _checkStatus(res);
     return jsonDecode(res.body);
   }
 
   static Future<dynamic> _post(String path, Map<String, dynamic> body) async {
     final headers = await _freshHeaders();
-    final res = await http.post(
+    final res = await _withTimeout(http.post(
       Uri.parse('$_baseUrl$path'),
       headers: headers,
       body: jsonEncode(body),
-    );
+    ));
     _checkStatus(res);
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     return jsonDecode(res.body);
@@ -61,11 +77,11 @@ class ApiService {
 
   static Future<dynamic> _patch(String path, Map<String, dynamic> body) async {
     final headers = await _freshHeaders();
-    final res = await http.patch(
+    final res = await _withTimeout(http.patch(
       Uri.parse('$_baseUrl$path'),
       headers: headers,
       body: jsonEncode(body),
-    );
+    ));
     _checkStatus(res);
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     return jsonDecode(res.body);
@@ -172,20 +188,20 @@ class ApiService {
   }
 
   static Future<Rental?> getActiveRental() async {
-    final res = await http.get(
+    final res = await _withTimeout(http.get(
       Uri.parse('$_baseUrl/rentals/active'),
       headers: await _freshHeaders(),
-    );
+    ));
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     _checkStatus(res);
     return Rental.fromJson(jsonDecode(res.body));
   }
 
   static Future<void> cancelRental(String rentalId) async {
-    final res = await http.delete(
+    final res = await _withTimeout(http.delete(
       Uri.parse('$_baseUrl/rentals/$rentalId'),
       headers: await _freshHeaders(),
-    );
+    ));
     _checkStatus(res);
   }
 
@@ -205,6 +221,65 @@ class ApiService {
       String rentalId) async {
     final data = await _post('/rentals/$rentalId/documents/seed', {}) as List;
     return data.map((e) => RentalDocument.fromJson(e)).toList();
+  }
+
+  // ─── Document signing (shared with business-app's Salgury.API controller) ──
+
+  static Future<List<MyLeaseSummary>> getMyLeases() async {
+    final data = await _get('/documents/lease/my') as List;
+    return data.map((l) => MyLeaseSummary.fromJson(l as Map<String, dynamic>)).toList();
+  }
+
+  static Future<List<MyInspectionSummary>> getMyInspections() async {
+    final data = await _get('/documents/inspection/my') as List;
+    return data.map((i) => MyInspectionSummary.fromJson(i as Map<String, dynamic>)).toList();
+  }
+
+  static Future<List<DocumentTemplate>> getDocumentTemplates({
+    required String appliesTo,
+  }) async {
+    final data = await _get('/documents/templates?appliesTo=$appliesTo') as List;
+    return data.map((t) => DocumentTemplate.fromJson(t as Map<String, dynamic>)).toList();
+  }
+
+  /// Resolves the template linked to one specific lease/inspection.
+  /// Authorized by being a party to that document (business owner OR its
+  /// tenant), unlike [getDocumentTemplates] — that endpoint only ever
+  /// returns templates owned by the caller, which is never true for a
+  /// tenant, so it can't be used to look up a tenant's own lease's template.
+  static Future<DocumentTemplate?> getTemplateForDocument({
+    required String documentType,
+    required String documentId,
+  }) async {
+    final data = await _get('/documents/$documentType/$documentId/template');
+    if (data == null) return null;
+    return DocumentTemplate.fromJson(data as Map<String, dynamic>);
+  }
+
+  static Future<SubmitSignatureResult> submitDocumentSignature({
+    required String documentType,
+    required String documentId,
+    required String signerRole,
+    required String signerName,
+    required String signaturePngBase64,
+    String? fieldId,
+  }) async {
+    final data = await _post('/documents/$documentType/$documentId/signatures', {
+      'field_id': fieldId,
+      'signer_role': signerRole,
+      'signer_name': signerName,
+      'signature_png_base64': signaturePngBase64,
+      'consent_given': true,
+    });
+    return SubmitSignatureResult.fromJson(data as Map<String, dynamic>);
+  }
+
+  static Future<String> getSealedDocumentUrl({
+    required String documentType,
+    required String documentId,
+  }) async {
+    final data = await _get('/documents/$documentType/$documentId/sealed-url') as Map<String, dynamic>;
+    return data['url'] as String;
   }
 
   static Future<void> createRentPayment({
@@ -364,10 +439,10 @@ class ApiService {
   }
 
   static Future<void> unsaveItem(String propertyId) async {
-    final res = await http.delete(
+    final res = await _withTimeout(http.delete(
       Uri.parse('$_baseUrl/saveditems/$propertyId'),
       headers: await _freshHeaders(),
-    );
+    ));
     _checkStatus(res);
   }
 
@@ -403,20 +478,20 @@ class ApiService {
   }
 
   static Future<void> cancelShowing(String showingId) async {
-    final res = await http.delete(
+    final res = await _withTimeout(http.delete(
       Uri.parse('$_baseUrl/showings/$showingId'),
       headers: await _freshHeaders(),
-    );
+    ));
     _checkStatus(res);
   }
 
   // ─── Profile ────────────────────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>?> getProfile() async {
-    final res = await http.get(
+    final res = await _withTimeout(http.get(
       Uri.parse('$_baseUrl/profile'),
       headers: await _freshHeaders(),
-    );
+    ));
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     _checkStatus(res);
     return Map<String, dynamic>.from(jsonDecode(res.body));
@@ -427,7 +502,7 @@ class ApiService {
     String? email,
     String? avatarUrl,
   }) async {
-    final res = await http.put(
+    final res = await _withTimeout(http.put(
       Uri.parse('$_baseUrl/profile'),
       headers: await _freshHeaders(),
       body: jsonEncode({
@@ -435,7 +510,7 @@ class ApiService {
         if (email != null) 'email': email,
         if (avatarUrl != null) 'avatar_url': avatarUrl,
       }),
-    );
+    ));
     _checkStatus(res);
     return Map<String, dynamic>.from(jsonDecode(res.body));
   }

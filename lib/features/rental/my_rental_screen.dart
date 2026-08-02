@@ -7,6 +7,8 @@ import '../../core/models/rental.dart';
 import '../../services/api_service.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../services/service_request_screen.dart';
+import 'my_inspections_screen.dart';
+import 'my_leases_screen.dart';
 import 'pay_rent_screen.dart';
 
 class MyRentalScreen extends StatefulWidget {
@@ -81,6 +83,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                             _buildRentStatusCard(cs, l),
                             _buildQuickInfoGrid(cs, l),
                             _buildLeaseSummary(cs, l),
+                            _buildInspectionsLink(context, cs),
                             _buildMaintenance(context, cs, l),
                             const SizedBox(height: 16),
                             _buildCancelRental(cs, l),
@@ -456,12 +459,17 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Text(
-                l.tr('viewAll'),
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MyLeasesScreen()),
+                ),
+                child: Text(
+                  l.tr('viewAll'),
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -521,6 +529,47 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
   Widget _leaseRowDivider(ColorScheme cs) {
     return Divider(
         height: 1, color: cs.outlineVariant.withValues(alpha: 0.3));
+  }
+
+  // ---------- Inspections ----------
+
+  Widget _buildInspectionsLink(BuildContext context, ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const MyInspectionsScreen()),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.fact_check_outlined, color: AppColors.primary, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Inspections',
+                        style: TextStyle(color: cs.onSurface, fontSize: 15, fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 2),
+                    Text('Reports and sign-off requests for your unit',
+                        style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // ---------- Maintenance ----------
