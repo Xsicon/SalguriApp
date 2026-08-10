@@ -352,12 +352,7 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                                               Positioned.fill(
                                                 child: Image.memory(_pageImage!, fit: BoxFit.contain),
                                               ),
-                                              // Only signature fields are interactive here — a role's
-                                              // date/text fields (e.g. "Date Signed", "Printed Name")
-                                              // are auto-filled from that same role's signature when
-                                              // the document is sealed, not tapped individually.
-                                              for (final f in _fields.where((f) =>
-                                                  f.pageNumber == _currentPage && f.fieldType == 'signature'))
+                                              for (final f in _fields.where((f) => f.pageNumber == _currentPage))
                                                 Positioned(
                                                   left: imgRect.left + imgRect.width * f.xPercent,
                                                   top: imgRect.top + imgRect.height * f.yPercent,

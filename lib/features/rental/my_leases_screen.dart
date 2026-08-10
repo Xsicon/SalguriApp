@@ -56,13 +56,6 @@ class _MyLeasesScreenState extends State<MyLeasesScreen> {
       }
       return;
     }
-    // An archived lease with no sealed document was closed out without ever
-    // being signed — there's nothing to sign and nothing to view.
-    if (lease.status == 'archived') {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('This lease has been archived.')));
-      return;
-    }
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => DocumentSigningScreen(
@@ -127,7 +120,7 @@ class _LeaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = _statusStyle;
-    final needsMySignature = !lease.tenantSigned && lease.status != 'archived';
+    final needsMySignature = !lease.tenantSigned;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),

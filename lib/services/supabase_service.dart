@@ -32,20 +32,6 @@ class SupabaseService {
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
 
-  /// Without a timeout, a request on a bad connection hangs forever with no
-  /// error and no visible feedback — the screen just spins, indistinguishable
-  /// from the app being broken, and (worse, for sign-up/sign-in) the account
-  /// never actually gets created server-side even though nothing tells the
-  /// user that happened. Matches the timeout added to ApiService's own calls.
-  static Future<T> _withTimeout<T>(Future<T> request) {
-    return request.timeout(
-      const Duration(seconds: 15),
-      onTimeout: () => throw Exception(
-        'Could not reach the server. Check your connection and try again.',
-      ),
-    );
-  }
-
   static Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -54,39 +40,29 @@ class SupabaseService {
     final data = <String, dynamic>{};
     if (fullName != null) data['full_name'] = fullName;
 
-    final response = await _withTimeout(
-        client.auth.signUp(email: email, password: password, data: data));
-    // Supabase deliberately returns a normal, error-free response even when
-    // the email is already registered (so a signup attempt can't be used to
-    // discover which emails exist) — no new account is created, and the only
-    // tell is an empty `identities` array. Without this check the caller has
-    // no way to know signup silently did nothing.
-    if (response.user?.identities?.isEmpty ?? false) {
-      throw Exception('An account with this email already exists. Try signing in instead.');
-    }
-    return response;
+    return client.auth.signUp(email: email, password: password, data: data);
   }
 
   static Future<AuthResponse> verifyEmailOTP({
     required String email,
     required String token,
   }) async {
-    return _withTimeout(client.auth.verifyOTP(
+    return client.auth.verifyOTP(
       email: email,
       token: token,
       type: OtpType.email,
-    ));
+    );
   }
 
   static Future<void> sendEmailOTP({required String email}) async {
-    await _withTimeout(client.auth.signInWithOtp(email: email));
+    await client.auth.signInWithOtp(email: email);
   }
 
   static Future<AuthResponse> signIn({
     required String email,
     required String password,
   }) async {
-    return _withTimeout(client.auth.signInWithPassword(email: email, password: password));
+    return client.auth.signInWithPassword(email: email, password: password);
   }
 
   static Future<void> updatePassword(String newPassword) async {
