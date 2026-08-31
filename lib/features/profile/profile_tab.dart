@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,25 +67,25 @@ class _ProfileTabState extends State<ProfileTab> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Container(
-              width: 40,
-              height: 4,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: cs.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               l.tr('selectLanguage'),
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 17,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ..._languages.map((lang) {
               final isSelected = lang == _selectedLanguage;
               return ListTile(
@@ -110,7 +111,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 },
               );
             }),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
           ],
         ),
       ),
@@ -228,18 +229,18 @@ class _ProfileTabState extends State<ProfileTab> {
       child: Column(
         children: [
           _buildProfileHeader(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildAccountSection(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildPreferencesSection(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildActivitySection(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildSupportSection(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildLogOutButton(),
           _buildVersionText(),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
         ],
       ),
     );
@@ -252,10 +253,10 @@ class _ProfileTabState extends State<ProfileTab> {
     final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 40, 24, 28),
+      padding: EdgeInsets.fromLTRB(24.w, 40.h, 24.w, 28.h),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.r)),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.04),
@@ -272,8 +273,8 @@ class _ProfileTabState extends State<ProfileTab> {
             child: Stack(
               children: [
                 Container(
-                  width: 100,
-                  height: 100,
+                  width: 100.w,
+                  height: 100.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: const Color(0xFFFEF3C7),
@@ -293,20 +294,20 @@ class _ProfileTabState extends State<ProfileTab> {
                       : Center(
                           child: Text(
                             _userInitials,
-                            style: const TextStyle(
-                              color: Color(0xFFF59E0B),
-                              fontSize: 36,
+                            style: TextStyle(
+                              color: const Color(0xFFF59E0B),
+                              fontSize: 36.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
                 ),
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  bottom: 0.h,
+                  right: 0.w,
                   child: Container(
-                    width: 34,
-                    height: 34,
+                    width: 34.w,
+                    height: 34.h,
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
@@ -321,59 +322,59 @@ class _ProfileTabState extends State<ProfileTab> {
                     ),
                     child: Center(
                       child: _uploadingAvatar
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
+                          ? SizedBox(
+                              width: 16.w,
+                              height: 16.h,
+                              child: const CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: AppColors.white,
                               ),
                             )
-                          : const Icon(Icons.camera_alt, color: AppColors.white, size: 16),
+                          : Icon(Icons.camera_alt, color: AppColors.white, size: 16.r),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           // Name
           Text(
             _userName,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 22,
+              fontSize: 22.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           // Email / Phone
           Text(
             _userEmail,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           // PRO MEMBER badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified, color: AppColors.primary, size: 16),
-                const SizedBox(width: 6),
+                Icon(Icons.verified, color: AppColors.primary, size: 16.r),
+                SizedBox(width: 6.w),
                 Text(
                   l.tr('proMember'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
@@ -451,7 +452,7 @@ class _ProfileTabState extends State<ProfileTab> {
             _selectedLanguage,
             style: TextStyle(
               color: Theme.of(context).colorScheme.outline,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -540,23 +541,23 @@ class _ProfileTabState extends State<ProfileTab> {
     final cs = Theme.of(context).colorScheme;
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SizedBox(
         width: double.infinity,
         child: OutlinedButton.icon(
           onPressed: _onSignOut,
-          icon: const Icon(Icons.logout, size: 20),
+          icon: Icon(Icons.logout, size: 20.r),
           label: Text(l.tr('logOut')),
           style: OutlinedButton.styleFrom(
             foregroundColor: const Color(0xFFEF4444),
             side: const BorderSide(color: Color(0xFFFEE2E2)),
             backgroundColor: cs.surface,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(
-              fontSize: 15,
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            textStyle: TextStyle(
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -570,12 +571,12 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget _buildVersionText() {
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(top: 20.h),
       child: Text(
         '${l.tr('versionLabel').toUpperCase()} ${AppStrings.version.toUpperCase()}',
         style: TextStyle(
           color: Theme.of(context).colorScheme.outline,
-          fontSize: 10,
+          fontSize: 10.sp,
           fontWeight: FontWeight.w500,
           letterSpacing: 2,
         ),
@@ -591,17 +592,17 @@ class _ProfileTabState extends State<ProfileTab> {
   }) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 10),
+            padding: EdgeInsets.only(left: 4.w, bottom: 10.h),
             child: Text(
               title,
               style: TextStyle(
                 color: cs.outline,
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
               ),
@@ -610,7 +611,7 @@ class _ProfileTabState extends State<ProfileTab> {
           Container(
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: cs.shadow.withValues(alpha: 0.04),
@@ -635,31 +636,31 @@ class _ProfileTabState extends State<ProfileTab> {
     final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.primary, size: 22),
-            const SizedBox(width: 14),
+            Icon(icon, color: AppColors.primary, size: 22.r),
+            SizedBox(width: 14.w),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             if (trailing != null) ...[
               trailing,
-              const SizedBox(width: 4),
+              SizedBox(width: 4.w),
             ],
             Icon(
               Icons.chevron_right,
               color: cs.outline,
-              size: 22,
+              size: 22.r,
             ),
           ],
         ),
@@ -675,17 +676,17 @@ class _ProfileTabState extends State<ProfileTab> {
   }) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 11.h),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
-          const SizedBox(width: 14),
+          Icon(icon, color: AppColors.primary, size: 22.r),
+          SizedBox(width: 14.w),
           Expanded(
             child: Text(
               label,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -705,7 +706,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget _buildDivider() {
     return Divider(
       height: 1,
-      indent: 52,
+      indent: 52.w,
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
     );
   }

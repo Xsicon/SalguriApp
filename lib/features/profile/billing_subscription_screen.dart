@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 
@@ -125,24 +126,24 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
             Divider(height: 1, color: cs.surfaceContainerHighest),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+                padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
                 children: [
                   _buildCurrentPlanCard(cs, l),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildSectionTitle(l.tr('chooseAPlan'), cs),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   ...List.generate(3, (i) => _buildPlanCard(i, cs, l)),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28.h),
                   _buildSectionTitle(l.tr('paymentMethods'), cs),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   _buildPaymentMethodsCard(cs, l),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28.h),
                   _buildSectionTitle(l.tr('billingHistory'), cs),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   _buildBillingHistoryCard(cs, l),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28.h),
                   _buildSectionTitle(l.tr('settings'), cs),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   _buildSettingsCard(cs, l),
                 ],
               ),
@@ -157,7 +158,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
 
   Widget _buildAppBar(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
@@ -170,13 +171,13 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.3,
               ),
             ),
           ),
-          const SizedBox(width: 48),
+          SizedBox(width: 48.w),
         ],
       ),
     );
@@ -189,14 +190,14 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
     final planName = _planNames(l)[_selectedPlan];
     final planPrice = _planPrices[_selectedPlan];
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [planColor, planColor.withValues(alpha: 0.8)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: planColor.withValues(alpha: 0.3),
@@ -215,16 +216,16 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
                       l.tr('currentPlan'),
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 11,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1,
                       ),
@@ -233,70 +234,70 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                 ],
               ),
               Container(
-                width: 40,
-                height: 40,
+                width: 40.w,
+                height: 40.h,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: const Icon(Icons.workspace_premium,
-                    color: Colors.white, size: 22),
+                child: Icon(Icons.workspace_premium,
+                    color: Colors.white, size: 22.r),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             planName,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 26.sp,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 planPrice,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 32,
+                  fontSize: 32.sp,
                   fontWeight: FontWeight.w800,
                   height: 1,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(bottom: 4.h),
                 child: Text(
                   l.tr('perMonth'),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.calendar_today,
-                    color: Colors.white.withValues(alpha: 0.8), size: 14),
-                const SizedBox(width: 8),
+                    color: Colors.white.withValues(alpha: 0.8), size: 14.r),
+                SizedBox(width: 8.w),
                 Text(
                   'Renews on Apr 1, 2026',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -324,11 +325,11 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
       onTap: () => setState(() => _selectedPlan = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: isSelected ? planBgColor : cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: isSelected ? planColor : cs.outlineVariant,
             width: isSelected ? 2 : 1,
@@ -355,13 +356,13 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
             Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 40.w,
+                  height: 40.h,
                   decoration: BoxDecoration(
                     color: isSelected
                         ? planColor.withValues(alpha: 0.15)
                         : cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Icon(
                     index == 0
@@ -370,10 +371,10 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                             ? Icons.star_outline
                             : Icons.diamond_outlined,
                     color: isSelected ? planColor : cs.onSurfaceVariant,
-                    size: 22,
+                    size: 22.r,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,24 +385,24 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                             planName,
                             style: TextStyle(
                               color: cs.onSurface,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (badge != null) ...[
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8.w),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w, vertical: 2.h),
                               decoration: BoxDecoration(
                                 color: planColor,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(6.r),
                               ),
                               child: Text(
                                 badge,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 9,
+                                  fontSize: 9.sp,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.5,
                                 ),
@@ -410,12 +411,12 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         planDescription,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
@@ -428,7 +429,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                       planPrice,
                       style: TextStyle(
                         color: isSelected ? planColor : cs.onSurface,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -436,17 +437,17 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                       l.tr('perMonth'),
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14.h),
             Wrap(
-              spacing: 6,
-              runSpacing: 6,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: features.map((f) {
                 return Row(
                   mainAxisSize: MainAxisSize.min,
@@ -454,15 +455,15 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                     Icon(
                       Icons.check_circle,
                       color: isSelected ? planColor : cs.outline,
-                      size: 16,
+                      size: 16.r,
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6.w),
                     Flexible(
                       child: Text(
                         f,
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -472,7 +473,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
               }).toList(),
             ),
             if (!isSelected) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: 14.h),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
@@ -481,39 +482,39 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                     foregroundColor: planColor,
                     side: BorderSide(color: planColor.withValues(alpha: 0.4)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
                   ),
                   child: Text(
                     '${l.tr('switchTo')} $planName',
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: 13.sp, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
             ],
             if (isSelected) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: 14.h),
               SizedBox(
                 width: double.infinity,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
                     color: planColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.check_circle,
-                          color: planColor, size: 18),
-                      const SizedBox(width: 6),
+                          color: planColor, size: 18.r),
+                      SizedBox(width: 6.w),
                       Text(
                         l.tr('currentPlanLabel'),
                         style: TextStyle(
                           color: planColor,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -534,7 +535,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.04),
@@ -553,19 +554,19 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                   child: Row(
                     children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 42.w,
+                        height: 42.h,
                         decoration: BoxDecoration(
                           color: pm.color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Icon(pm.icon, color: pm.color, size: 22),
+                        child: Icon(pm.icon, color: pm.color, size: 22.r),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: 14.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,25 +577,25 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                                   pm.name,
                                   style: TextStyle(
                                     color: cs.onSurface,
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 if (pm.isDefault) ...[
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8.w),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 7, vertical: 2),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 7.w, vertical: 2.h),
                                     decoration: BoxDecoration(
                                       color: AppColors.primary
                                           .withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: BorderRadius.circular(5.r),
                                     ),
                                     child: Text(
                                       l.tr('default_'),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppColors.primary,
-                                        fontSize: 9,
+                                        fontSize: 9.sp,
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
@@ -602,25 +603,25 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                                 ],
                               ],
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2.h),
                             Text(
                               pm.detail,
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 13,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.more_horiz, color: cs.outline, size: 20),
+                      Icon(Icons.more_horiz, color: cs.outline, size: 20.r),
                     ],
                   ),
                 ),
                 if (!isLast)
                   Divider(
                     height: 1,
-                    indent: 72,
+                    indent: 72.w,
                     color: cs.outlineVariant.withValues(alpha: 0.5),
                   ),
               ],
@@ -633,18 +634,18 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: 14.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.add_circle_outline,
-                      color: AppColors.primary, size: 18),
-                  const SizedBox(width: 8),
-                  const Text(
+                      color: AppColors.primary, size: 18.r),
+                  SizedBox(width: 8.w),
+                  Text(
                     'Add Payment Method',
                     style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -663,7 +664,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.04),
@@ -681,20 +682,20 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                   child: Row(
                     children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 42.w,
+                        height: 42.h,
                         decoration: BoxDecoration(
                           color: const Color(0xFFDCFCE7),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: const Icon(Icons.receipt_long_outlined,
-                            color: Color(0xFF22C55E), size: 20),
+                        child: Icon(Icons.receipt_long_outlined,
+                            color: const Color(0xFF22C55E), size: 20.r),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: 14.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -703,16 +704,16 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                               'Pro Plan',
                               style: TextStyle(
                                 color: cs.onSurface,
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2.h),
                             Text(
                               _invoiceDates[index],
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 13,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ],
@@ -725,23 +726,23 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                             _invoiceAmounts[index],
                             style: TextStyle(
                               color: cs.onSurface,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2.h),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8.w, vertical: 2.h),
                             decoration: BoxDecoration(
                               color: const Color(0xFFDCFCE7),
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(5.r),
                             ),
                             child: Text(
                               l.tr('paid'),
-                              style: const TextStyle(
-                                color: Color(0xFF16A34A),
-                                fontSize: 11,
+                              style: TextStyle(
+                                color: const Color(0xFF16A34A),
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -754,7 +755,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                 if (!isLast)
                   Divider(
                     height: 1,
-                    indent: 72,
+                    indent: 72.w,
                     color: cs.outlineVariant.withValues(alpha: 0.5),
                   ),
               ],
@@ -767,18 +768,18 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: EdgeInsets.symmetric(vertical: 14.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.download_outlined,
-                      color: AppColors.primary, size: 18),
-                  const SizedBox(width: 8),
-                  const Text(
+                      color: AppColors.primary, size: 18.r),
+                  SizedBox(width: 8.w),
+                  Text(
                     'Download All Invoices',
                     style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -797,7 +798,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.04),
@@ -811,20 +812,20 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
         children: [
           // Auto-renew toggle
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             child: Row(
               children: [
                 Container(
-                  width: 42,
-                  height: 42,
+                  width: 42.w,
+                  height: 42.h,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: const Icon(Icons.autorenew,
-                      color: AppColors.primary, size: 22),
+                  child: Icon(Icons.autorenew,
+                      color: AppColors.primary, size: 22.r),
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: 14.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -833,16 +834,16 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
                         'Auto-Renew',
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         'Automatically renew your subscription',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
@@ -859,7 +860,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
           ),
           Divider(
             height: 1,
-            indent: 72,
+            indent: 72.w,
             color: cs.outlineVariant.withValues(alpha: 0.5),
           ),
           // Cancel subscription
@@ -867,44 +868,44 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
             onTap: () => _showCancelDialog(cs),
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               child: Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    width: 42.w,
+                    height: 42.h,
                     decoration: BoxDecoration(
                       color: const Color(0xFFFEE2E2),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    child: const Icon(Icons.cancel_outlined,
-                        color: Color(0xFFEF4444), size: 22),
+                    child: Icon(Icons.cancel_outlined,
+                        color: const Color(0xFFEF4444), size: 22.r),
                   ),
-                  const SizedBox(width: 14),
+                  SizedBox(width: 14.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Cancel Subscription',
                           style: TextStyle(
-                            color: Color(0xFFEF4444),
-                            fontSize: 14,
+                            color: const Color(0xFFEF4444),
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2.h),
                         Text(
                           'You\'ll keep access until Apr 1, 2026',
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 13,
+                            fontSize: 13.sp,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.chevron_right, color: cs.outline, size: 22),
+                  Icon(Icons.chevron_right, color: cs.outline, size: 22.r),
                 ],
               ),
             ),
@@ -918,12 +919,12 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Cancel Subscription?',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-        content: const Text(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: Text('Cancel Subscription?',
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700)),
+        content: Text(
           'Your Pro plan will remain active until the end of the current billing period. After that, you\'ll be downgraded to the Basic plan.',
-          style: TextStyle(fontSize: 14, height: 1.5),
+          style: TextStyle(fontSize: 14.sp, height: 1.5),
         ),
         actions: [
           TextButton(
@@ -943,7 +944,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
               backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10.r)),
               elevation: 0,
             ),
             child: const Text('Cancel Plan'),
@@ -960,7 +961,7 @@ class _BillingSubscriptionScreenState extends State<BillingSubscriptionScreen> {
       title,
       style: TextStyle(
         color: cs.outline,
-        fontSize: 11,
+        fontSize: 11.sp,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.5,
       ),

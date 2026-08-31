@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
@@ -6,18 +9,32 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/models/chat_message.dart';
 import '../../services/api_service.dart';
 import '../../services/supabase_service.dart';
+import '../../services/unread_badge_controller.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  final String conversationId;
+  /// Null when opening a brand-new chat that has no conversation yet — the
+  /// row is only created (via [pendingOtherUserId]) once the first message
+  /// is actually sent, so backing out beforehand leaves nothing behind.
+  final String? conversationId;
   final String name;
   final String? avatarUrl;
+
+  /// Required when [conversationId] is null — identifies who the first
+  /// message should be sent to once the user actually sends one.
+  final String? pendingOtherUserId;
+  final String? pendingOtherRole;
 
   const ChatDetailScreen({
     super.key,
     required this.conversationId,
     required this.name,
     this.avatarUrl,
-  });
+    this.pendingOtherUserId,
+    this.pendingOtherRole,
+  }) : assert(
+          conversationId != null || pendingOtherUserId != null,
+          'Either conversationId or pendingOtherUserId must be provided',
+        );
 
   @override
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
@@ -32,15 +49,25 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _isSending = false;
   RealtimeChannel? _realtimeChannel;
 
+  /// The real conversation id once one exists — either passed in, or filled
+  /// in the moment the first message is sent.
+  String? _conversationId;
+
   String get _currentUserId => SupabaseService.currentUser?.id ?? '';
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
-    _subscribeToMessages();
-    // Mark messages as read when opening the conversation
-    ApiService.markMessagesAsRead(widget.conversationId);
+    _conversationId = widget.conversationId;
+    final id = _conversationId;
+    if (id != null) {
+      _loadMessages(id);
+      _subscribeToMessages(id);
+      _markRead(id);
+    } else {
+      // Nothing to load yet — this is a pending, not-yet-created chat.
+      _isLoading = false;
+    }
   }
 
   @override
@@ -53,9 +80,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     super.dispose();
   }
 
-  Future<void> _loadMessages() async {
+  Future<void> _loadMessages(String conversationId) async {
     try {
-      final msgs = await ApiService.getMessages(widget.conversationId);
+      final msgs = await ApiService.getMessages(conversationId);
       if (mounted) {
         setState(() {
           _messages = msgs;
@@ -69,20 +96,28 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     }
   }
 
-  void _subscribeToMessages() {
+  void _subscribeToMessages(String conversationId) {
     _realtimeChannel = SupabaseService.subscribeToMessages(
-      widget.conversationId,
+      conversationId,
       (message) {
         if (mounted) {
           setState(() => _messages.add(message));
           _scrollToBottom();
           // Mark as read if it's not our message
           if (!message.isMine(_currentUserId)) {
-            ApiService.markMessagesAsRead(widget.conversationId);
+            _markRead(conversationId);
           }
         }
       },
     );
+  }
+
+  /// Marking read doesn't touch the `conversations` table, so the inbox
+  /// badge's realtime subscription (which only watches that table) would
+  /// never learn about it — refresh it directly instead.
+  Future<void> _markRead(String conversationId) async {
+    await ApiService.markMessagesAsRead(conversationId);
+    unawaited(UnreadBadgeController.instance.refresh());
   }
 
   void _scrollToBottom() {
@@ -105,8 +140,23 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     setState(() => _isSending = true);
 
     try {
+      var id = _conversationId;
+      if (id == null) {
+        // First message in a brand-new chat — create the conversation now,
+        // not before. If the user had backed out before this point, nothing
+        // would ever have been created.
+        final conv = await ApiService.getOrCreateConversation(
+          otherUserId: widget.pendingOtherUserId!,
+          otherDisplayName: widget.name,
+          otherAvatarUrl: widget.avatarUrl,
+          otherRole: widget.pendingOtherRole ?? 'user',
+        );
+        id = conv.id;
+        _conversationId = id;
+        _subscribeToMessages(id);
+      }
       await ApiService.sendMessage(
-        conversationId: widget.conversationId,
+        conversationId: id,
         content: text,
       );
       // The realtime subscription will add the message to the list
@@ -183,7 +233,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _buildAppBar(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: cs.surface,
         border: Border(
@@ -196,22 +246,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             onTap: () => Navigator.of(context).pop(),
             child: Icon(Icons.arrow_back, color: cs.onSurface),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           CircleAvatar(
-            radius: 20,
+            radius: 20.r,
             backgroundImage:
                 widget.avatarUrl != null ? NetworkImage(widget.avatarUrl!) : null,
             backgroundColor: cs.surfaceContainerHighest,
             child: widget.avatarUrl == null
-                ? Icon(Icons.person, color: cs.outline, size: 20)
+                ? Icon(Icons.person, color: cs.outline, size: 20.r)
                 : null,
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           Expanded(
             child: Text(
               widget.name,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
                 color: cs.onSurface,
               ),
@@ -229,14 +279,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       return Center(
         child: Text(
           l.tr('noMessagesYet'),
-          style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
+          style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15.sp),
         ),
       );
     }
 
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       itemCount: _messages.length,
       itemBuilder: (context, index) {
         final msg = _messages[index];
@@ -245,18 +295,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         return Column(
           children: [
             if (dividerLabel != null) ...[
-              if (index > 0) const SizedBox(height: 16),
+              if (index > 0) SizedBox(height: 16.h),
               Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
                     dividerLabel,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
                       color: cs.outline,
@@ -264,10 +314,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
             ],
             Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.only(bottom: 12.h),
               child: msg.isMine(_currentUserId)
                   ? _buildSentBubble(msg, cs)
                   : _buildReceivedBubble(msg, cs),
@@ -283,58 +333,58 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         CircleAvatar(
-          radius: 16,
+          radius: 16.r,
           backgroundImage:
               widget.avatarUrl != null ? NetworkImage(widget.avatarUrl!) : null,
           backgroundColor: cs.surfaceContainerHighest,
           child: widget.avatarUrl == null
-              ? Icon(Icons.person, color: cs.outline, size: 16)
+              ? Icon(Icons.person, color: cs.outline, size: 16.r)
               : null,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Flexible(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: cs.surfaceContainerHighest,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                    bottomRight: Radius.circular(16.r),
                   ),
                 ),
                 child: Text(
                   msg.content,
-                  style: TextStyle(fontSize: 14, color: cs.onSurface, height: 1.4),
+                  style: TextStyle(fontSize: 14.sp, color: cs.onSurface, height: 1.4),
                 ),
               ),
               if (msg.imageUrl != null) ...[
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   child: Image.network(
                     msg.imageUrl!,
-                    width: 192,
-                    height: 128,
+                    width: 192.w,
+                    height: 128.h,
                     fit: BoxFit.cover,
                     errorBuilder: (_, _, _) => Container(
-                      width: 192,
-                      height: 128,
+                      width: 192.w,
+                      height: 128.h,
                       color: cs.surfaceContainerHighest,
-                      child: Icon(Icons.image, color: cs.outline, size: 32),
+                      child: Icon(Icons.image, color: cs.outline, size: 32.r),
                     ),
                   ),
                 ),
               ],
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Padding(
-                padding: const EdgeInsets.only(left: 4),
+                padding: EdgeInsets.only(left: 4.w),
                 child: Text(
                   _formatTime(msg.createdAt),
-                  style: TextStyle(fontSize: 10, color: cs.outline),
+                  style: TextStyle(fontSize: 10.sp, color: cs.outline),
                 ),
               ),
             ],
@@ -354,61 +404,61 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
-          padding: const EdgeInsets.all(12),
-          decoration: const BoxDecoration(
+          padding: EdgeInsets.all(12.r),
+          decoration: BoxDecoration(
             color: AppColors.primary,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-              bottomLeft: Radius.circular(16),
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
+              bottomLeft: Radius.circular(16.r),
             ),
           ),
           child: Text(
             msg.content,
-            style: const TextStyle(fontSize: 14, color: AppColors.white, height: 1.4),
+            style: TextStyle(fontSize: 14.sp, color: AppColors.white, height: 1.4),
           ),
         ),
         if (msg.imageUrl != null) ...[
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
                   color: AppColors.primary.withValues(alpha: 0.2),
                   width: 2,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 child: Image.network(
                   msg.imageUrl!,
-                  width: 192,
-                  height: 128,
+                  width: 192.w,
+                  height: 128.h,
                   fit: BoxFit.cover,
                   errorBuilder: (_, _, _) => Container(
-                    width: 192,
-                    height: 128,
+                    width: 192.w,
+                    height: 128.h,
                     color: cs.surfaceContainerHighest,
-                    child: Icon(Icons.image, color: cs.outline, size: 32),
+                    child: Icon(Icons.image, color: cs.outline, size: 32.r),
                   ),
                 ),
               ),
             ),
           ),
         ],
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               _formatTime(msg.createdAt),
-              style: TextStyle(fontSize: 10, color: cs.outline),
+              style: TextStyle(fontSize: 10.sp, color: cs.outline),
             ),
             if (msg.isRead) ...[
-              const SizedBox(width: 4),
-              const Icon(Icons.done_all, size: 14, color: AppColors.primary),
+              SizedBox(width: 4.w),
+              Icon(Icons.done_all, size: 14.r, color: AppColors.primary),
             ],
           ],
         ),
@@ -419,7 +469,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _buildInputBar(ColorScheme cs, AppLocalizations l) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
       decoration: BoxDecoration(
         color: cs.surface,
         border: Border(
@@ -427,10 +477,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+        padding: EdgeInsets.fromLTRB(8.w, 4.h, 8.w, 4.h),
         decoration: BoxDecoration(
           color: cs.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
         ),
         child: Row(
           children: [
@@ -444,12 +494,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 onSubmitted: (_) => _sendMessage(),
                 decoration: InputDecoration(
                   hintText: l.tr('typeMessage'),
-                  hintStyle: TextStyle(color: cs.outline, fontSize: 14),
+                  hintStyle: TextStyle(color: cs.outline, fontSize: 14.sp),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(vertical: 8.h),
                   isDense: true,
                 ),
-                style: TextStyle(color: cs.onSurface, fontSize: 14),
+                style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
                 maxLines: 4,
                 minLines: 1,
                 textInputAction: TextInputAction.send,
@@ -458,21 +508,21 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             GestureDetector(
               onTap: _isSending ? null : _sendMessage,
               child: Container(
-                width: 40,
-                height: 40,
+                width: 40.w,
+                height: 40.h,
                 decoration: BoxDecoration(
                   color: _isSending ? AppColors.primary.withValues(alpha: 0.5) : AppColors.primary,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: _isSending
-                    ? const Padding(
-                        padding: EdgeInsets.all(10),
-                        child: CircularProgressIndicator(
+                    ? Padding(
+                        padding: EdgeInsets.all(10.r),
+                        child: const CircularProgressIndicator(
                           color: AppColors.white,
                           strokeWidth: 2,
                         ),
                       )
-                    : const Icon(Icons.send, color: AppColors.white, size: 20),
+                    : Icon(Icons.send, color: AppColors.white, size: 20.r),
               ),
             ),
           ],

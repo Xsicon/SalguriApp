@@ -13,12 +13,13 @@ import '../core/models/rental_document.dart';
 import '../core/models/service_category.dart';
 import '../core/models/service_item.dart';
 import '../core/models/service_request.dart';
+import '../core/models/vendor_marketplace.dart';
 
 /// All data calls go through the .NET backend API.
 /// Supabase is used only for Auth + Storage + Realtime.
 class ApiService {
   // Change this to your deployed API URL in production.
-  static const String _baseUrl = 'http://192.168.1.63:5000/api';
+  static const String _baseUrl = 'http://192.168.1.229:5000/api';
 
   static Future<String?> _freshToken() async {
     final session = Supabase.instance.client.auth.currentSession;
@@ -45,9 +46,12 @@ class ApiService {
   /// with no error and no visible feedback — indistinguishable from the app
   /// being broken. This turns that into a clear, actionable failure instead.
   static const _timeout = Duration(seconds: 15);
-  static Future<http.Response> _withTimeout(Future<http.Response> request) {
+  static Future<http.Response> _withTimeout(
+    Future<http.Response> request, {
+    Duration timeout = _timeout,
+  }) {
     return request.timeout(
-      _timeout,
+      timeout,
       onTimeout: () => throw Exception(
         'Could not reach the server. Check that this device is on the same '
         'network as the backend and that it is running.',
@@ -63,13 +67,17 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
-  static Future<dynamic> _post(String path, Map<String, dynamic> body) async {
+  static Future<dynamic> _post(
+    String path,
+    Map<String, dynamic> body, {
+    Duration timeout = _timeout,
+  }) async {
     final headers = await _freshHeaders();
     final res = await _withTimeout(http.post(
       Uri.parse('$_baseUrl$path'),
       headers: headers,
       body: jsonEncode(body),
-    ));
+    ), timeout: timeout);
     _checkStatus(res);
     if (res.statusCode == 204 || res.body.isEmpty) return null;
     return jsonDecode(res.body);
@@ -92,6 +100,41 @@ class ApiService {
       debugPrint('[ApiService] ${res.statusCode} ${res.request?.url}: ${res.body}');
       throw Exception('API error ${res.statusCode}: ${res.body}');
     }
+  }
+
+  // ─── Password reset ────────────────────────────────────────────────────────
+  // Our own OTP flow (backend + Postmark) — deliberately not Supabase Auth's
+  // built-in email/OTP sender. See PasswordResetController on the backend.
+
+  static Future<void> sendPasswordResetCode(String email) async {
+    await _post('/password-reset/send', {'email': email});
+  }
+
+  /// Returns the opaque reset token to carry into [confirmPasswordReset] if
+  /// the code was correct, or null if it wasn't.
+  static Future<String?> verifyPasswordResetCode({
+    required String email,
+    required String code,
+  }) async {
+    final data = await _post('/password-reset/verify', {
+      'email': email,
+      'code': code,
+    }) as Map<String, dynamic>;
+    if (data['verified'] != true) return null;
+    // Backend serializes JSON as snake_case globally — see Program.cs's
+    // JsonNamingPolicy.SnakeCaseLower.
+    return data['reset_token'] as String?;
+  }
+
+  static Future<void> confirmPasswordReset({
+    required String resetToken,
+    required String newPassword,
+  }) async {
+    // snake_case keys — see the comment on verifyPasswordResetCode above.
+    await _post('/password-reset/confirm', {
+      'reset_token': resetToken,
+      'new_password': newPassword,
+    });
   }
 
   // ─── Properties ────────────────────────────────────────────────────────────
@@ -197,6 +240,38 @@ class ApiService {
     return Rental.fromJson(jsonDecode(res.body));
   }
 
+  // ─── Job Marketplace / Vendor service requests ────────────────────────────
+
+  static Future<List<VendorMarketplacePost>> getVendorMarketplacePosts({String? category}) async {
+    final query = category != null ? '?category=$category' : '';
+    final data = await _get('/vendor-marketplace/posts$query') as List;
+    return data.map((j) => VendorMarketplacePost.fromJson(j as Map<String, dynamic>)).toList();
+  }
+
+  static Future<PropertyServiceRequest> createVendorServiceRequest({
+    required String scope, // 'property' | 'direct'
+    String? rentalId,
+    String? vendorBusinessUserId,
+    required String category,
+    required String title,
+    String? description,
+  }) async {
+    final data = await _post('/service-requests', {
+      'scope': scope,
+      'rental_id': rentalId,
+      'vendor_business_user_id': vendorBusinessUserId,
+      'category': category,
+      'title': title,
+      'description': description,
+    });
+    return PropertyServiceRequest.fromJson(data as Map<String, dynamic>);
+  }
+
+  static Future<List<PropertyServiceRequest>> getMyServiceRequests() async {
+    final data = await _get('/service-requests/mine') as List;
+    return data.map((j) => PropertyServiceRequest.fromJson(j as Map<String, dynamic>)).toList();
+  }
+
   static Future<void> cancelRental(String rentalId) async {
     final res = await _withTimeout(http.delete(
       Uri.parse('$_baseUrl/rentals/$rentalId'),
@@ -228,6 +303,43 @@ class ApiService {
   static Future<List<MyLeaseSummary>> getMyLeases() async {
     final data = await _get('/documents/lease/my') as List;
     return data.map((l) => MyLeaseSummary.fromJson(l as Map<String, dynamic>)).toList();
+  }
+
+  /// Submits proof of an out-of-band security-deposit payment for review —
+  /// no payment gateway exists yet, so this is the only working path today.
+  /// [receiptPath] is the storage path returned by
+  /// `SupabaseService.uploadDepositReceipt`, not a public URL.
+  static Future<void> submitLeaseDeposit({
+    required String leaseId,
+    required double amount,
+    required String receiptPath,
+  }) async {
+    await _post('/leases/$leaseId/deposit/submit', {
+      'amount': amount,
+      'receipt_url': receiptPath,
+    });
+  }
+
+  // ─── Rental applications ─────────────────────────────────────────────────
+
+  static Future<void> submitApplication({
+    required String propertyId,
+    double? monthlyIncome,
+    String? notes,
+  }) async {
+    await _post('/properties/$propertyId/applications', {
+      'monthly_income': monthlyIncome,
+      'notes': notes,
+    });
+  }
+
+  static Future<List<MyApplicationSummary>> getMyApplications() async {
+    final data = await _get('/applications/mine') as List;
+    return data.map((a) => MyApplicationSummary.fromJson(a as Map<String, dynamic>)).toList();
+  }
+
+  static Future<void> withdrawApplication(String applicationId) async {
+    await _post('/applications/$applicationId/withdraw', const {});
   }
 
   static Future<List<MyInspectionSummary>> getMyInspections() async {
@@ -264,13 +376,17 @@ class ApiService {
     required String signaturePngBase64,
     String? fieldId,
   }) async {
-    final data = await _post('/documents/$documentType/$documentId/signatures', {
-      'field_id': fieldId,
-      'signer_role': signerRole,
-      'signer_name': signerName,
-      'signature_png_base64': signaturePngBase64,
-      'consent_given': true,
-    });
+    final data = await _post(
+      '/documents/$documentType/$documentId/signatures',
+      {
+        'field_id': fieldId,
+        'signer_role': signerRole,
+        'signer_name': signerName,
+        'signature_png_base64': signaturePngBase64,
+        'consent_given': true,
+      },
+      timeout: const Duration(seconds: 90),
+    );
     return SubmitSignatureResult.fromJson(data as Map<String, dynamic>);
   }
 
@@ -410,6 +526,37 @@ class ApiService {
   static Future<List<Map<String, dynamic>>> getUsers() async {
     final data = await _get('/conversations/users') as List;
     return List<Map<String, dynamic>>.from(data);
+  }
+
+  // ─── Notifications ────────────────────────────────────────────────────────
+
+  /// Count of unread conversations (one per conversation with unread
+  /// messages) — what the Inbox icon badge shows. Scoped to type=message so
+  /// other alert types (lease, deposit, ...) don't inflate a badge the Inbox
+  /// screen has no way to display.
+  static Future<int> getUnreadNotificationCount() async {
+    final data = await _get('/notifications/unread-count?type=message') as Map<String, dynamic>;
+    return data['count'] as int? ?? 0;
+  }
+
+  static Future<List<Map<String, dynamic>>> getNotifications({int limit = 50}) async {
+    final data = await _get('/notifications?limit=$limit') as List;
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  static Future<void> markNotificationRead(String id) async {
+    await _post('/notifications/$id/read', {});
+  }
+
+  static Future<void> markAllNotificationsRead() async {
+    await _post('/notifications/read-all', {});
+  }
+
+  static Future<void> registerPushToken(String token, String platform) async {
+    await _post('/notifications/register-token', {
+      'token': token,
+      'platform': platform,
+    });
   }
 
   // ─── Saved Items ──────────────────────────────────────────────────────────

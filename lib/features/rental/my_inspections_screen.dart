@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -55,9 +56,11 @@ class _MyInspectionsScreenState extends State<MyInspectionsScreen> {
       }
       return;
     }
-    if (!inspection.signOffRequired || inspection.tenantSigned) {
-      // Nothing for the tenant to do — a routine inspection with no sign-off
-      // requirement, or one they've already signed.
+    if (!inspection.signOffRequired ||
+        inspection.tenantSigned ||
+        inspection.status != 'signature_required') {
+      // Nothing for the tenant to do yet — no sign-off required, already
+      // signed, or staff hasn't completed the walkthrough/report yet.
       return;
     }
     await Navigator.of(context).push(
@@ -86,7 +89,7 @@ class _MyInspectionsScreenState extends State<MyInspectionsScreen> {
           if (_error != null) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24.r),
                 child: Text(_error!, textAlign: TextAlign.center),
               ),
             );
@@ -97,9 +100,9 @@ class _MyInspectionsScreenState extends State<MyInspectionsScreen> {
           return RefreshIndicator(
             onRefresh: _load,
             child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
               itemCount: inspections.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              separatorBuilder: (_, _) => SizedBox(height: 10.h),
               itemBuilder: (_, i) =>
                   _InspectionCard(inspection: inspections[i], onTap: () => _openInspection(inspections[i])),
             ),
@@ -130,12 +133,12 @@ class _InspectionCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16.r),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: AppColors.border),
         ),
         child: Column(
@@ -150,30 +153,30 @@ class _InspectionCard extends StatelessWidget {
                     children: [
                       Text(
                         inspection.title.isEmpty ? inspection.propertyTitle : inspection.title,
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                       ),
                       if (inspection.propertyAddress.isNotEmpty) ...[
-                        const SizedBox(height: 3),
+                        SizedBox(height: 3.h),
                         Text(
                           inspection.propertyAddress,
-                          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                          style: TextStyle(fontSize: 12.sp, color: AppColors.textMuted),
                         ),
                       ],
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(6.r)),
                   child: Text(
                     label,
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white),
+                    style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w800, color: Colors.white),
                   ),
                 ),
               ],
             ),
             if (needsMySignature) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

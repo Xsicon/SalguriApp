@@ -59,6 +59,7 @@ class DocumentTemplate {
 
 class MyLeaseSummary {
   final String id;
+  final String businessUserId;
   final String unitLabel;
   final String propertyTitle;
   final String propertyAddress;
@@ -68,9 +69,12 @@ class MyLeaseSummary {
   final bool businessSigned;
   final bool tenantSigned;
   final String? sealedDocumentUrl;
+  final String depositStatus;
+  final double? depositAmount;
 
   const MyLeaseSummary({
     required this.id,
+    required this.businessUserId,
     required this.unitLabel,
     required this.propertyTitle,
     required this.propertyAddress,
@@ -80,10 +84,13 @@ class MyLeaseSummary {
     this.templateId,
     this.documentUrl,
     this.sealedDocumentUrl,
+    this.depositStatus = 'unpaid',
+    this.depositAmount,
   });
 
   factory MyLeaseSummary.fromJson(Map<String, dynamic> j) => MyLeaseSummary(
         id: j['id'] as String,
+        businessUserId: j['business_user_id'] as String? ?? '',
         unitLabel: (j['unit_label'] as String?) ?? '',
         propertyTitle: (j['property_title'] as String?) ?? '',
         propertyAddress: (j['property_address'] as String?) ?? '',
@@ -93,6 +100,8 @@ class MyLeaseSummary {
         businessSigned: (j['business_signed'] as bool?) ?? false,
         tenantSigned: (j['tenant_signed'] as bool?) ?? false,
         sealedDocumentUrl: j['sealed_document_url'] as String?,
+        depositStatus: (j['deposit_status'] as String?) ?? 'unpaid',
+        depositAmount: (j['deposit_amount'] as num?)?.toDouble(),
       );
 }
 
@@ -138,6 +147,42 @@ class MyInspectionSummary {
         businessSigned: (j['business_signed'] as bool?) ?? false,
         tenantSigned: (j['tenant_signed'] as bool?) ?? false,
         sealedReportUrl: j['sealed_report_url'] as String?,
+      );
+}
+
+class MyApplicationSummary {
+  final String id;
+  final String? propertyId;
+  final String propertyTitle;
+  final String status;
+  final double? monthlyIncome;
+  final String? notes;
+  final DateTime submittedAt;
+  final DateTime? reviewedAt;
+  final String? reviewerNotes;
+
+  const MyApplicationSummary({
+    required this.id,
+    required this.propertyTitle,
+    required this.status,
+    required this.submittedAt,
+    this.propertyId,
+    this.monthlyIncome,
+    this.notes,
+    this.reviewedAt,
+    this.reviewerNotes,
+  });
+
+  factory MyApplicationSummary.fromJson(Map<String, dynamic> j) => MyApplicationSummary(
+        id: j['id'] as String,
+        propertyId: j['property_id'] as String?,
+        propertyTitle: (j['property_title'] as String?) ?? '',
+        status: (j['status'] as String?) ?? 'under_review',
+        monthlyIncome: (j['monthly_income'] as num?)?.toDouble(),
+        notes: j['notes'] as String?,
+        submittedAt: DateTime.tryParse(j['submitted_at'] as String? ?? '') ?? DateTime.now(),
+        reviewedAt: j['reviewed_at'] == null ? null : DateTime.tryParse(j['reviewed_at'] as String),
+        reviewerNotes: j['reviewer_notes'] as String?,
       );
 }
 

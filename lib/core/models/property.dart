@@ -20,6 +20,7 @@ class Property {
   final double latitude;
   final double longitude;
   final String? ownerUserId;
+  final String status;
 
   const Property({
     required this.id,
@@ -41,7 +42,10 @@ class Property {
     this.latitude = 2.0469,
     this.longitude = 45.3182,
     this.ownerUserId,
+    this.status = 'active',
   });
+
+  bool get isAvailableToApply => type == 'For Rent' && status == 'active';
 
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
@@ -64,6 +68,7 @@ class Property {
       latitude: (json['latitude'] as num?)?.toDouble() ?? 2.0469,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 45.3182,
       ownerUserId: json['owner_user_id'] as String?,
+      status: json['status'] as String? ?? 'active',
     );
   }
 

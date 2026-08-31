@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
@@ -27,20 +28,20 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: GoogleFonts.poppins(
           color: AppColors.textPrimary,
-          fontSize: 17,
+          fontSize: 17.sp,
           fontWeight: FontWeight.w700,
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 22),
+        iconTheme: IconThemeData(color: AppColors.textPrimary, size: 22.r),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+          padding: EdgeInsets.symmetric(vertical: 16.h),
           textStyle: GoogleFonts.poppins(
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
           ),
@@ -50,10 +51,10 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.border),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+          padding: EdgeInsets.symmetric(vertical: 16.h),
           textStyle: GoogleFonts.poppins(
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
           ),
@@ -63,8 +64,8 @@ class AppTheme {
         backgroundColor: AppColors.white,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textMuted,
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w500),
+        selectedLabelStyle: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w500),
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
@@ -72,29 +73,29 @@ class AppTheme {
         color: AppColors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           side: const BorderSide(color: AppColors.border, width: 0.5),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         hintStyle: GoogleFonts.poppins(
           color: AppColors.textMuted,
-          fontSize: 15,
+          fontSize: 15.sp,
         ),
       ),
       dividerTheme: const DividerThemeData(
@@ -126,20 +127,20 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: GoogleFonts.poppins(
           color: colorScheme.onSurface,
-          fontSize: 17,
+          fontSize: 17.sp,
           fontWeight: FontWeight.w700,
         ),
-        iconTheme: IconThemeData(color: colorScheme.onSurface, size: 22),
+        iconTheme: IconThemeData(color: colorScheme.onSurface, size: 22.r),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+          padding: EdgeInsets.symmetric(vertical: 16.h),
           textStyle: GoogleFonts.poppins(
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
           ),
@@ -149,10 +150,10 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: colorScheme.onSurface,
           side: BorderSide(color: colorScheme.outlineVariant),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+          padding: EdgeInsets.symmetric(vertical: 16.h),
           textStyle: GoogleFonts.poppins(
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
           ),
@@ -162,8 +163,8 @@ class AppTheme {
         backgroundColor: colorScheme.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: colorScheme.onSurfaceVariant,
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w500),
+        selectedLabelStyle: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11.sp, fontWeight: FontWeight.w500),
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
@@ -171,29 +172,29 @@ class AppTheme {
         color: colorScheme.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           side: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         hintStyle: GoogleFonts.poppins(
           color: colorScheme.onSurfaceVariant,
-          fontSize: 15,
+          fontSize: 15.sp,
         ),
       ),
       dividerTheme: DividerThemeData(

@@ -1,8 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/nav/bottom_nav_bar.dart';
 import '../../core/models/property.dart';
 import '../../core/models/rental.dart';
 import '../../core/models/service_category.dart';
@@ -15,13 +17,19 @@ import '../profile/profile_tab.dart';
 import '../property/properties_screen.dart';
 import '../property/property_details_screen.dart';
 import '../property/property_filter_screen.dart';
+import '../rental/my_applications_screen.dart';
+import '../rental/my_leases_screen.dart';
 import '../rental/my_rental_screen.dart';
 import '../inbox/inbox_screen.dart';
 import '../services/service_request_screen.dart';
 import '../services/service_tracking_screen.dart';
+import '../services/job_marketplace_screen.dart';
+import '../services/my_service_requests_screen.dart';
 import '../explore/explore_hub_screen.dart';
 import '../explore/saved_items_screen.dart';
+import '../notifications/notifications_screen.dart';
 import '../rental/pay_rent_screen.dart';
+import '../../services/notification_center.dart';
 
 const _quickActions = [
   {'icon': Icons.search_rounded, 'label': 'Search', 'gradient': [0xFF2563EB, 0xFF3B82F6]},
@@ -58,6 +66,9 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
     final parts = _userName.split(' ');
     return parts.first;
   }
+
+  String? get _avatarUrl =>
+      SupabaseService.currentUser?.userMetadata?['avatar_url'] as String?;
 
   String _greeting(AppLocalizations l) {
     final hour = DateTime.now().hour;
@@ -163,7 +174,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           SliverToBoxAdapter(child: _buildActiveRequests()),
           SliverToBoxAdapter(child: _buildRecommendedProperties()),
           SliverToBoxAdapter(child: _buildBottomActions()),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          SliverToBoxAdapter(child: SizedBox(height: 32.h)),
         ],
       ),
     );
@@ -188,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+          padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 28.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -196,13 +207,19 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    width: 42.w,
+                    height: 42.h,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFFFDE68A), Color(0xFFF59E0B)],
                       ),
                       shape: BoxShape.circle,
+                      image: _avatarUrl != null
+                          ? DecorationImage(
+                              image: NetworkImage(_avatarUrl!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
@@ -211,89 +228,103 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        _firstName.isNotEmpty ? _firstName[0].toUpperCase() : 'U',
-                        style: const TextStyle(
-                          color: Color(0xFF92400E),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
+                    child: _avatarUrl == null
+                        ? Center(
+                            child: Text(
+                              _firstName.isNotEmpty ? _firstName[0].toUpperCase() : 'U',
+                              style: TextStyle(
+                                color: const Color(0xFF92400E),
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
                   Text(
                     l.tr('appName'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.3,
                     ),
                   ),
                   const Spacer(),
                   // Notification bell
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
                     ),
-                    child: Stack(
-                      children: [
-                        const Center(
-                          child: Icon(
-                            Icons.notifications_outlined,
-                            color: Colors.white,
-                            size: 22,
+                    child: AnimatedBuilder(
+                      animation: NotificationCenter.instance,
+                      builder: (context, _) {
+                        final hasUnread = NotificationCenter.instance.hasUnread;
+                        return Container(
+                          width: 42.w,
+                          height: 42.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            shape: BoxShape.circle,
                           ),
-                        ),
-                        Positioned(
-                          top: 10,
-                          right: 10,
-                          child: Container(
-                            width: 9,
-                            height: 9,
-                            decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: const Color(0xFF2563EB), width: 1.5),
-                            ),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Icon(
+                                  Icons.notifications_outlined,
+                                  color: Colors.white,
+                                  size: 22.r,
+                                ),
+                              ),
+                              if (hasUnread)
+                                Positioned(
+                                  top: 10.h,
+                                  right: 10.w,
+                                  child: Container(
+                                    width: 9.w,
+                                    height: 9.h,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accent,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: const Color(0xFF2563EB), width: 1.5),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               // Greeting
               Text(
                 '${_greeting(l)},',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 '$_firstName!',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
+                  fontSize: 28.sp,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6.h),
               Text(
                 l.tr('welcomeBack'),
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.7),
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -315,7 +346,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
       'Inbox': l.tr('inbox'),
     };
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: _buildGlassCard(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -345,15 +376,15 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
     return Column(
       children: [
         Container(
-          width: 52,
-          height: 52,
+          width: 52.w,
+          height: 52.h,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: gradientColors,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
                 color: gradientColors.first.withValues(alpha: 0.3),
@@ -363,15 +394,15 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
             ],
           ),
           child: Center(
-            child: Icon(icon, color: Colors.white, size: 24),
+            child: Icon(icon, color: Colors.white, size: 24.r),
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10.h),
         Text(
           label,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -410,12 +441,12 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
     final leaseLabel = rental.leaseStatus.toUpperCase();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader('Current Rental', trailing: leaseLabel),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           _buildGlassCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,16 +462,16 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                             rental.address,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 17,
+                              fontSize: 17.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 3),
+                          SizedBox(height: 3.h),
                           Text(
                             rental.location,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                             ),
                           ),
                         ],
@@ -452,7 +483,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 // Rent + Due date
                 Row(
                   children: [
@@ -464,7 +495,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 // Buttons
                 Row(
                   children: [
@@ -480,7 +511,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                         child: const Text('VIEW DETAILS'),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12.w),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -530,7 +561,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
         _serviceRequests.where((r) => r.status == 'pending').length;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -539,9 +570,9 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
             trailing: pendingCount > 0 ? '$pendingCount Pending' : null,
             trailingColor: AppColors.error,
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           ..._serviceRequests.map((req) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.only(bottom: 12.h),
                 child: _buildRequestCard(req),
               )),
         ],
@@ -557,8 +588,8 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 48.w,
+                height: 48.h,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -566,17 +597,17 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                       AppColors.primary.withValues(alpha: 0.05),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Center(
                   child: Icon(
                     _categoryIcon(req),
                     color: AppColors.primary,
-                    size: 22,
+                    size: 22.r,
                   ),
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -585,38 +616,38 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                       req.displayTitle,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2.h),
                     Text(
                       req.shortNumber,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.outline,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (req.statusMessage.isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Row(
                         children: [
                           Container(
-                            width: 7,
-                            height: 7,
+                            width: 7.w,
+                            height: 7.h,
                             decoration: const BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
                               req.statusMessage,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontSize: 13,
+                                fontSize: 13.sp,
                               ),
                             ),
                           ),
@@ -629,27 +660,27 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
             ],
           ),
           if (req.etaMinutes != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               decoration: BoxDecoration(
                 color: AppColors.primarySoft,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.access_time_rounded, color: AppColors.primary, size: 18),
-                  const SizedBox(width: 8),
+                  Icon(Icons.access_time_rounded, color: AppColors.primary, size: 18.r),
+                  SizedBox(width: 8.w),
                   Text(
                     l.tr('estimatedArrival'),
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13.sp),
                   ),
                   const Spacer(),
                   Text(
                     '${req.etaMinutes} ${l.tr('min')}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -657,7 +688,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               ),
             ),
           ],
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -682,7 +713,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   Widget _buildRecommendedProperties() {
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -693,7 +724,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                 l.tr('recommended'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 19,
+                  fontSize: 19.sp,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -702,16 +733,16 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                   MaterialPageRoute(builder: (_) => const PropertiesScreen()),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
                   decoration: BoxDecoration(
                     color: AppColors.primarySoft,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
                     l.tr('seeAll'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -719,25 +750,25 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           if (_properties.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24.h),
               child: Center(
                 child: Text(
                   l.tr('noPropertiesAvailable'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 14),
+                  style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 14.sp),
                 ),
               ),
             )
           else
             SizedBox(
-              height: 290,
+              height: 290.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 clipBehavior: Clip.none,
                 itemCount: _properties.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 16),
+                separatorBuilder: (_, __) => SizedBox(width: 16.w),
                 itemBuilder: (context, index) {
                   final prop = _properties[index];
                   return GestureDetector(
@@ -759,10 +790,10 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   Widget _buildPropertyCard({required Property property}) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: 230,
+      width: 230.w,
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.06),
@@ -779,7 +810,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           Stack(
             children: [
               SizedBox(
-                height: 150,
+                height: 150.h,
                 width: double.infinity,
                 child: Image.network(
                   property.images.isNotEmpty ? property.images.first : '',
@@ -787,7 +818,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                   errorBuilder: (_, _, _) => Container(
                     color: cs.surfaceContainerHighest,
                     child: Center(
-                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40),
+                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40.r),
                     ),
                   ),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -806,23 +837,23 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               ),
               // Price tag
               Positioned(
-                top: 12,
-                right: 12,
+                top: 12.h,
+                right: 12.w,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                       decoration: BoxDecoration(
                         color: AppColors.black.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Text(
                         property.price,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -832,19 +863,19 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               ),
               // Type badge
               Positioned(
-                top: 12,
-                left: 12,
+                top: 12.h,
+                left: 12.w,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
                     property.type,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -854,7 +885,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           ),
           // Info
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -862,23 +893,23 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                   property.title,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 Row(
                   children: [
-                    const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 15),
-                    const SizedBox(width: 4),
+                    Icon(Icons.location_on_rounded, color: AppColors.primary, size: 15.r),
+                    SizedBox(width: 4.w),
                     Expanded(
                       child: Text(
                         property.location,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -886,21 +917,21 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 // Stats row
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildPropertyStat(Icons.bed_rounded, '${property.beds}'),
-                      Container(width: 1, height: 16, color: cs.outlineVariant),
+                      Container(width: 1.w, height: 16.h, color: cs.outlineVariant),
                       _buildPropertyStat(Icons.bathtub_rounded, '${property.baths}'),
-                      Container(width: 1, height: 16, color: cs.outlineVariant),
+                      Container(width: 1.w, height: 16.h, color: cs.outlineVariant),
                       _buildPropertyStat(Icons.star_rounded, property.rating.toString()),
                     ],
                   ),
@@ -917,13 +948,13 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppColors.primary, size: 16),
-        const SizedBox(width: 4),
+        Icon(icon, color: AppColors.primary, size: 16.r),
+        SizedBox(width: 4.w),
         Text(
           value,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 13,
+            fontSize: 13.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -936,7 +967,7 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   Widget _buildBottomActions() {
     final l = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         children: [
           _buildActionRow(Icons.grid_view_rounded, l.tr('viewAllProperties'), () {
@@ -944,12 +975,36 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
               MaterialPageRoute(builder: (_) => const PropertiesScreen()),
             );
           }),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           _buildActionRow(Icons.handyman_rounded, l.tr('seeAllServices'), () {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => ServiceRequestScreen(rental: _activeRental),
               ),
+            );
+          }),
+          SizedBox(height: 12.h),
+          _buildActionRow(Icons.assignment_outlined, 'Applications', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MyApplicationsScreen()),
+            );
+          }),
+          SizedBox(height: 12.h),
+          _buildActionRow(Icons.description_outlined, 'Leases', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MyLeasesScreen()),
+            );
+          }),
+          SizedBox(height: 12.h),
+          _buildActionRow(Icons.storefront_outlined, 'Service Providers', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const JobMarketplaceScreen()),
+            );
+          }),
+          SizedBox(height: 12.h),
+          _buildActionRow(Icons.checklist_outlined, 'My Service Requests', () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MyServiceRequestsScreen()),
             );
           }),
         ],
@@ -962,38 +1017,38 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
     return GestureDetector(
       onTap: onTap,
       child: _buildGlassCard(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 40.w,
+              height: 40.h,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Center(child: Icon(icon, color: AppColors.primary, size: 20)),
+              child: Center(child: Icon(icon, color: AppColors.primary, size: 20.r)),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             Container(
-              width: 32,
-              height: 32,
+              width: 32.w,
+              height: 32.h,
               decoration: BoxDecoration(
                 color: cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
-              child: const Center(
-                child: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.primary, size: 14),
+              child: Center(
+                child: Icon(Icons.arrow_forward_ios_rounded, color: AppColors.primary, size: 14.r),
               ),
             ),
           ],
@@ -1005,53 +1060,12 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   // ---------- Bottom Nav ----------
 
   Widget _buildBottomNav() {
-    final l = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surface,
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _currentNavIndex,
-        onTap: (i) {
-          setState(() => _currentNavIndex = i);
-          if (i == 0) _loadData();
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home_rounded),
-            label: l.tr('home'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.search_rounded),
-            activeIcon: const Icon(Icons.search_rounded),
-            label: l.tr('search'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.explore_outlined),
-            activeIcon: const Icon(Icons.explore_rounded),
-            label: l.tr('explore'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.chat_bubble_outline_rounded),
-            activeIcon: const Icon(Icons.chat_bubble_rounded),
-            label: l.tr('inbox'),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person_outline_rounded),
-            activeIcon: const Icon(Icons.person_rounded),
-            label: l.tr('profile'),
-          ),
-        ],
-      ),
+    return BottomNavBar(
+      currentIndex: _currentNavIndex,
+      onTap: (i) {
+        setState(() => _currentNavIndex = i);
+        if (i == 0) _loadData();
+      },
     );
   }
 
@@ -1062,10 +1076,10 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
   Widget _buildGlassCard({required Widget child, EdgeInsets? padding}) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: padding ?? const EdgeInsets.all(18),
+      padding: padding ?? EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
@@ -1087,22 +1101,22 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           title,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 19,
+            fontSize: 19.sp,
             fontWeight: FontWeight.w800,
           ),
         ),
         if (trailing != null)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
             decoration: BoxDecoration(
               color: (trailingColor ?? AppColors.primary).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
             ),
             child: Text(
               trailing,
               style: TextStyle(
                 color: trailingColor ?? AppColors.primary,
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -1113,10 +1127,10 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
 
   Widget _buildStatusBadge(String text, {required bool isPositive}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: isPositive ? AppColors.successSoft : AppColors.errorSoft,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1124,14 +1138,14 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           Icon(
             isPositive ? Icons.check_circle_rounded : Icons.warning_rounded,
             color: isPositive ? AppColors.success : AppColors.error,
-            size: 14,
+            size: 14.r,
           ),
-          const SizedBox(width: 5),
+          SizedBox(width: 5.w),
           Text(
             text,
             style: TextStyle(
               color: isPositive ? AppColors.success : AppColors.error,
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1149,17 +1163,17 @@ class _DashboardScreenState extends State<DashboardScreen> with RouteAware {
           label,
           style: TextStyle(
             color: cs.outline,
-            fontSize: 11,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6.h),
         Text(
           value,
           style: TextStyle(
             color: isHighlight ? AppColors.primary : cs.onSurface,
-            fontSize: isHighlight ? 22 : 17,
+            fontSize: isHighlight ? 22.sp : 17.sp,
             fontWeight: FontWeight.w800,
           ),
         ),

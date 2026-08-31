@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 
@@ -42,7 +43,7 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
           l.tr('bookingConfirmed'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -52,11 +53,11 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Column(
                   children: [
                     _buildSuccessHeader(cs, l),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     _buildBookingSummary(cs, l),
                   ],
                 ),
@@ -72,50 +73,50 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
   Widget _buildSuccessHeader(ColorScheme cs, AppLocalizations l) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(22.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(18.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Column(
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 72.w,
+            height: 72.h,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.event_available_rounded,
               color: AppColors.primary,
-              size: 38,
+              size: 38.r,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             l.tr('bookingConfirmedTitle'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 21,
+              fontSize: 21.sp,
               fontWeight: FontWeight.w800,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             l.tr('bookingConfirmedMessage'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               height: 1.35,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(999),
@@ -124,7 +125,7 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
               requestNumber,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -137,10 +138,10 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
   Widget _buildBookingSummary(ColorScheme cs, AppLocalizations l) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Column(
@@ -150,15 +151,15 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
             l.tr('bookingSummary'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _summaryRow(cs, l.tr('selectedProperty'), propertyAddress),
           _summaryRow(cs, l.tr('location'), propertySubtitle),
-          const Divider(height: 28),
+          Divider(height: 28.h),
           ...List.generate(serviceNames.length, (index) {
             final schedule = index < scheduledTimes.length
                 ? scheduledTimes[index]
@@ -172,7 +173,7 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
               icon: Icons.schedule_rounded,
             );
           }),
-          const Divider(height: 28),
+          Divider(height: 28.h),
           _summaryRow(
             cs,
             l.tr('estimatedTotal'),
@@ -194,7 +195,7 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
     bool isEmphasized = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 12.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -203,27 +204,27 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
               label,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: isEmphasized ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Flexible(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: 14, color: cs.onSurfaceVariant),
-                  const SizedBox(width: 4),
+                  Icon(icon, size: 14.r, color: cs.onSurfaceVariant),
+                  SizedBox(width: 4.w),
                 ],
                 Flexible(
                   child: Text(
                     value,
                     style: TextStyle(
                       color: valueColor ?? cs.onSurfaceVariant,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: isEmphasized
                           ? FontWeight.w800
                           : FontWeight.w600,
@@ -241,7 +242,7 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
 
   Widget _buildBottomButton(BuildContext context, AppLocalizations l) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
       color: Theme.of(context).colorScheme.surface,
       child: SizedBox(
         width: double.infinity,
@@ -251,14 +252,14 @@ class ServiceBookingConfirmationScreen extends StatelessWidget {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 17),
+            padding: EdgeInsets.symmetric(vertical: 17.h),
             elevation: 0,
           ),
           child: Text(
             l.tr('backToHome'),
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+            style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700),
           ),
         ),
       ),

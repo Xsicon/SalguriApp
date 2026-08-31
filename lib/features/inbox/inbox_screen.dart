@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
@@ -87,19 +88,17 @@ class _InboxScreenState extends State<InboxScreen> {
         users: users,
         onUserSelected: (user) async {
           Navigator.of(context).pop();
-          final conv = await ApiService.getOrCreateConversation(
-            otherUserId: user['id'] as String,
-            otherDisplayName: user['full_name'] as String? ?? 'User',
-            otherAvatarUrl: user['avatar_url'] as String?,
-            otherRole: user['role'] as String? ?? 'user',
-          );
-          if (!mounted) return;
+          // No conversation is created here — only when a message is
+          // actually sent from the chat screen. Backing out before that
+          // leaves nothing behind for either side.
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => ChatDetailScreen(
-                conversationId: conv.id,
+                conversationId: null,
                 name: user['full_name'] as String? ?? 'User',
                 avatarUrl: user['avatar_url'] as String?,
+                pendingOtherUserId: user['id'] as String,
+                pendingOtherRole: user['role'] as String? ?? 'user',
               ),
             ),
           );
@@ -184,7 +183,7 @@ class _InboxScreenState extends State<InboxScreen> {
 
   Widget _buildHeader(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
       child: Row(
         children: [
           if (widget.onBack != null)
@@ -196,7 +195,7 @@ class _InboxScreenState extends State<InboxScreen> {
             child: Text(
               l.tr('messages'),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700),
             ),
           ),
           Icon(Icons.more_vert, color: cs.onSurface),
@@ -207,17 +206,17 @@ class _InboxScreenState extends State<InboxScreen> {
 
   Widget _buildSearchBar(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: TextField(
         controller: _searchController,
         onChanged: (_) => setState(() {}),
         decoration: InputDecoration(
           hintText: l.tr('searchConversations'),
-          hintStyle: TextStyle(color: cs.outline, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+          hintStyle: TextStyle(color: cs.outline, fontSize: 15.sp),
+          prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
-                  icon: Icon(Icons.close, color: cs.outline, size: 20),
+                  icon: Icon(Icons.close, color: cs.outline, size: 20.r),
                   onPressed: () {
                     _searchController.clear();
                     setState(() {});
@@ -227,13 +226,13 @@ class _InboxScreenState extends State<InboxScreen> {
           filled: true,
           fillColor: cs.surfaceContainerHighest,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide.none,
           ),
         ),
-        style: TextStyle(color: cs.onSurface, fontSize: 15),
+        style: TextStyle(color: cs.onSurface, fontSize: 15.sp),
       ),
     );
   }
@@ -242,29 +241,29 @@ class _InboxScreenState extends State<InboxScreen> {
     final filters = [l.tr('all'), l.tr('agents'), l.tr('landlords'), l.tr('providers')];
     final filterKeys = ['All', 'Agents', 'Landlords', 'Providers'];
     return SizedBox(
-      height: 44,
+      height: 44.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
           final isSelected = filterKeys[index] == _selectedFilter;
           return GestureDetector(
             onTap: () => setState(() => _selectedFilter = filterKeys[index]),
             child: Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              height: 36.h,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primary : cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20.r),
               ),
               alignment: Alignment.center,
               child: Text(
                 filters[index],
                 style: TextStyle(
                   color: isSelected ? AppColors.white : cs.onSurfaceVariant,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -279,16 +278,16 @@ class _InboxScreenState extends State<InboxScreen> {
     if (_errorMessage != null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(24.r),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48, color: cs.error),
-              const SizedBox(height: 12),
-              Text(l.tr('errorLoadingConversations'), style: TextStyle(color: cs.error, fontSize: 16, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              Text(_errorMessage!, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13), textAlign: TextAlign.center),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, size: 48.r, color: cs.error),
+              SizedBox(height: 12.h),
+              Text(l.tr('errorLoadingConversations'), style: TextStyle(color: cs.error, fontSize: 16.sp, fontWeight: FontWeight.w600)),
+              SizedBox(height: 8.h),
+              Text(_errorMessage!, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13.sp), textAlign: TextAlign.center),
+              SizedBox(height: 16.h),
               ElevatedButton(onPressed: () { setState(() => _isLoading = true); _loadConversations(); }, child: Text(l.tr('retry'))),
             ],
           ),
@@ -301,16 +300,16 @@ class _InboxScreenState extends State<InboxScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.chat_bubble_outline, size: 48, color: cs.outline),
-            const SizedBox(height: 12),
+            Icon(Icons.chat_bubble_outline, size: 48.r, color: cs.outline),
+            SizedBox(height: 12.h),
             Text(
               l.tr('noConversationsYet'),
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16),
+              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16.sp),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Text(
               'User: ${SupabaseService.currentUser?.id ?? l.tr('notLoggedIn')}',
-              style: TextStyle(color: cs.outline, fontSize: 11),
+              style: TextStyle(color: cs.outline, fontSize: 11.sp),
             ),
           ],
         ),
@@ -320,7 +319,7 @@ class _InboxScreenState extends State<InboxScreen> {
       color: AppColors.primary,
       onRefresh: _loadConversations,
       child: ListView.builder(
-        padding: const EdgeInsets.only(top: 12),
+        padding: EdgeInsets.only(top: 12.h),
         itemCount: conversations.length,
         itemBuilder: (context, index) {
           return _buildConversationTile(conversations[index], cs);
@@ -361,7 +360,7 @@ class _InboxScreenState extends State<InboxScreen> {
         _loadConversations();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         decoration: BoxDecoration(
           border: hasUnread
               ? const Border(left: BorderSide(color: AppColors.primary, width: 4))
@@ -374,23 +373,23 @@ class _InboxScreenState extends State<InboxScreen> {
               children: [
                 if (other?.avatarUrl != null)
                   CircleAvatar(
-                    radius: 28,
+                    radius: 28.r,
                     backgroundImage: NetworkImage(other!.avatarUrl!),
                     backgroundColor: cs.surfaceContainerHighest,
                   )
                 else
                   CircleAvatar(
-                    radius: 28,
+                    radius: 28.r,
                     backgroundColor: cs.surfaceContainerHighest,
                     child: Icon(
                       _roleIcon(other?.role ?? 'user'),
                       color: cs.outline,
-                      size: 24,
+                      size: 24.r,
                     ),
                   ),
               ],
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             // Content
             Expanded(
               child: Column(
@@ -402,7 +401,7 @@ class _InboxScreenState extends State<InboxScreen> {
                         child: Text(
                           other?.displayName ?? 'Unknown',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 15.sp,
                             fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w500,
                             color: cs.onSurface,
                           ),
@@ -410,22 +409,22 @@ class _InboxScreenState extends State<InboxScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       Text(
                         _formatTime(conv.lastMessageAt),
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: hasUnread ? FontWeight.w700 : FontWeight.w400,
                           color: hasUnread ? AppColors.primary : cs.outline,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     conv.lastMessageText ?? '',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400,
                       color: hasUnread ? cs.onSurface : cs.onSurfaceVariant,
                     ),
@@ -435,29 +434,29 @@ class _InboxScreenState extends State<InboxScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             // Badge or chevron
             if (hasUnread)
               Container(
-                height: 22,
-                constraints: const BoxConstraints(minWidth: 22),
-                padding: const EdgeInsets.symmetric(horizontal: 6),
+                height: 22.h,
+                constraints: BoxConstraints(minWidth: 22.w),
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(11),
+                  color: AppColors.error,
+                  borderRadius: BorderRadius.circular(11.r),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '${conv.unreadCount}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.white,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               )
             else
-              Icon(Icons.chevron_right, color: cs.outlineVariant, size: 20),
+              Icon(Icons.chevron_right, color: cs.outlineVariant, size: 20.r),
           ],
         ),
       ),
@@ -469,7 +468,7 @@ class _InboxScreenState extends State<InboxScreen> {
 // User Picker Bottom Sheet
 // ---------------------------------------------------------------------------
 
-class _UserPickerSheet extends StatelessWidget {
+class _UserPickerSheet extends StatefulWidget {
   final List<Map<String, dynamic>> users;
   final void Function(Map<String, dynamic> user) onUserSelected;
 
@@ -479,9 +478,41 @@ class _UserPickerSheet extends StatelessWidget {
   });
 
   @override
+  State<_UserPickerSheet> createState() => _UserPickerSheetState();
+}
+
+class _UserPickerSheetState extends State<_UserPickerSheet> {
+  final _searchCtrl = TextEditingController();
+  String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchCtrl.addListener(() {
+      setState(() => _query = _searchCtrl.text.trim().toLowerCase());
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> get _filtered {
+    if (_query.isEmpty) return widget.users;
+    return widget.users.where((user) {
+      final name = (user['full_name'] as String? ?? '').toLowerCase();
+      final role = (user['role'] as String? ?? '').toLowerCase();
+      return name.contains(_query) || role.contains(_query);
+    }).toList(growable: false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final l = AppLocalizations.of(context);
+    final visible = _filtered;
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.4,
@@ -489,27 +520,48 @@ class _UserPickerSheet extends StatelessWidget {
       expand: false,
       builder: (_, scrollController) => Column(
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Container(
-            width: 40,
-            height: 4,
+            width: 40.w,
+            height: 4.h,
             decoration: BoxDecoration(
               color: cs.outlineVariant,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(2.r),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             l.tr('newMessage'),
             style: TextStyle(
-              fontSize: 17,
+              fontSize: 17.sp,
               fontWeight: FontWeight.w700,
               color: cs.onSurface,
             ),
           ),
-          const SizedBox(height: 12),
-          Divider(height: 1, color: cs.outlineVariant),
-          if (users.isEmpty)
+          SizedBox(height: 12.h),
+          if (widget.users.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: TextField(
+                controller: _searchCtrl,
+                decoration: InputDecoration(
+                  hintText: 'Search people…',
+                  prefixIcon: Icon(Icons.search, size: 20.r),
+                  isDense: true,
+                  filled: true,
+                  fillColor: cs.surfaceContainerHighest,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+          SizedBox(height: 12.h),
+          Divider(height: 1.h, color: cs.outlineVariant),
+          if (widget.users.isEmpty)
             Expanded(
               child: Center(
                 child: Text(
@@ -518,19 +570,28 @@ class _UserPickerSheet extends StatelessWidget {
                 ),
               ),
             )
+          else if (visible.isEmpty)
+            Expanded(
+              child: Center(
+                child: Text(
+                  'No matches for your search',
+                  style: TextStyle(color: cs.onSurfaceVariant),
+                ),
+              ),
+            )
           else
             Expanded(
               child: ListView.builder(
                 controller: scrollController,
-                itemCount: users.length,
+                itemCount: visible.length,
                 itemBuilder: (_, index) {
-                  final user = users[index];
+                  final user = visible[index];
                   final name = user['full_name'] as String? ?? 'User';
                   final role = user['role'] as String? ?? 'user';
                   final avatarUrl = user['avatar_url'] as String?;
                   return ListTile(
                     leading: CircleAvatar(
-                      radius: 24,
+                      radius: 24.r,
                       backgroundImage:
                           avatarUrl != null ? NetworkImage(avatarUrl) : null,
                       backgroundColor: cs.surfaceContainerHighest,
@@ -552,10 +613,12 @@ class _UserPickerSheet extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text(
-                      role[0].toUpperCase() + role.substring(1),
-                      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
+                      role.isEmpty
+                          ? role
+                          : role[0].toUpperCase() + role.substring(1),
+                      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13.sp),
                     ),
-                    onTap: () => onUserSelected(user),
+                    onTap: () => widget.onUserSelected(user),
                   );
                 },
               ),

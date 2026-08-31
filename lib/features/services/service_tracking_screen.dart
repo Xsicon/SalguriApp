@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
@@ -204,18 +205,18 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             child: RefreshIndicator(
               onRefresh: _fetchLatestStatus,
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 24.h),
                 children: [
                   _buildStatusHeader(cs, l),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   _buildEtaCard(cs, l),
                   if (_request.hasAssignedAgent) ...[
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     _buildProviderCard(cs, l),
                   ],
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildTrackingTimeline(cs, l),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildRequestDetails(cs, l),
                 ],
               ),
@@ -245,7 +246,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
     final isCancelled = _request.status == 'cancelled';
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -254,7 +255,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
               ? [const Color(0xFFEF4444), const Color(0xFFDC2626)]
               : [const Color(0xFF2563EB), const Color(0xFF1D4ED8)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
         children: [
@@ -263,45 +264,45 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             animation: _pulseAnimation,
             builder: (context, child) {
               return Container(
-                width: 52,
-                height: 52,
+                width: 52.w,
+                height: 52.h,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: _pulseAnimation.value * 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
                   child: Container(
-                    width: 36,
-                    height: 36,
+                    width: 36.w,
+                    height: 36.h,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.25),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(step.icon, color: Colors.white, size: 20),
+                    child: Icon(step.icon, color: Colors.white, size: 20.r),
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   step.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 17,
+                    fontSize: 17.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   step.subtitle,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 13,
+                    fontSize: 13.sp,
                   ),
                 ),
               ],
@@ -322,10 +323,10 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
         _request.status == 'completed' || _request.status == 'cancelled';
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
@@ -340,18 +341,18 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 44.w,
+                height: 44.h,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(Icons.access_time_rounded,
-                      color: AppColors.primary, size: 22),
+                      color: AppColors.primary, size: 22.r),
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,11 +361,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                       l.tr('estimatedArrival'),
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2.h),
                     Text(
                       _request.status == 'completed'
                           ? l.tr('serviceCompleted')
@@ -377,7 +378,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                                       : l.tr('calculatingEta'),
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -390,18 +391,18 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   animation: _pulseAnimation,
                   builder: (context, _) => Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                     decoration: BoxDecoration(
                       color: AppColors.success
                           .withValues(alpha: 0.08 + _pulseAnimation.value * 0.08),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 7,
-                          height: 7,
+                          width: 7.w,
+                          height: 7.h,
                           decoration: BoxDecoration(
                             color: AppColors.success,
                             shape: BoxShape.circle,
@@ -414,12 +415,12 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                             ],
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        SizedBox(width: 5.w),
                         Text(
                           l.tr('live'),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.success,
-                            fontSize: 11,
+                            fontSize: 11.sp,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.5,
                           ),
@@ -430,10 +431,10 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           // Progress bar
           ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(6.r),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 6,
@@ -442,19 +443,19 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   const AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${l.tr('step')} ${(_currentStep + 1).clamp(1, steps.length)} ${l.tr('of')} ${steps.length}',
-                style: TextStyle(color: cs.outline, fontSize: 12),
+                style: TextStyle(color: cs.outline, fontSize: 12.sp),
               ),
               Text(
                 '${(progress * 100).toInt()}${l.tr('percentComplete')}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -514,10 +515,10 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
     final deals = _request.assignedAgentDeals ?? 0;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
@@ -534,18 +535,18 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             l.tr('yourProvider'),
             style: TextStyle(
               color: cs.outline,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Row(
             children: [
               // Avatar
               Container(
-                width: 52,
-                height: 52,
+                width: 52.w,
+                height: 52.h,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF3C7),
                   shape: BoxShape.circle,
@@ -557,15 +558,15 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 child: Center(
                   child: Text(
                     _request.agentInitials,
-                    style: const TextStyle(
-                      color: Color(0xFFF59E0B),
-                      fontSize: 18,
+                    style: TextStyle(
+                      color: const Color(0xFFF59E0B),
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,39 +575,39 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                       name,
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4.h),
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded,
-                            color: Color(0xFFF59E0B), size: 16),
-                        const SizedBox(width: 3),
+                        Icon(Icons.star_rounded,
+                            color: const Color(0xFFF59E0B), size: 16.r),
+                        SizedBox(width: 3.w),
                         Text(
                           '$rating',
                           style: TextStyle(
                             color: cs.onSurface,
-                            fontSize: 13,
+                            fontSize: 13.sp,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Container(
-                          width: 4,
-                          height: 4,
+                          width: 4.w,
+                          height: 4.h,
                           decoration: BoxDecoration(
                             color: cs.outline,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Text(
                           '$deals ${l.tr('jobsCompleted')}',
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 13,
+                            fontSize: 13.sp,
                           ),
                         ),
                       ],
@@ -616,7 +617,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Row(
             children: [
               Expanded(
@@ -624,38 +625,38 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   onPressed: _request.assignedAgentUserId != null
                       ? () => _openChat()
                       : null,
-                  icon: const Icon(Icons.chat_outlined, size: 18),
+                  icon: Icon(Icons.chat_outlined, size: 18.r),
                   label: Text(l.tr('message')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: BorderSide(color: cs.outlineVariant),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    textStyle: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w600),
+                    padding: EdgeInsets.symmetric(vertical: 11.h),
+                    textStyle: TextStyle(
+                        fontSize: 13.sp, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: _request.assignedAgentPhone != null
                       ? () => _makeCall()
                       : null,
-                  icon: const Icon(Icons.phone_outlined, size: 18),
+                  icon: Icon(Icons.phone_outlined, size: 18.r),
                   label: Text(l.tr('call')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    textStyle: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w600),
+                    padding: EdgeInsets.symmetric(vertical: 11.h),
+                    textStyle: TextStyle(
+                        fontSize: 13.sp, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -677,17 +678,17 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           l.tr('trackingTimeline'),
           style: TextStyle(
             color: cs.outline,
-            fontSize: 11,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Container(
-          padding: const EdgeInsets.all(18),
+          padding: EdgeInsets.all(18.r),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
@@ -722,7 +723,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
       children: [
         // Timeline indicator
         SizedBox(
-          width: 32,
+          width: 32.w,
           child: Column(
             children: [
               // Dot
@@ -730,8 +731,8 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, _) => Container(
-                    width: 28,
-                    height: 28,
+                    width: 28.w,
+                    height: 28.h,
                     decoration: BoxDecoration(
                       color: AppColors.primary
                           .withValues(alpha: _pulseAnimation.value * 0.2),
@@ -739,8 +740,8 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                     ),
                     child: Center(
                       child: Container(
-                        width: 16,
-                        height: 16,
+                        width: 16.w,
+                        height: 16.h,
                         decoration: const BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
@@ -751,8 +752,8 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 )
               else
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 28.w,
+                  height: 28.h,
                   decoration: BoxDecoration(
                     color: isCompleted
                         ? AppColors.primary
@@ -763,7 +764,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                     child: Icon(
                       isCompleted ? Icons.check_rounded : step.icon,
                       color: isCompleted ? Colors.white : cs.outline,
-                      size: 16,
+                      size: 16.r,
                     ),
                   ),
                 ),
@@ -771,8 +772,8 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
               if (!isLast)
                 Container(
                   width: 2,
-                  height: 40,
-                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  height: 40.h,
+                  margin: EdgeInsets.symmetric(vertical: 4.h),
                   color: isCompleted
                       ? AppColors.primary
                       : cs.surfaceContainerHighest,
@@ -780,11 +781,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         // Content
         Expanded(
           child: Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 20.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -795,7 +796,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                         step.title,
                         style: TextStyle(
                           color: isFuture ? cs.outline : cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight:
                               isActive ? FontWeight.w700 : FontWeight.w600,
                         ),
@@ -806,20 +807,20 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                         step.time!,
                         style: TextStyle(
                           color: cs.outline,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.h),
                 Text(
                   step.subtitle,
                   style: TextStyle(
                     color: isFuture
                         ? cs.outline.withValues(alpha: 0.6)
                         : cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],
@@ -840,17 +841,17 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           l.tr('requestDetails'),
           style: TextStyle(
             color: cs.outline,
-            fontSize: 11,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
-          padding: const EdgeInsets.all(18),
+          padding: EdgeInsets.all(18.r),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
@@ -863,26 +864,26 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
           child: Column(
             children: [
               _buildDetailRow(l.tr('requestId'), _request.shortNumber, cs),
-              Divider(color: cs.outlineVariant, height: 24),
+              Divider(color: cs.outlineVariant, height: 24.h),
               _buildDetailRow(l.tr('category'), _request.displayCategory, cs),
               if (_request.description != null &&
                   _request.description!.isNotEmpty) ...[
-                Divider(color: cs.outlineVariant, height: 24),
+                Divider(color: cs.outlineVariant, height: 24.h),
                 _buildDetailRow(
                     l.tr('description'), _request.description!, cs),
               ],
               if (_request.scheduledTime != null &&
                   _request.scheduledTime!.isNotEmpty) ...[
-                Divider(color: cs.outlineVariant, height: 24),
+                Divider(color: cs.outlineVariant, height: 24.h),
                 _buildDetailRow(
                     l.tr('scheduleTime'), _request.scheduledTime!, cs),
               ],
-              Divider(color: cs.outlineVariant, height: 24),
+              Divider(color: cs.outlineVariant, height: 24.h),
               _buildDetailRow(l.tr('status'),
                   _request.status.replaceAll('_', ' ').toUpperCase(), cs,
                   valueColor: AppColors.primary),
               if (_request.etaMinutes != null) ...[
-                Divider(color: cs.outlineVariant, height: 24),
+                Divider(color: cs.outlineVariant, height: 24.h),
                 _buildDetailRow(l.tr('estimatedArrival'),
                     '${_request.etaMinutes} min', cs),
               ],
@@ -899,12 +900,12 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 100,
+          width: 100.w,
           child: Text(
             label,
             style: TextStyle(
               color: cs.outline,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -914,7 +915,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
             value,
             style: TextStyle(
               color: valueColor ?? cs.onSurface,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -930,7 +931,7 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
         _request.status == 'completed' || _request.status == 'cancelled';
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
@@ -950,17 +951,17 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                 foregroundColor: cs.onSurface,
                 side: BorderSide(color: cs.outlineVariant),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w700),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+                textStyle: TextStyle(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700),
               ),
               child: Text(l.tr('back')),
             ),
           ),
           if (!isTerminal) ...[
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
@@ -971,11 +972,11 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w700),
+                  padding: EdgeInsets.symmetric(vertical: 15.h),
+                  textStyle: TextStyle(
+                      fontSize: 14.sp, fontWeight: FontWeight.w700),
                 ),
                 child: Text(l.tr('cancelRequest')),
               ),
@@ -991,20 +992,20 @@ class _ServiceTrackingScreenState extends State<ServiceTrackingScreen>
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cs.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         title: Text(
           l.tr('cancelServiceRequest'),
           style: TextStyle(
             color: cs.onSurface,
             fontWeight: FontWeight.w700,
-            fontSize: 17,
+            fontSize: 17.sp,
           ),
         ),
         content: Text(
           l.tr('cancelServiceConfirm'),
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             height: 1.5,
           ),
         ),

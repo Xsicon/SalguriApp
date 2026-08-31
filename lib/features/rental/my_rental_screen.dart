@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
@@ -85,9 +86,9 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                             _buildLeaseSummary(cs, l),
                             _buildInspectionsLink(context, cs),
                             _buildMaintenance(context, cs, l),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                             _buildCancelRental(cs, l),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
                           ],
                         ),
                       ),
@@ -103,7 +104,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   Widget _buildHeader(BuildContext context, ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
@@ -116,7 +117,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -138,13 +139,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
         : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 0.h),
       child: Container(
-        height: 220,
+        height: 220.h,
         width: double.infinity,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
               color: cs.shadow.withValues(alpha: 0.1),
@@ -163,7 +164,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 color: cs.surfaceContainerHighest,
                 child: Center(
                   child:
-                      Icon(Icons.apartment, color: cs.outline, size: 48),
+                      Icon(Icons.apartment, color: cs.outline, size: 48.r),
                 ),
               ),
             ),
@@ -178,20 +179,20 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
               ),
             ),
             Positioned(
-              top: 14,
-              right: 14,
+              top: 14.h,
+              right: 14.w,
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
                   '${rental.leaseStatus.toUpperCase()} ${l.tr('lease')}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
@@ -199,31 +200,31 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
               ),
             ),
             Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
+              bottom: 16.h,
+              left: 16.w,
+              right: 16.w,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     rental.address,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      const Icon(Icons.location_on,
-                          color: Colors.white70, size: 14),
-                      const SizedBox(width: 4),
+                      Icon(Icons.location_on,
+                          color: Colors.white70, size: 14.r),
+                      SizedBox(width: 4.w),
                       Text(
                         rental.location,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
@@ -251,12 +252,12 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             : 'OVERDUE';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0.h),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         decoration: BoxDecoration(
           color: AppColors.primary,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withValues(alpha: 0.3),
@@ -277,18 +278,18 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                   children: [
                     Text(
                       l.tr('rentStatus'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4.h),
                     Text(
                       '\$${rental.monthlyRent.toStringAsFixed(2)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 26,
+                        fontSize: 26.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -296,38 +297,38 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: Text(
                     dueLabel,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Row(
               children: [
-                const Icon(Icons.calendar_today,
-                    color: Colors.white70, size: 16),
-                const SizedBox(width: 8),
+                Icon(Icons.calendar_today,
+                    color: Colors.white70, size: 16.r),
+                SizedBox(width: 8.w),
                 Text(
                   '${l.tr('due')} $dueFormatted',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -343,18 +344,18 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                     });
                   }
                 },
-                icon: const Icon(Icons.payments_outlined, size: 20),
+                icon: Icon(Icons.payments_outlined, size: 20.r),
                 label: Text(l.tr('payRentNow')),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: AppColors.primary,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  textStyle: const TextStyle(
-                    fontSize: 15,
+                  textStyle: TextStyle(
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -378,13 +379,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
         : '--';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0.h),
       child: Row(
         children: [
           _buildInfoTile(cs, Icons.bed_outlined, bedsLabel, l.tr('rooms')),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           _buildInfoTile(cs, Icons.bathtub_outlined, bathsLabel, l.tr('toilets')),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           _buildInfoTile(cs, Icons.square_foot_outlined, sqftLabel, l.tr('sqFt')),
         ],
       ),
@@ -395,31 +396,31 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
       ColorScheme cs, IconData icon, String value, String label) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
           color: cs.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
               color: AppColors.primary.withValues(alpha: 0.1)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 24),
-            const SizedBox(height: 8),
+            Icon(icon, color: AppColors.primary, size: 24.r),
+            SizedBox(height: 8.h),
             Text(
               value,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2.h),
             Text(
               label,
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 10,
+                fontSize: 10.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
@@ -445,7 +446,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
         : '\$${rental.monthlyRent.toStringAsFixed(2)}';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 0.h),
       child: Column(
         children: [
           Row(
@@ -455,7 +456,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 l.tr('leaseSummary'),
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -467,19 +468,19 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                   l.tr('viewAll'),
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(
               color: cs.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(
                   color: AppColors.primary.withValues(alpha: 0.05)),
             ),
@@ -502,7 +503,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   Widget _buildLeaseRow(ColorScheme cs, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -510,14 +511,14 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
             label,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
           Text(
             value,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -528,39 +529,39 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   Widget _leaseRowDivider(ColorScheme cs) {
     return Divider(
-        height: 1, color: cs.outlineVariant.withValues(alpha: 0.3));
+        height: 1.h, color: cs.outlineVariant.withValues(alpha: 0.3));
   }
 
   // ---------- Inspections ----------
 
   Widget _buildInspectionsLink(BuildContext context, ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0.h),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const MyInspectionsScreen()),
         ),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
             color: cs.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.fact_check_outlined, color: AppColors.primary, size: 22),
-              const SizedBox(width: 12),
+              Icon(Icons.fact_check_outlined, color: AppColors.primary, size: 22.r),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Inspections',
-                        style: TextStyle(color: cs.onSurface, fontSize: 15, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 2),
+                        style: TextStyle(color: cs.onSurface, fontSize: 15.sp, fontWeight: FontWeight.w700)),
+                    SizedBox(height: 2.h),
                     Text('Reports and sign-off requests for your unit',
-                        style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                        style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp)),
                   ],
                 ),
               ),
@@ -611,7 +612,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   Widget _buildMaintenance(BuildContext context, ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 0.h),
       child: Column(
         children: [
           Row(
@@ -621,7 +622,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 l.tr('maintenance'),
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -635,13 +636,13 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                 },
                 child: Row(
                   children: [
-                    const Icon(Icons.add, color: AppColors.primary, size: 18),
-                    const SizedBox(width: 4),
+                    Icon(Icons.add, color: AppColors.primary, size: 18.r),
+                    SizedBox(width: 4.w),
                     Text(
                       l.tr('newRequest'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.primary,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -650,27 +651,27 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           if (_maintenanceRequests.isEmpty)
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(24.r),
               decoration: BoxDecoration(
                 color: cs.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(14.r),
                 border: Border.all(
                     color: AppColors.primary.withValues(alpha: 0.05)),
               ),
               child: Column(
                 children: [
                   Icon(Icons.check_circle_outline,
-                      color: cs.outline, size: 36),
-                  const SizedBox(height: 8),
+                      color: cs.outline, size: 36.r),
+                  SizedBox(height: 8.h),
                   Text(
                     l.tr('noMaintenanceRequests'),
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ],
@@ -690,27 +691,27 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
               final catIconColor = _statusColor(req.status);
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: EdgeInsets.all(14.r),
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14.r),
                     border: Border.all(
                         color: AppColors.primary.withValues(alpha: 0.05)),
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
+                        width: 48.w,
+                        height: 48.h,
                         decoration: BoxDecoration(
                           color: catBgColor,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Icon(catIcon, color: catIconColor, size: 24),
+                        child: Icon(catIcon, color: catIconColor, size: 24.r),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: 14.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,35 +725,35 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
                                     req.title,
                                     style: TextStyle(
                                       color: cs.onSurface,
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 3.h),
                                   decoration: BoxDecoration(
                                     color: sBgColor,
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(4.r),
                                   ),
                                   child: Text(
                                     statusLabel,
                                     style: TextStyle(
                                       color: sColor,
-                                      fontSize: 10,
+                                      fontSize: 10.sp,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4.h),
                             Text(
                               dateLabel,
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 12,
+                                fontSize: 12.sp,
                               ),
                             ),
                           ],
@@ -772,22 +773,22 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
 
   Widget _buildCancelRental(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: SizedBox(
         width: double.infinity,
         child: OutlinedButton.icon(
           onPressed: () => _showCancelConfirmation(),
-          icon: const Icon(Icons.cancel_outlined, size: 18),
+          icon: Icon(Icons.cancel_outlined, size: 18.r),
           label: Text(l.tr('cancelRental')),
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.error,
             side: const BorderSide(color: AppColors.error),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            textStyle: const TextStyle(
-              fontSize: 14,
+            padding: EdgeInsets.symmetric(vertical: 14.h),
+            textStyle: TextStyle(
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -803,7 +804,7 @@ class _MyRentalScreenState extends State<MyRentalScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(l.tr('cancelRental')),
         content: Text(l.tr('cancelRentalConfirm')),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),

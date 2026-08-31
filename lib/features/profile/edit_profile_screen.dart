@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,7 +123,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           l.tr('editProfile'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -134,22 +135,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             _buildAvatarSection(cs),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             Form(
               key: _formKey,
               child: Column(
                 children: [
                   _buildPersonalInfoSection(cs, l),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildPreferencesSection(cs, l),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             _buildSaveButton(l),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
           ],
         ),
       ),
@@ -167,8 +168,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Stack(
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 100.w,
+              height: 100.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFFFEF3C7),
@@ -180,9 +181,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Center(
                 child: Text(
                   _userInitials,
-                  style: const TextStyle(
-                    color: Color(0xFFF59E0B),
-                    fontSize: 36,
+                  style: TextStyle(
+                    color: const Color(0xFFF59E0B),
+                    fontSize: 36.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -192,8 +193,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               bottom: 0,
               right: 0,
               child: Container(
-                width: 34,
-                height: 34,
+                width: 34.w,
+                height: 34.h,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
@@ -206,8 +207,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Icon(Icons.camera_alt, color: AppColors.white, size: 16),
+                child: Center(
+                  child: Icon(Icons.camera_alt, color: AppColors.white, size: 16.r),
                 ),
               ),
             ),
@@ -221,39 +222,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildPersonalInfoSection(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionTitle(cs, l.tr('personalInformation')),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           _buildLabel(cs, l.tr('fullName')),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           TextFormField(
             controller: _fullNameCtrl,
-            style: TextStyle(fontSize: 16, color: cs.onSurface),
+            style: TextStyle(fontSize: 16.sp, color: cs.onSurface),
             validator: (v) =>
                 (v == null || v.trim().isEmpty) ? 'Name is required' : null,
             decoration: _inputDecoration(l.tr('enterFullName')),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildLabel(cs, l.tr('phoneNumber')),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           TextFormField(
             controller: _phoneCtrl,
             readOnly: true,
-            style: TextStyle(fontSize: 16, color: cs.onSurfaceVariant),
+            style: TextStyle(fontSize: 16.sp, color: cs.onSurfaceVariant),
             decoration: _inputDecoration(l.tr('phoneNumberHint')).copyWith(
-              suffixIcon: Icon(Icons.lock_outline, color: cs.outline, size: 20),
+              suffixIcon: Icon(Icons.lock_outline, color: cs.outline, size: 20.r),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildLabel(cs, l.tr('emailAddress')),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           TextFormField(
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
-            style: TextStyle(fontSize: 16, color: cs.onSurface),
+            style: TextStyle(fontSize: 16.sp, color: cs.onSurface),
             decoration: _inputDecoration(l.tr('enterEmail')),
           ),
         ],
@@ -271,18 +272,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       l.tr('services'),
     ];
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionTitle(cs, l.tr('preferences')),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           // Property type chips
           _buildLabel(cs, l.tr('propertyTypePreferences')),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 10.w,
+            runSpacing: 10.h,
             children: propertyTypes.map((type) {
               final selected = _selectedPropertyTypes.contains(type);
               return ChoiceChip(
@@ -302,10 +303,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 labelStyle: TextStyle(
                   color: selected ? AppColors.primary : cs.onSurface,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                   side: BorderSide(
                     color: selected ? AppColors.primary : cs.outlineVariant,
                   ),
@@ -314,12 +315,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           // Toggles card
           Container(
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: cs.shadow.withValues(alpha: 0.04),
@@ -339,7 +340,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 Divider(
                   height: 1,
-                  indent: 52,
+                  indent: 52.w,
                   color: cs.surfaceContainerHighest,
                 ),
                 _buildToggleRow(
@@ -355,7 +356,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
                 Divider(
                   height: 1,
-                  indent: 52,
+                  indent: 52.w,
                   color: cs.surfaceContainerHighest,
                 ),
                 _buildLanguageRow(cs, l),
@@ -383,25 +384,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Container(
-                    width: 36,
-                    height: 4,
+                    width: 36.w,
+                    height: 4.h,
                     decoration: BoxDecoration(
                       color: cs.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Text(
                     l.tr('selectLanguage'),
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   ...languages.map(
                     (lang) => ListTile(
                       title: Text(lang),
@@ -411,7 +412,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onTap: () => Navigator.pop(ctx, lang),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                 ],
               ),
             );
@@ -426,19 +427,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => _language = picked);
         }
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
         child: Row(
           children: [
-            const Icon(Icons.language, color: AppColors.primary, size: 22),
-            const SizedBox(width: 14),
+            Icon(Icons.language, color: AppColors.primary, size: 22.r),
+            SizedBox(width: 14.w),
             Expanded(
               child: Text(
                 l.tr('language'),
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -447,12 +448,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _language,
               style: TextStyle(
                 color: cs.outline,
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            const SizedBox(width: 4),
-            Icon(Icons.chevron_right, color: cs.outline, size: 22),
+            SizedBox(width: 4.w),
+            Icon(Icons.chevron_right, color: cs.outline, size: 22.r),
           ],
         ),
       ),
@@ -463,10 +464,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildSaveButton(AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SizedBox(
         width: double.infinity,
-        height: 56,
+        height: 56.h,
         child: ElevatedButton(
           onPressed: _isSaving ? null : _onSave,
           style: ElevatedButton.styleFrom(
@@ -474,21 +475,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             foregroundColor: AppColors.white,
             disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             elevation: 4,
             shadowColor: AppColors.primary.withValues(alpha: 0.3),
-            textStyle: const TextStyle(
-              fontSize: 16,
+            textStyle: TextStyle(
+              fontSize: 16.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
             ),
           ),
           child: _isSaving
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
+              ? SizedBox(
+                  width: 24.w,
+                  height: 24.h,
+                  child: const CircularProgressIndicator(
                     strokeWidth: 2.5,
                     color: AppColors.white,
                   ),
@@ -503,12 +504,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildSectionTitle(ColorScheme cs, String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4.w),
       child: Text(
         title,
         style: TextStyle(
           color: cs.outline,
-          fontSize: 11,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.5,
         ),
@@ -521,7 +522,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       text,
       style: TextStyle(
         color: cs.onSurface,
-        fontSize: 13,
+        fontSize: 13.sp,
         fontWeight: FontWeight.w600,
       ),
     );
@@ -535,17 +536,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 11.h),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
-          const SizedBox(width: 14),
+          Icon(icon, color: AppColors.primary, size: 22.r),
+          SizedBox(width: 14.w),
           Expanded(
             child: Text(
               label,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -568,30 +569,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       hintText: hint,
       hintStyle: TextStyle(
         color: cs.outline,
-        fontSize: 16,
+        fontSize: 16.sp,
         fontWeight: FontWeight.w400,
       ),
       filled: true,
       fillColor: cs.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: cs.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: cs.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: Color(0xFFEF4444)),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
       ),
     );

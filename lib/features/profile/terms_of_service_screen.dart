@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 
@@ -62,13 +63,13 @@ class TermsOfServiceScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 32.h),
         children: [
           _buildHeaderCard(cs, l),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           for (final section in sections) ...[
             _buildSectionCard(section, cs),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
           ],
           _buildFooter(cs, l),
         ],
@@ -78,43 +79,43 @@ class TermsOfServiceScreen extends StatelessWidget {
 
   Widget _buildHeaderCard(ColorScheme cs, AppLocalizations l) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.12),
         ),
       ),
       child: Column(
         children: [
-          const Icon(Icons.description_outlined,
-              color: AppColors.primary, size: 36),
-          const SizedBox(height: 12),
+          Icon(Icons.description_outlined,
+              color: AppColors.primary, size: 36.r),
+          SizedBox(height: 12.h),
           Text(
             '${l.tr('appName')} ${l.tr('termsOfService')}',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           Text(
             l.tr('lastUpdated'),
             style: TextStyle(
               color: cs.outline,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w400,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             l.tr('termsIntro'),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w400,
               height: 1.5,
             ),
@@ -128,7 +129,7 @@ class TermsOfServiceScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.04),
@@ -138,41 +139,41 @@ class TermsOfServiceScreen extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 36.w,
+                  height: 36.h,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                   child:
-                      Icon(section.icon, color: AppColors.primary, size: 20),
+                      Icon(section.icon, color: AppColors.primary, size: 20.r),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
                     section.title,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Text(
               section.body,
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
                 height: 1.6,
               ),
@@ -185,25 +186,25 @@ class TermsOfServiceScreen extends StatelessWidget {
 
   Widget _buildFooter(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: EdgeInsets.only(top: 8.h),
       child: Column(
         children: [
           Divider(color: cs.surfaceContainerHighest),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             '${l.tr('appName')} ${l.tr('version')}',
             style: TextStyle(
               color: cs.outline,
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             l.tr('tagline'),
             style: TextStyle(
               color: cs.outline,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w400,
             ),
           ),

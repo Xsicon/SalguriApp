@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/models/property.dart';
@@ -165,13 +166,13 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
   Widget _buildAppBar(AppLocalizations l) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
           Expanded(
             child: Text(
@@ -179,7 +180,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.3,
               ),
@@ -188,7 +189,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.settings_outlined, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
         ],
       ),
@@ -201,12 +202,12 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     final cs = Theme.of(context).colorScheme;
     final tabs = [l.tr('properties'), l.tr('services'), l.tr('lots'), l.tr('lists')];
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
       child: Container(
-        height: 42,
+        height: 42.h,
         decoration: BoxDecoration(
           color: cs.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: Row(
           children: List.generate(tabs.length, (index) {
@@ -216,10 +217,10 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                 onTap: () => setState(() => _selectedTab = index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.all(3),
+                  margin: EdgeInsets.all(3.r),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(9),
+                    borderRadius: BorderRadius.circular(9.r),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
@@ -235,7 +236,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                       tabs[index],
                       style: TextStyle(
                         color: isSelected ? AppColors.white : cs.onSurfaceVariant,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                       ),
                     ),
@@ -257,7 +258,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: _buildPropertyGrid(l)),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        SliverToBoxAdapter(child: SizedBox(height: 24.h)),
       ],
     );
   }
@@ -273,7 +274,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -281,18 +282,18 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
             '${_savedProperties.length} ${l.tr('savedProperties')}',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
+              mainAxisSpacing: 14.h,
+              crossAxisSpacing: 14.w,
               childAspectRatio: 0.58,
             ),
             itemCount: _savedProperties.length,
@@ -311,7 +312,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -328,7 +329,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           Stack(
             children: [
               SizedBox(
-                height: 110,
+                height: 110.h,
                 width: double.infinity,
                 child: Image.network(
                   property.images.isNotEmpty ? property.images.first : '',
@@ -337,7 +338,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     color: cs.surfaceContainerHighest,
                     child: Center(
                       child: Icon(Icons.home_outlined,
-                          color: cs.outline, size: 32),
+                          color: cs.outline, size: 32.r),
                     ),
                   ),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -355,21 +356,21 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                 ),
               ),
               Positioned(
-                top: 8,
-                right: 8,
+                top: 8.h,
+                right: 8.w,
                 child: GestureDetector(
                   onTap: () => _unsaveProperty(property),
                   child: Container(
-                    width: 30,
-                    height: 30,
+                    width: 30.w,
+                    height: 30.h,
                     decoration: const BoxDecoration(
                       color: Colors.black38,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite,
-                      color: Color(0xFFEF4444),
-                      size: 16,
+                      color: const Color(0xFFEF4444),
+                      size: 16.r,
                     ),
                   ),
                 ),
@@ -378,67 +379,67 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+              padding: EdgeInsets.fromLTRB(10.w, 8.h, 10.w, 10.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     property.price,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3.h),
                   Text(
                     property.title,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     property.location,
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w400,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Row(
                     children: [
-                      Icon(Icons.bed_outlined, color: cs.outline, size: 13),
-                      const SizedBox(width: 2),
+                      Icon(Icons.bed_outlined, color: cs.outline, size: 13.r),
+                      SizedBox(width: 2.w),
                       Text('${property.beds}',
                           style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 11,
+                              fontSize: 11.sp,
                               fontWeight: FontWeight.w500)),
-                      const SizedBox(width: 8),
-                      Icon(Icons.bathtub_outlined, color: cs.outline, size: 13),
-                      const SizedBox(width: 2),
+                      SizedBox(width: 8.w),
+                      Icon(Icons.bathtub_outlined, color: cs.outline, size: 13.r),
+                      SizedBox(width: 2.w),
                       Text('${property.baths}',
                           style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 11,
+                              fontSize: 11.sp,
                               fontWeight: FontWeight.w500)),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       Icon(Icons.square_foot_outlined,
-                          color: cs.outline, size: 13),
-                      const SizedBox(width: 2),
+                          color: cs.outline, size: 13.r),
+                      SizedBox(width: 2.w),
                       Flexible(
                         child: Text('${property.sqft}',
                             style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 11,
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w500),
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -447,19 +448,19 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                   const Spacer(),
                   SizedBox(
                     width: double.infinity,
-                    height: 32,
+                    height: 32.h,
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                         padding: EdgeInsets.zero,
                         elevation: 0,
-                        textStyle: const TextStyle(
-                          fontSize: 12,
+                        textStyle: TextStyle(
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -506,31 +507,31 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
         .toList();
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 24.h),
       children: [
         if (active.isNotEmpty) ...[
           Text(
             '${active.length} ${l.tr('active')}',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           ...active.map((sr) => _buildServiceRequestCard(sr, cs, l)),
         ],
         if (past.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           Text(
             '${past.length} ${l.tr('past')}',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           ...past.map((sr) => _buildServiceRequestCard(sr, cs, l)),
         ],
       ],
@@ -577,11 +578,11 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     };
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -594,21 +595,21 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 48.w,
+            height: 48.h,
             decoration: BoxDecoration(
               color: isActive
                   ? AppColors.primary.withValues(alpha: 0.1)
                   : cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               categoryIcon,
               color: isActive ? AppColors.primary : cs.onSurfaceVariant,
-              size: 24,
+              size: 24.r,
             ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -617,32 +618,32 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                   sr.displayTitle,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   '${sr.shortNumber}  •  ${sr.displayCategory}',
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 if (sr.etaMinutes != null && isActive) ...[
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      Icon(Icons.schedule, color: cs.outline, size: 13),
-                      const SizedBox(width: 4),
+                      Icon(Icons.schedule, color: cs.outline, size: 13.r),
+                      SizedBox(width: 4.w),
                       Text(
                         '${l.tr('eta')} ${sr.etaMinutes} min',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 11,
+                          fontSize: 11.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -652,18 +653,18 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
             decoration: BoxDecoration(
               color: statusBg,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
               statusLabel,
               style: TextStyle(
                 color: statusColor,
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -692,17 +693,17 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 24.h),
       children: [
         Text(
           '${_savedLots.length} ${l.tr('savedLots')}',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         ..._savedLots.map((lot) => _buildLotCard(lot, cs, l)),
       ],
     );
@@ -710,10 +711,10 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
 
   Widget _buildLotCard(Property lot, ColorScheme cs, AppLocalizations l) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: EdgeInsets.only(bottom: 14.h),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -727,8 +728,8 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
       child: Row(
         children: [
           SizedBox(
-            width: 120,
-            height: 110,
+            width: 120.w,
+            height: 110.h,
             child: Image.network(
               lot.images.isNotEmpty ? lot.images.first : '',
               fit: BoxFit.cover,
@@ -736,48 +737,48 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                 color: cs.surfaceContainerHighest,
                 child: Center(
                   child: Icon(Icons.terrain_outlined,
-                      color: cs.outline, size: 32),
+                      color: cs.outline, size: 32.r),
                 ),
               ),
             ),
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.r),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     lot.price,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     lot.title,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Row(
                     children: [
                       Icon(Icons.location_on_outlined,
-                          color: cs.outline, size: 13),
-                      const SizedBox(width: 3),
+                          color: cs.outline, size: 13.r),
+                      SizedBox(width: 3.w),
                       Flexible(
                         child: Text(
                           lot.location,
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -785,17 +786,17 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Row(
                     children: [
                       Icon(Icons.square_foot_outlined,
-                          color: cs.outline, size: 13),
-                      const SizedBox(width: 3),
+                          color: cs.outline, size: 13.r),
+                      SizedBox(width: 3.w),
                       Text(
                         '${lot.sqft} ${l.tr('sqft')}',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -803,7 +804,7 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                       GestureDetector(
                         onTap: () => _unsaveProperty(lot),
                         child: Icon(Icons.favorite,
-                            color: const Color(0xFFEF4444), size: 20),
+                            color: const Color(0xFFEF4444), size: 20.r),
                       ),
                     ],
                   ),
@@ -835,17 +836,17 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 24.h),
       children: [
         Text(
           '${_collections.length} ${l.tr('lists')}',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
         ..._collections.map((name) => _buildListTile(name, cs, l)),
       ],
     );
@@ -858,11 +859,11 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
     return GestureDetector(
       onTap: () => _openCollection(name),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -875,15 +876,15 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
         child: Row(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 48.w,
+              height: 48.h,
               decoration: BoxDecoration(
                 color: cs.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(icon, color: AppColors.primary, size: 24),
+              child: Icon(icon, color: AppColors.primary, size: 24.r),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -892,22 +893,22 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
                     name == 'default' ? l.tr('favorites') : name,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3.h),
                   Text(
                     '$count ${count == 1 ? l.tr('item') : l.tr('items')}',
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: cs.outline, size: 22),
+            Icon(Icons.chevron_right, color: cs.outline, size: 22.r),
           ],
         ),
       ),
@@ -949,34 +950,34 @@ class _SavedItemsScreenState extends State<SavedItemsScreen> {
   }) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 60),
+      padding: EdgeInsets.symmetric(vertical: 60.h),
       child: Center(
         child: Column(
           children: [
             Container(
-              width: 72,
-              height: 72,
+              width: 72.w,
+              height: 72.h,
               decoration: BoxDecoration(
                 color: cs.surfaceContainerHighest,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: cs.outline, size: 36),
+              child: Icon(icon, color: cs.outline, size: 36.r),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               title,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(
               subtitle,
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 13,
+                fontSize: 13.sp,
               ),
             ),
           ],
@@ -1007,7 +1008,7 @@ class _CollectionDetailScreen extends StatelessWidget {
       backgroundColor: cs.surfaceContainerLowest,
       appBar: AppBar(
         title: Text(name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700)),
         centerTitle: true,
         backgroundColor: cs.surface,
         surfaceTintColor: Colors.transparent,
@@ -1017,13 +1018,13 @@ class _CollectionDetailScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.folder_open_outlined, color: cs.outline, size: 48),
-                  const SizedBox(height: 12),
+                  Icon(Icons.folder_open_outlined, color: cs.outline, size: 48.r),
+                  SizedBox(height: 12.h),
                   Text(
                     l.tr('listIsEmpty'),
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1031,15 +1032,15 @@ class _CollectionDetailScreen extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20.r),
               itemCount: properties.length,
               itemBuilder: (context, index) {
                 final p = properties[index];
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 14),
+                  margin: EdgeInsets.only(bottom: 14.h),
                   decoration: BoxDecoration(
                     color: cs.surface,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14.r),
                     border: Border.all(color: cs.outlineVariant),
                     boxShadow: [
                       BoxShadow(
@@ -1053,8 +1054,8 @@ class _CollectionDetailScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 110,
-                        height: 100,
+                        width: 110.w,
+                        height: 100.h,
                         child: Image.network(
                           p.images.isNotEmpty ? p.images.first : '',
                           fit: BoxFit.cover,
@@ -1062,42 +1063,42 @@ class _CollectionDetailScreen extends StatelessWidget {
                             color: cs.surfaceContainerHighest,
                             child: Center(
                               child: Icon(Icons.home_outlined,
-                                  color: cs.outline, size: 28),
+                                  color: cs.outline, size: 28.r),
                             ),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12.r),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 p.price,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.primary,
-                                  fontSize: 15,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4.h),
                               Text(
                                 p.title,
                                 style: TextStyle(
                                   color: cs.onSurface,
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              SizedBox(height: 2.h),
                               Text(
                                 p.location,
                                 style: TextStyle(
                                   color: cs.onSurfaceVariant,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

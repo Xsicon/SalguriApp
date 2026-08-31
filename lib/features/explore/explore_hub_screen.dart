@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/agent.dart';
 import '../../core/models/property.dart';
@@ -99,7 +100,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               SliverToBoxAdapter(child: _buildTrendingNow()),
               SliverToBoxAdapter(child: _buildPopularServices()),
               SliverToBoxAdapter(child: _buildTopRatedAgents()),
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(child: SizedBox(height: 24.h)),
             ],
           ),
         ),
@@ -113,31 +114,31 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
     final cs = Theme.of(context).colorScheme;
     return Container(
       color: cs.surface,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
       child: Container(
-        height: 46,
+        height: 46.h,
         decoration: BoxDecoration(
           color: cs.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: cs.outlineVariant),
         ),
         child: Row(
           children: [
-            const SizedBox(width: 14),
-            Icon(Icons.search, color: cs.outline, size: 22),
-            const SizedBox(width: 10),
+            SizedBox(width: 14.w),
+            Icon(Icons.search, color: cs.outline, size: 22.r),
+            SizedBox(width: 10.w),
             Expanded(
               child: Text(
                 'Search properties, agents, or area',
                 style: TextStyle(
                   color: cs.outline,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
             ),
-            Icon(Icons.tune_outlined, color: cs.outline, size: 20),
-            const SizedBox(width: 14),
+            Icon(Icons.tune_outlined, color: cs.outline, size: 20.r),
+            SizedBox(width: 14.w),
           ],
         ),
       ),
@@ -149,11 +150,11 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildFeaturedBanner() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0.h),
       child: Container(
-        height: 200,
+        height: 200.h,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           boxShadow: [
             BoxShadow(
               color: cs.shadow.withValues(alpha: 0.08),
@@ -172,7 +173,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               errorBuilder: (_, _, _) => Container(
                 color: cs.surfaceContainerHighest,
                 child: Center(
-                  child: Icon(Icons.image_outlined, color: cs.outline, size: 48),
+                  child: Icon(Icons.image_outlined, color: cs.outline, size: 48.r),
                 ),
               ),
               loadingBuilder: (context, child, loadingProgress) {
@@ -200,19 +201,19 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             ),
             // Featured badge
             Positioned(
-              top: 14,
-              left: 14,
+              top: 14.h,
+              left: 14.w,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
-                child: const Text(
+                child: Text(
                   'FEATURED',
                   style: TextStyle(
                     color: AppColors.white,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
@@ -221,41 +222,41 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             ),
             // Content
             Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
+              bottom: 16.h,
+              left: 16.w,
+              right: 16.w,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Pearl Towers',
                     style: TextStyle(
                       color: AppColors.white,
-                      fontSize: 22,
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, color: AppColors.white60, size: 14),
-                      const SizedBox(width: 4),
+                      Icon(Icons.location_on_outlined, color: AppColors.white60, size: 14.r),
+                      SizedBox(width: 4.w),
                       Text(
                         'Downtown, Mogadishu',
                         style: TextStyle(
                           color: AppColors.white.withValues(alpha: 0.8),
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     'Luxury waterfront living with panoramic city views',
                     style: TextStyle(
                       color: AppColors.white.withValues(alpha: 0.7),
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -273,19 +274,19 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildTabRow() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Row(
         children: List.generate(_tabs.length, (index) {
           final isSelected = _selectedTab == index;
           return Padding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: EdgeInsets.only(right: 10.w),
             child: GestureDetector(
               onTap: () => setState(() => _selectedTab = index),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : cs.surface,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected ? AppColors.primary : cs.outlineVariant,
                   ),
@@ -294,7 +295,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                   _tabs[index],
                   style: TextStyle(
                     color: isSelected ? AppColors.white : cs.onSurfaceVariant,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -311,14 +312,14 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildCategoryFilter() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(top: 18),
+      padding: EdgeInsets.only(top: 18.h),
       child: SizedBox(
-        height: 90,
+        height: 90.h,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           itemCount: _categories.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 16),
+          separatorBuilder: (_, __) => SizedBox(width: 16.w),
           itemBuilder: (context, index) {
             final cat = _categories[index];
             final isSelected = _selectedCategory == index;
@@ -327,8 +328,8 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               child: Column(
                 children: [
                   Container(
-                    width: 56,
-                    height: 56,
+                    width: 56.w,
+                    height: 56.h,
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary
@@ -343,16 +344,16 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                       child: Icon(
                         cat['icon'] as IconData,
                         color: isSelected ? AppColors.white : cs.onSurfaceVariant,
-                        size: 24,
+                        size: 24.r,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     cat['label'] as String,
                     style: TextStyle(
                       color: isSelected ? AppColors.primary : cs.onSurfaceVariant,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
@@ -370,7 +371,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildMarketInsights() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -381,17 +382,17 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 'Market Insights',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               GestureDetector(
                 onTap: () {},
-                child: const Text(
+                child: Text(
                   'View All',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.3,
                   ),
@@ -399,12 +400,12 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(18.r),
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: cs.outlineVariant),
               boxShadow: [
                 BoxShadow(
@@ -417,21 +418,21 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             child: Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 44.w,
+                  height: 44.h,
                   decoration: BoxDecoration(
                     color: const Color(0xFFEEF2FF),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.trending_up,
                       color: AppColors.primary,
-                      size: 22,
+                      size: 22.r,
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: 14.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,23 +441,23 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                         'Property prices up 12% this quarter',
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Text(
                         'Mogadishu real estate market is trending upward',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: cs.outline, size: 22),
+                Icon(Icons.chevron_right, color: cs.outline, size: 22.r),
               ],
             ),
           ),
@@ -470,7 +471,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildTrendingNow() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -481,17 +482,17 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 'Trending Now',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               GestureDetector(
                 onTap: () {},
-                child: const Text(
+                child: Text(
                   'SEE ALL',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.3,
                   ),
@@ -499,11 +500,11 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           if (_isLoading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h),
+              child: const Center(
                 child: CircularProgressIndicator(
                   color: AppColors.primary,
                   strokeWidth: 2,
@@ -512,21 +513,21 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             )
           else if (_trendingProperties.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+              padding: EdgeInsets.symmetric(vertical: 24.h),
               child: Center(
                 child: Text(
                   'No trending properties',
-                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+                  style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
                 ),
               ),
             )
           else
             SizedBox(
-              height: 270,
+              height: 270.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: _trendingProperties.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 14),
+                separatorBuilder: (_, __) => SizedBox(width: 14.w),
                 itemBuilder: (context, index) {
                   final prop = _trendingProperties[index];
                   return GestureDetector(
@@ -548,10 +549,10 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
   Widget _buildPropertyCard({required Property property}) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: 220,
+      width: 220.w,
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.05),
@@ -568,7 +569,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
           Stack(
             children: [
               SizedBox(
-                height: 140,
+                height: 140.h,
                 width: double.infinity,
                 child: Image.network(
                   property.images.isNotEmpty ? property.images.first : '',
@@ -576,7 +577,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                   errorBuilder: (_, _, _) => Container(
                     color: cs.surfaceContainerHighest,
                     child: Center(
-                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40),
+                      child: Icon(Icons.home_outlined, color: cs.outline, size: 40.r),
                     ),
                   ),
                   loadingBuilder: (context, child, loadingProgress) {
@@ -594,19 +595,19 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 ),
               ),
               Positioned(
-                top: 10,
-                right: 10,
+                top: 10.h,
+                right: 10.w,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: Text(
                     property.price,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.white,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -616,7 +617,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
           ),
           // Info
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 12.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -628,44 +629,44 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                         property.title,
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.star, color: Color(0xFFF59E0B), size: 14),
-                    const SizedBox(width: 2),
+                    SizedBox(width: 4.w),
+                    Icon(Icons.star, color: const Color(0xFFF59E0B), size: 14.r),
+                    SizedBox(width: 2.w),
                     Text(
                       property.rating.toString(),
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 // Location
                 Text(
                   property.location,
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 // Bed + Bath
                 Row(
                   children: [
                     _buildPropertyStat(Icons.bed_outlined, '${property.beds} Bed'),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14.w),
                     _buildPropertyStat(Icons.bathtub_outlined, '${property.baths} Bath'),
                   ],
                 ),
@@ -682,13 +683,13 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: cs.outline, size: 16),
-        const SizedBox(width: 4),
+        Icon(icon, color: cs.outline, size: 16.r),
+        SizedBox(width: 4.w),
         Text(
           value,
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -720,7 +721,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
     ];
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -728,18 +729,18 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
             'Popular Services',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 17,
+              fontSize: 17.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
+              mainAxisSpacing: 16.h,
+              crossAxisSpacing: 16.w,
               childAspectRatio: 1.0,
             ),
             itemCount: _serviceCategories.length.clamp(0, 6),
@@ -751,7 +752,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: cs.surface,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14.r),
                     border: Border.all(color: cs.outlineVariant),
                     boxShadow: [
                       BoxShadow(
@@ -765,8 +766,8 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 44,
-                        height: 44,
+                        width: 44.w,
+                        height: 44.h,
                         decoration: BoxDecoration(
                           color: colorPair.$1,
                           shape: BoxShape.circle,
@@ -775,16 +776,16 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                           child: Icon(
                             _iconForService(svc.name),
                             color: colorPair.$2,
-                            size: 22,
+                            size: 22.r,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       Text(
                         svc.name,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                         ),
                         textAlign: TextAlign.center,
@@ -807,7 +808,7 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
     if (_topAgents.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -818,17 +819,17 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                 'Top Rated Agents',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               GestureDetector(
                 onTap: () {},
-                child: const Text(
+                child: Text(
                   'SEE ALL',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.3,
                   ),
@@ -836,24 +837,24 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           SizedBox(
-            height: 110,
+            height: 110.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _topAgents.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              separatorBuilder: (_, __) => SizedBox(width: 16.w),
               itemBuilder: (context, index) {
                 final agent = _topAgents[index];
                 return GestureDetector(
                   onTap: () {},
                   child: SizedBox(
-                    width: 76,
+                    width: 76.w,
                     child: Column(
                       children: [
                         Container(
-                          width: 60,
-                          height: 60,
+                          width: 60.w,
+                          height: 60.h,
                           decoration: BoxDecoration(
                             color: cs.primaryContainer,
                             shape: BoxShape.circle,
@@ -872,38 +873,38 @@ class _ExploreHubScreenState extends State<ExploreHubScreen> {
                           child: Center(
                             child: Text(
                               agent.initials,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
-                                fontSize: 18,
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8.h),
                         Text(
                           agent.name.split(' ').first,
                           style: TextStyle(
                             color: cs.onSurface,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2.h),
                         if (agent.rating > 0)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.star, color: Color(0xFFF59E0B), size: 12),
-                              const SizedBox(width: 2),
+                              Icon(Icons.star, color: const Color(0xFFF59E0B), size: 12.r),
+                              SizedBox(width: 2.w),
                               Text(
                                 agent.rating.toString(),
                                 style: TextStyle(
                                   color: cs.onSurfaceVariant,
-                                  fontSize: 11,
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

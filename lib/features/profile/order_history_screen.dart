@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
@@ -145,7 +146,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         child: Column(
           children: [
             _buildAppBar(cs, l),
-            Divider(height: 1, color: cs.surfaceContainerHighest),
+            Divider(height: 1.h, color: cs.surfaceContainerHighest),
             _buildTabRow(cs, l),
             Expanded(
               child: _isLoading
@@ -168,7 +169,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Widget _buildAppBar(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
@@ -181,13 +182,13 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.3,
               ),
             ),
           ),
-          const SizedBox(width: 48),
+          SizedBox(width: 48.w),
         ],
       ),
     );
@@ -198,12 +199,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget _buildTabRow(ColorScheme cs, AppLocalizations l) {
     final tabs = _tabs(l);
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
       child: Container(
-        height: 42,
+        height: 42.h,
         decoration: BoxDecoration(
           color: cs.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: Row(
           children: List.generate(tabs.length, (index) {
@@ -213,10 +214,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 onTap: () => setState(() => _selectedTab = index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.all(3),
+                  margin: EdgeInsets.all(3.r),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(9),
+                    borderRadius: BorderRadius.circular(9.r),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
@@ -234,7 +235,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         color: isSelected
                             ? AppColors.white
                             : cs.onSurfaceVariant,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w500,
                       ),
@@ -253,7 +254,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Widget _buildSummaryRow(ColorScheme cs, AppLocalizations l) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      padding: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 16.h),
       child: Row(
         children: [
           _buildSummaryCard(
@@ -264,7 +265,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             color: const Color(0xFF22C55E),
             bg: const Color(0xFFDCFCE7),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           _buildSummaryCard(
             cs,
             icon: Icons.build_outlined,
@@ -273,7 +274,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             color: const Color(0xFF3B82F6),
             bg: const Color(0xFFDBEAFE),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           _buildSummaryCard(
             cs,
             icon: Icons.calendar_today_outlined,
@@ -297,10 +298,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   }) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14.r),
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -313,29 +314,29 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         child: Column(
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 36.w,
+              height: 36.h,
               decoration: BoxDecoration(
                 color: bg,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(icon, color: color, size: 18),
+              child: Icon(icon, color: color, size: 18.r),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               value,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2.h),
             Text(
               label,
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 12,
+                fontSize: 12.sp,
               ),
             ),
           ],
@@ -353,7 +354,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       return ListView(
         children: [
           _buildSummaryRow(cs, l),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
           _buildEmptyState(cs, l),
         ],
       );
@@ -367,17 +368,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     }
 
     return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: EdgeInsets.only(bottom: 24.h),
       children: [
         _buildSummaryRow(cs, l),
         ...grouped.entries.expand((entry) => [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
+                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 10.h),
                 child: Text(
                   entry.key,
                   style: TextStyle(
                     color: cs.outline,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                   ),
@@ -418,11 +419,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     };
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 10.h),
+      padding: EdgeInsets.all(14.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -435,15 +436,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       child: Row(
         children: [
           Container(
-            width: 46,
-            height: 46,
+            width: 46.w,
+            height: 46.h,
             decoration: BoxDecoration(
               color: order.iconBg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(order.icon, color: order.iconColor, size: 22),
+            child: Icon(order.icon, color: order.iconColor, size: 22.r),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,32 +453,32 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   order.title,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3.h),
                 Row(
                   children: [
                     Text(
                       _dateFormat.format(order.date),
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                       ),
                     ),
                     if (order.subtitle.isNotEmpty) ...[
                       Text('  \u2022  ',
                           style: TextStyle(
-                              color: cs.outline, fontSize: 12)),
+                              color: cs.outline, fontSize: 12.sp)),
                       Flexible(
                         child: Text(
                           order.subtitle,
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -487,7 +488,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   ],
                 ),
                 if (order.detail != null && order.detail!.isNotEmpty) ...[
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3.h),
                   Row(
                     children: [
                       Icon(
@@ -495,15 +496,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             ? Icons.account_balance_wallet_outlined
                             : Icons.info_outline,
                         color: cs.outline,
-                        size: 13,
+                        size: 13.r,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4.w),
                       Flexible(
                         child: Text(
                           order.detail!,
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 11,
+                            fontSize: 11.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -515,7 +516,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -523,23 +524,23 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 order.amount,
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: statusBg,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Text(
                   statusLabel,
                   style: TextStyle(
                     color: statusColor,
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -556,30 +557,30 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       child: Column(
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 72.w,
+            height: 72.h,
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.receipt_long_outlined,
-                color: cs.outline, size: 36),
+                color: cs.outline, size: 36.r),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             l.tr('noOrdersYet'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           Text(
             l.tr('transactionsAppearHere'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 13,
+              fontSize: 13.sp,
             ),
           ),
         ],

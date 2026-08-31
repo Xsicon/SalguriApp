@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 
@@ -146,17 +147,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
             child: TextField(
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
               decoration: InputDecoration(
                 hintText: l.tr('searchForHelp'),
-                hintStyle: TextStyle(color: cs.outline, fontSize: 14),
-                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+                hintStyle: TextStyle(color: cs.outline, fontSize: 14.sp),
+                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.close, color: cs.outline, size: 20),
+                        icon: Icon(Icons.close, color: cs.outline, size: 20.r),
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchQuery = '');
@@ -166,9 +167,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 filled: true,
                 fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.5),
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -180,7 +181,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             child: filtered.isEmpty
                 ? _buildEmptyState(cs, l)
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 24.h),
                     itemCount: filtered.length,
                     itemBuilder: (context, i) =>
                         _buildCategorySection(filtered[i], cs),
@@ -199,20 +200,20 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.search_off, size: 56, color: cs.outline),
-          const SizedBox(height: 12),
+          Icon(Icons.search_off, size: 56.r, color: cs.outline),
+          SizedBox(height: 12.h),
           Text(
             l.tr('noResultsFound'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             l.tr('tryDifferentSearch'),
-            style: TextStyle(color: cs.outline, fontSize: 13),
+            style: TextStyle(color: cs.outline, fontSize: 13.sp),
           ),
         ],
       ),
@@ -221,22 +222,22 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   Widget _buildCategorySection(_FaqCategory category, ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Category header
           Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 10),
+            padding: EdgeInsets.only(left: 4.w, bottom: 10.h),
             child: Row(
               children: [
-                Icon(category.icon, color: AppColors.primary, size: 20),
-                const SizedBox(width: 8),
+                Icon(category.icon, color: AppColors.primary, size: 20.r),
+                SizedBox(width: 8.w),
                 Text(
                   category.title,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -247,7 +248,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           Container(
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
                   color: cs.shadow.withValues(alpha: 0.04),
@@ -262,7 +263,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   if (i > 0)
                     Divider(
                       height: 1,
-                      indent: 16,
+                      indent: 16.w,
                       color: cs.surfaceContainerHighest,
                     ),
                   _FaqTile(faq: category.faqs[i]),
@@ -278,7 +279,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   Widget _buildContactSupport(ColorScheme cs, AppLocalizations l) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
@@ -295,53 +296,53 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             l.tr('stillNeedHelp'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 15,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             l.tr('supportTeamHere'),
-            style: TextStyle(color: cs.outline, fontSize: 13),
+            style: TextStyle(color: cs.outline, fontSize: 13.sp),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.email_outlined, size: 18),
+                  icon: Icon(Icons.email_outlined, size: 18.r),
                   label: Text(l.tr('emailUs')),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primarySoft),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    textStyle: const TextStyle(
-                      fontSize: 13,
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    textStyle: TextStyle(
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.chat_outlined, size: 18),
+                  icon: Icon(Icons.chat_outlined, size: 18.r),
                   label: Text(l.tr('liveChat')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    textStyle: const TextStyle(
-                      fontSize: 13,
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    textStyle: TextStyle(
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -406,9 +407,9 @@ class _FaqTileState extends State<_FaqTile>
     final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: _toggle,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -419,7 +420,7 @@ class _FaqTileState extends State<_FaqTile>
                     widget.faq.question,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -429,7 +430,7 @@ class _FaqTileState extends State<_FaqTile>
                   child: Icon(
                     Icons.expand_more,
                     color: cs.outline,
-                    size: 22,
+                    size: 22.r,
                   ),
                 ),
               ],
@@ -437,12 +438,12 @@ class _FaqTileState extends State<_FaqTile>
             SizeTransition(
               sizeFactor: _expandAnimation,
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 10.h),
                 child: Text(
                   widget.faq.answer,
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                     height: 1.5,
                   ),

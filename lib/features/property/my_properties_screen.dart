@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
 import '../../services/api_service.dart';
@@ -107,7 +108,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             _buildStatsCard(cs),
                             _buildSectionHeader(cs),
                             _buildPropertyList(cs),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                           ],
                         ),
                       ),
@@ -124,7 +125,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
   Widget _buildAppBar(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
@@ -137,7 +138,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -155,7 +156,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
   Widget _buildAddPropertyButton(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0.h),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
@@ -165,18 +166,18 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
             );
             if (created == true) _loadProperties();
           },
-          icon: const Icon(Icons.add, size: 20),
+          icon: Icon(Icons.add, size: 20.r),
           label: const Text('ADD NEW PROPERTY'),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.white,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(vertical: 14),
+            padding: EdgeInsets.symmetric(vertical: 14.h),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            textStyle: const TextStyle(
-              fontSize: 14,
+            textStyle: TextStyle(
+              fontSize: 14.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
@@ -190,12 +191,12 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
   Widget _buildStatsCard(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0.h),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -242,17 +243,17 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
             label,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 10,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           Text(
             value,
             style: TextStyle(
               color: valueColor,
-              fontSize: 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -263,8 +264,8 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
   Widget _buildStatDivider(ColorScheme cs) {
     return Container(
-      width: 1,
-      height: 36,
+      width: 1.w,
+      height: 36.h,
       color: cs.outlineVariant.withValues(alpha: 0.5),
     );
   }
@@ -273,7 +274,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
   Widget _buildSectionHeader(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+      padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -281,7 +282,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
             'Your Assets',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -289,7 +290,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
             '${_properties.length} Total',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -303,26 +304,26 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
   Widget _buildPropertyList(ColorScheme cs) {
     if (_properties.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
+        padding: EdgeInsets.symmetric(vertical: 48.h),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.home_work_outlined, color: cs.outline, size: 48),
-              const SizedBox(height: 12),
+              Icon(Icons.home_work_outlined, color: cs.outline, size: 48.r),
+              SizedBox(height: 12.h),
               Text(
                 'No properties yet',
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 'Add your first property to get started',
                 style: TextStyle(
                   color: cs.outline,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
@@ -332,13 +333,13 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         children: _properties.asMap().entries.map((entry) {
           final index = entry.key;
           final property = entry.value;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildPropertyCard(cs, property, index),
           );
         }).toList(),
@@ -359,10 +360,10 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -379,10 +380,10 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
               children: [
                 // Thumbnail
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                   child: SizedBox(
-                    width: 80,
-                    height: 80,
+                    width: 80.w,
+                    height: 80.h,
                     child: imageUrl.isNotEmpty
                         ? Image.network(
                             imageUrl,
@@ -390,17 +391,17 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             errorBuilder: (_, _, _) => Container(
                               color: cs.surfaceContainerHighest,
                               child: Icon(Icons.home_outlined,
-                                  color: cs.outline, size: 28),
+                                  color: cs.outline, size: 28.r),
                             ),
                           )
                         : Container(
                             color: cs.surfaceContainerHighest,
                             child: Icon(Icons.home_outlined,
-                                color: cs.outline, size: 28),
+                                color: cs.outline, size: 28.r),
                           ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 // Info
                 Expanded(
                   child: Column(
@@ -413,7 +414,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                               property.title,
                               style: TextStyle(
                                 color: cs.onSurface,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                               maxLines: 1,
@@ -421,19 +422,19 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                             ),
                           ),
                           if (maintenance != null) ...[
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8.w),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w, vertical: 3.h),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFEF3C7),
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(4.r),
                               ),
                               child: Text(
                                 maintenance,
-                                style: const TextStyle(
-                                  color: Color(0xFFD97706),
-                                  fontSize: 9,
+                                style: TextStyle(
+                                  color: const Color(0xFFD97706),
+                                  fontSize: 9.sp,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
                                 ),
@@ -442,18 +443,18 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Row(
                         children: [
                           Icon(Icons.location_on_outlined,
-                              color: cs.onSurfaceVariant, size: 14),
-                          const SizedBox(width: 4),
+                              color: cs.onSurfaceVariant, size: 14.r),
+                          SizedBox(width: 4.w),
                           Expanded(
                             child: Text(
                               property.location,
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
                               ),
                               maxLines: 1,
@@ -462,36 +463,36 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 3.h),
                         decoration: BoxDecoration(
                           color: const Color(0xFFDCFCE7),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
                           property.type.toUpperCase(),
-                          style: const TextStyle(
-                            color: Color(0xFF16A34A),
-                            fontSize: 10,
+                          style: TextStyle(
+                            color: const Color(0xFF16A34A),
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
                       if (subtext != null) ...[
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6.h),
                         Row(
                           children: [
-                            const Icon(Icons.info_outline,
-                                color: Color(0xFFD97706), size: 14),
-                            const SizedBox(width: 4),
+                            Icon(Icons.info_outline,
+                                color: const Color(0xFFD97706), size: 14.r),
+                            SizedBox(width: 4.w),
                             Expanded(
                               child: Text(
                                 subtext,
-                                style: const TextStyle(
-                                  color: Color(0xFFD97706),
-                                  fontSize: 11,
+                                style: TextStyle(
+                                  color: const Color(0xFFD97706),
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 maxLines: 1,
@@ -506,13 +507,13 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             // Action icons row
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(vertical: 8.h),
               decoration: BoxDecoration(
                 color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -548,13 +549,13 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppColors.primary, size: 20),
-          const SizedBox(height: 4),
+          Icon(icon, color: AppColors.primary, size: 20.r),
+          SizedBox(height: 4.h),
           Text(
             label,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 10,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -584,8 +585,8 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
         backgroundColor: cs.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: cs.outline,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
+        selectedFontSize: 11.sp,
+        unselectedFontSize: 11.sp,
         elevation: 0,
         items: const [
           BottomNavigationBarItem(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
 import '../../services/api_service.dart';
@@ -73,7 +74,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
         child: Column(
           children: [
             _buildAppBar(),
-            Divider(height: 1, color: cs.surfaceContainerHighest),
+            Divider(height: 1.h, color: cs.surfaceContainerHighest),
             _buildSearchBar(),
             _buildResultCount(),
             Expanded(
@@ -85,11 +86,11 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                       ? Center(
                           child: Text(
                             'No properties found',
-                            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
+                            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15.sp),
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                          padding: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 24.h),
                           itemCount: _filtered.length,
                           itemBuilder: (context, index) {
                             return _buildPropertyCard(_filtered[index]);
@@ -107,13 +108,13 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
   Widget _buildAppBar() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
           Expanded(
             child: Text(
@@ -121,7 +122,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
@@ -136,7 +137,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
               );
             },
             icon: Icon(Icons.tune_outlined, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
         ],
       ),
@@ -148,28 +149,28 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
   Widget _buildSearchBar() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0.h),
       child: TextField(
         controller: _searchController,
         onChanged: _onSearch,
-        style: TextStyle(fontSize: 15, color: cs.onSurface),
+        style: TextStyle(fontSize: 15.sp, color: cs.onSurface),
         decoration: InputDecoration(
           hintText: 'Search properties...',
-          hintStyle: TextStyle(color: cs.outline, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+          hintStyle: TextStyle(color: cs.outline, fontSize: 15.sp),
+          prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
           filled: true,
           fillColor: cs.surfaceContainerHighest,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          contentPadding: EdgeInsets.symmetric(vertical: 12.h),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(color: cs.outlineVariant),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: BorderSide(color: cs.outlineVariant),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
           ),
         ),
@@ -182,14 +183,14 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
   Widget _buildResultCount() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+      padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 14.h),
       child: Row(
         children: [
           Text(
             '${_filtered.length} Properties Found',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -205,10 +206,10 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
     return GestureDetector(
       onTap: () => _openProperty(property),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
           color: cs.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -226,7 +227,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
             Stack(
               children: [
                 SizedBox(
-                  height: 180,
+                  height: 180.h,
                   width: double.infinity,
                   child: Image.network(
                     property.images.isNotEmpty ? property.images.first : '',
@@ -234,7 +235,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                     errorBuilder: (_, _, _) => Container(
                       color: cs.surfaceContainerHighest,
                       child: Center(
-                        child: Icon(Icons.home_outlined, color: cs.outline, size: 40),
+                        child: Icon(Icons.home_outlined, color: cs.outline, size: 40.r),
                       ),
                     ),
                     loadingBuilder: (context, child, loadingProgress) {
@@ -250,19 +251,19 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                 ),
                 // Price badge
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 12.h,
+                  right: 12.w,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
                       property.price,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.white,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -270,19 +271,19 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                 ),
                 // Type badge
                 Positioned(
-                  top: 12,
-                  left: 12,
+                  top: 12.h,
+                  left: 12.w,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                     decoration: BoxDecoration(
                       color: const Color(0xFFDCFCE7),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
                       property.type,
-                      style: const TextStyle(
-                        color: Color(0xFF16A34A),
-                        fontSize: 12,
+                      style: TextStyle(
+                        color: const Color(0xFF16A34A),
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -290,19 +291,19 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                 ),
                 // Favorite
                 Positioned(
-                  bottom: 12,
-                  right: 12,
+                  bottom: 12.h,
+                  right: 12.w,
                   child: Container(
-                    width: 34,
-                    height: 34,
+                    width: 34.w,
+                    height: 34.h,
                     decoration: const BoxDecoration(
                       color: Colors.black38,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite_border,
                       color: AppColors.white,
-                      size: 18,
+                      size: 18.r,
                     ),
                   ),
                 ),
@@ -310,7 +311,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
             ),
             // Info
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -322,48 +323,48 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                           property.title,
                           style: TextStyle(
                             color: cs.onSurface,
-                            fontSize: 17,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                      const Icon(Icons.star, color: Color(0xFFF59E0B), size: 16),
-                      const SizedBox(width: 3),
+                      Icon(Icons.star, color: const Color(0xFFF59E0B), size: 16.r),
+                      SizedBox(width: 3.w),
                       Text(
                         property.rating.toString(),
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   // Location
                   Row(
                     children: [
                       Icon(Icons.location_on_outlined,
-                          color: cs.onSurfaceVariant, size: 16),
-                      const SizedBox(width: 4),
+                          color: cs.onSurfaceVariant, size: 16.r),
+                      SizedBox(width: 4.w),
                       Text(
                         property.location,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   // Specs row
                   Row(
                     children: [
                       _buildSpec(Icons.bed_outlined, '${property.beds} Beds'),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       _buildSpec(
                           Icons.bathtub_outlined, '${property.baths} Baths'),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       _buildSpec(
                           Icons.square_foot_outlined, '${property.sqft} sqft'),
                     ],
@@ -382,13 +383,13 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: cs.outline, size: 16),
-        const SizedBox(width: 4),
+        Icon(icon, color: cs.outline, size: 16.r),
+        SizedBox(width: 4.w),
         Text(
           text,
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

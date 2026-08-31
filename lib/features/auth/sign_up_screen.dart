@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../services/supabase_service.dart';
@@ -91,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _buildHeader(),
                     _buildForm(),
                     _buildLoginRedirect(),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                   ],
                 ),
               ),
@@ -107,13 +108,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildAppBar() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
           Expanded(
             child: Text(
@@ -121,13 +122,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
             ),
           ),
-          const SizedBox(width: 48),
+          SizedBox(width: 48.w),
         ],
       ),
     );
@@ -138,7 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildHeader() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
+      padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,17 +147,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
             AppLocalizations.of(context).tr('joinSalguri'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 26,
+              fontSize: 26.sp,
               fontWeight: FontWeight.w700,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           Text(
             AppLocalizations.of(context).tr('startJourney'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -171,12 +172,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _FieldLabel(text: AppLocalizations.of(context).tr('fullName')),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             _buildTextField(
               controller: _nameController,
               hint: AppLocalizations.of(context).tr('fullNameHint'),
@@ -185,9 +186,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? AppLocalizations.of(context).tr('nameRequired') : null,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _FieldLabel(text: AppLocalizations.of(context).tr('emailAddress')),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             _buildTextField(
               controller: _emailController,
               hint: AppLocalizations.of(context).tr('emailHint'),
@@ -198,9 +199,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _FieldLabel(text: AppLocalizations.of(context).tr('password')),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             _buildPasswordField(
               controller: _passwordController,
               obscure: _obscurePassword,
@@ -210,9 +211,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _FieldLabel(text: AppLocalizations.of(context).tr('confirmPassword')),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             _buildPasswordField(
               controller: _confirmPasswordController,
               obscure: _obscureConfirmPassword,
@@ -222,9 +223,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             _buildTermsCheckbox(),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             _buildCreateAccountButton(),
           ],
         ),
@@ -247,7 +248,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       validator: validator,
-      style: TextStyle(fontSize: 16, color: cs.onSurface),
+      style: TextStyle(fontSize: 16.sp, color: cs.onSurface),
       decoration: _inputDecoration(hint),
     );
   }
@@ -263,21 +264,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: TextStyle(fontSize: 16, color: cs.onSurface),
+      style: TextStyle(fontSize: 16.sp, color: cs.onSurface),
       decoration: _inputDecoration('').copyWith(
         hintText: '\u2022' * 8,
         suffixIcon: GestureDetector(
           onTap: onToggle,
           child: Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: EdgeInsets.only(right: 12.w),
             child: Icon(
               obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
               color: cs.outline,
-              size: 22,
+              size: 22.r,
             ),
           ),
         ),
-        suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        suffixIconConstraints: BoxConstraints(minWidth: 40.w, minHeight: 40.h),
       ),
     );
   }
@@ -290,23 +291,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 22,
-          height: 22,
+          width: 22.w,
+          height: 22.h,
           child: Checkbox(
             value: _agreedToTerms,
             onChanged: (v) => setState(() => _agreedToTerms = v ?? false),
             activeColor: AppColors.primary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.r)),
             side: BorderSide(color: cs.outlineVariant),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 2),
+            padding: EdgeInsets.only(top: 2.h),
             child: Text.rich(
               TextSpan(
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14, height: 1.4),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp, height: 1.4),
                 children: [
                   TextSpan(text: AppLocalizations.of(context).tr('agreeToTerms')),
                   TextSpan(
@@ -343,23 +344,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildCreateAccountButton() {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 56.h,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _onCreateAccount,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
           elevation: 4,
           shadowColor: AppColors.primary.withValues(alpha: 0.3),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 1),
+          textStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, letterSpacing: 1),
         ),
         child: _isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(color: AppColors.white, strokeWidth: 2.5),
+            ? SizedBox(
+                width: 24.w,
+                height: 24.h,
+                child: const CircularProgressIndicator(color: AppColors.white, strokeWidth: 2.5),
               )
             : Text(AppLocalizations.of(context).tr('createAccount')),
       ),
@@ -371,11 +372,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildLoginRedirect() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: EdgeInsets.symmetric(vertical: 24.h),
       child: Center(
         child: Text.rich(
           TextSpan(
-            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
             children: [
               TextSpan(text: AppLocalizations.of(context).tr('alreadyHaveAccount')),
               TextSpan(
@@ -401,28 +402,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final cs = Theme.of(context).colorScheme;
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: cs.outline, fontSize: 16, fontWeight: FontWeight.w400),
+      hintStyle: TextStyle(color: cs.outline, fontSize: 16.sp, fontWeight: FontWeight.w400),
       filled: true,
       fillColor: cs.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: cs.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: cs.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: Color(0xFFEF4444)),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
       ),
     );
@@ -441,7 +442,7 @@ class _FieldLabel extends StatelessWidget {
       text,
       style: TextStyle(
         color: Theme.of(context).colorScheme.onSurface,
-        fontSize: 14,
+        fontSize: 14.sp,
         fontWeight: FontWeight.w600,
       ),
     );

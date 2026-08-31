@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
@@ -52,14 +53,14 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: cs.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20.r, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'SCHEDULE SHOWING',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
           ),
@@ -69,22 +70,22 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildPropertyCard(cs),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildCalendarSection(cs),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildTimeSection(cs),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildPeopleSection(cs),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildNotesSection(cs),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildConfirmBySection(cs),
-                  const SizedBox(height: 100),
+                  SizedBox(height: 100.h),
                 ],
               ),
             ),
@@ -101,21 +102,21 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
 
   Widget _buildPropertyCard(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Row(
         children: [
           // Property image thumbnail
           Container(
-            width: 60,
-            height: 60,
+            width: 60.w,
+            height: 60.h,
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             clipBehavior: Clip.antiAlias,
             child: p.images.isNotEmpty
@@ -123,14 +124,14 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                     p.images.first,
                     fit: BoxFit.cover,
                     errorBuilder: (_, _, _) => Center(
-                      child: Icon(Icons.home_outlined, color: cs.outline, size: 28),
+                      child: Icon(Icons.home_outlined, color: cs.outline, size: 28.r),
                     ),
                   )
                 : Center(
-                    child: Icon(Icons.home_outlined, color: cs.outline, size: 28),
+                    child: Icon(Icons.home_outlined, color: cs.outline, size: 28.r),
                   ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,16 +140,16 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                   p.location,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   p.price,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -157,8 +158,8 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           ),
           // Agent avatar
           Container(
-            width: 40,
-            height: 40,
+            width: 40.w,
+            height: 40.h,
             decoration: BoxDecoration(
               color: cs.primaryContainer,
               shape: BoxShape.circle,
@@ -166,9 +167,9 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
             child: Center(
               child: Text(
                 p.agent?.initials ?? '?',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -191,25 +192,25 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           'SELECT DATE',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: Column(
             children: [
               _buildCalendarHeader(cs),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               _buildCalendarWeekDays(cs),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               _buildCalendarDays(cs),
             ],
           ),
@@ -230,20 +231,20 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
             });
           },
           child: Container(
-            width: 32,
-            height: 32,
+            width: 32.w,
+            height: 32.h,
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Icon(Icons.chevron_left, color: cs.onSurfaceVariant, size: 20),
+            child: Icon(Icons.chevron_left, color: cs.onSurfaceVariant, size: 20.r),
           ),
         ),
         Text(
           monthLabel,
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -254,13 +255,13 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
             });
           },
           child: Container(
-            width: 32,
-            height: 32,
+            width: 32.w,
+            height: 32.h,
             decoration: BoxDecoration(
               color: cs.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 20),
+            child: Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 20.r),
           ),
         ),
       ],
@@ -278,7 +279,7 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                   d,
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -303,14 +304,14 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
     return Column(
       children: List.generate(rows, (row) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 4),
+          padding: EdgeInsets.only(bottom: 4.h),
           child: Row(
             children: List.generate(7, (col) {
               final index = row * 7 + col;
               final day = index - offset + 1;
 
               if (day < 1 || day > daysInMonth) {
-                return const Expanded(child: SizedBox(height: 40));
+                return Expanded(child: SizedBox(height: 40.h));
               }
 
               final date = DateTime(year, month, day);
@@ -326,15 +327,15 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedDate = date),
                   child: Container(
-                    height: 40,
-                    margin: const EdgeInsets.all(2),
+                    height: 40.h,
+                    margin: EdgeInsets.all(2.r),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary
                           : isToday
                               ? AppColors.primary.withValues(alpha: 0.1)
                               : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Center(
                       child: Text(
@@ -345,7 +346,7 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                               : isToday
                                   ? AppColors.primary
                                   : cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: isSelected || isToday
                               ? FontWeight.w700
                               : FontWeight.w500,
@@ -374,25 +375,25 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           'SELECT TIME',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Wrap(
-          spacing: 10,
-          runSpacing: 10,
+          spacing: 10.w,
+          runSpacing: 10.h,
           children: _timeSlots.map((time) {
             final isSelected = _selectedTime == time;
             return GestureDetector(
               onTap: () => setState(() => _selectedTime = time),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : cs.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: isSelected ? AppColors.primary : cs.outlineVariant,
                     width: isSelected ? 2 : 1,
@@ -402,7 +403,7 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                   time,
                   style: TextStyle(
                     color: isSelected ? Colors.white : cs.onSurface,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -426,17 +427,17 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           'NUMBER OF PEOPLE',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: Row(
@@ -446,7 +447,7 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                 '$_numberOfPeople ${_numberOfPeople == 1 ? 'person' : 'people'}',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -460,12 +461,12 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                     cs: cs,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Text(
                       '$_numberOfPeople',
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -495,18 +496,18 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 36.w,
+        height: 36.h,
         decoration: BoxDecoration(
           color: isEnabled
               ? AppColors.primary.withValues(alpha: 0.1)
               : cs.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Icon(
           icon,
           color: isEnabled ? AppColors.primary : cs.onSurfaceVariant,
-          size: 20,
+          size: 20.r,
         ),
       ),
     );
@@ -524,26 +525,26 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           'ADDITIONAL NOTES',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: TextField(
             controller: _notesController,
             maxLines: 4,
-            style: TextStyle(color: cs.onSurface, fontSize: 14),
+            style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
             decoration: InputDecoration(
               hintText: 'Tell us if you have any special requirements...',
-              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-              contentPadding: const EdgeInsets.all(16),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              contentPadding: EdgeInsets.all(16.r),
               border: InputBorder.none,
             ),
           ),
@@ -564,17 +565,17 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
           'CONFIRM BY',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Row(
           children: _confirmOptions.map((option) {
             final isSelected = _confirmBy.contains(option);
             return Padding(
-              padding: const EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 10.w),
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -587,12 +588,12 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
                         : cs.surface,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: isSelected ? AppColors.primary : cs.outlineVariant,
                       width: isSelected ? 2 : 1,
@@ -602,14 +603,14 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (isSelected) ...[
-                        const Icon(Icons.check, color: AppColors.primary, size: 16),
-                        const SizedBox(width: 6),
+                        Icon(Icons.check, color: AppColors.primary, size: 16.r),
+                        SizedBox(width: 6.w),
                       ],
                       Text(
                         option,
                         style: TextStyle(
                           color: isSelected ? AppColors.primary : cs.onSurface,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -632,10 +633,10 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
     final isValid = _selectedDate != null && _selectedTime != null;
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20,
-        16,
-        20,
-        MediaQuery.of(context).padding.bottom + 16,
+        20.w,
+        16.h,
+        20.w,
+        MediaQuery.of(context).padding.bottom + 16.h,
       ),
       decoration: BoxDecoration(
         color: cs.surface,
@@ -659,12 +660,12 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
             foregroundColor: Colors.white,
             disabledForegroundColor: cs.onSurfaceVariant,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 16.h),
             elevation: 0,
-            textStyle: const TextStyle(
-              fontSize: 14,
+            textStyle: TextStyle(
+              fontSize: 14.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
@@ -693,22 +694,22 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
           title: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 40.w,
+                height: 40.h,
                 decoration: BoxDecoration(
                   color: Colors.green.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_circle, color: Colors.green, size: 24),
+                child: Icon(Icons.check_circle, color: Colors.green, size: 24.r),
               ),
-              const SizedBox(width: 12),
-              const Text(
+              SizedBox(width: 12.w),
+              Text(
                 'Request Sent!',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -718,7 +719,7 @@ class _ScheduleShowingScreenState extends State<ScheduleShowingScreen> {
             'You will be notified via ${_confirmBy.join(', ')}.',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               height: 1.5,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/agent.dart';
@@ -128,41 +129,41 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget _buildSearchBar() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0.h),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            constraints: BoxConstraints(minWidth: 40.w, minHeight: 40.h),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Expanded(
             child: TextField(
               controller: _searchController,
               onChanged: _onSearch,
-              style: TextStyle(fontSize: 15, color: cs.onSurface),
+              style: TextStyle(fontSize: 15.sp, color: cs.onSurface),
               decoration: InputDecoration(
                 hintText: 'Search properties, agents, or area',
-                hintStyle: TextStyle(color: cs.outline, fontSize: 14),
-                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+                hintStyle: TextStyle(color: cs.outline, fontSize: 14.sp),
+                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
                 suffixIcon: Icon(Icons.tune_outlined,
-                    color: cs.onSurfaceVariant, size: 22),
+                    color: cs.onSurfaceVariant, size: 22.r),
                 filled: true,
                 fillColor: cs.surfaceContainerHighest,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: cs.outlineVariant),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: cs.outlineVariant),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide:
                       const BorderSide(color: AppColors.primary, width: 1.5),
                 ),
@@ -179,20 +180,20 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget _buildLocationTags() {
     final cs = Theme.of(context).colorScheme;
     return SizedBox(
-      height: 48,
+      height: 48.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+        padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 6.h),
         itemCount: _locationTags.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
             decoration: BoxDecoration(
               color: index == 0
                   ? AppColors.primary.withValues(alpha: 0.1)
                   : cs.surface,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: index == 0 ? AppColors.primary : cs.outlineVariant,
               ),
@@ -202,16 +203,16 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               children: [
                 Icon(
                   Icons.location_on_outlined,
-                  size: 14,
+                  size: 14.r,
                   color: index == 0 ? AppColors.primary : cs.onSurfaceVariant,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4.w),
                 Text(
                   _locationTags[index],
                   style: TextStyle(
                     color:
                         index == 0 ? AppColors.primary : cs.onSurfaceVariant,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight:
                         index == 0 ? FontWeight.w600 : FontWeight.w500,
                   ),
@@ -238,7 +239,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         SliverToBoxAdapter(child: _buildMarketStats()),
         SliverToBoxAdapter(child: _buildTopLocalAgents()),
         SliverToBoxAdapter(child: _buildTrustedServices()),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+        SliverToBoxAdapter(child: SizedBox(height: 24.h)),
       ],
     );
   }
@@ -248,10 +249,10 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget _buildMapSection() {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      height: 320,
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      height: 320.h,
+      margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -279,8 +280,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               final isSelected = _selectedProperty?.id == property.id;
               return Marker(
                 point: LatLng(property.latitude, property.longitude),
-                width: isSelected ? 50 : 40,
-                height: isSelected ? 50 : 40,
+                width: isSelected ? 50.w : 40.w,
+                height: isSelected ? 50.h : 40.h,
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedProperty = property),
                   child: Container(
@@ -301,11 +302,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                         ),
                       ],
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.home,
                         color: AppColors.white,
-                        size: 18,
+                        size: 18.r,
                       ),
                     ),
                   ),
@@ -323,13 +324,13 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget _buildCategoryIcons() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0.h),
       child: SizedBox(
-        height: 80,
+        height: 80.h,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: _categories.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 14),
+          separatorBuilder: (_, __) => SizedBox(width: 14.w),
           itemBuilder: (context, index) {
             final cat = _categories[index];
             final isSelected = _selectedCategoryIndex == index;
@@ -338,8 +339,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               child: Column(
                 children: [
                   Container(
-                    width: 52,
-                    height: 52,
+                    width: 52.w,
+                    height: 52.h,
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary
@@ -355,18 +356,18 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                       child: Icon(
                         cat['icon'] as IconData,
                         color: isSelected ? AppColors.white : cs.onSurfaceVariant,
-                        size: 24,
+                        size: 24.r,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     cat['label'] as String,
                     style: TextStyle(
                       color: isSelected
                           ? AppColors.primary
                           : cs.onSurfaceVariant,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight:
                           isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
@@ -385,18 +386,18 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget _buildFilterBar() {
     final cs = Theme.of(context).colorScheme;
     return SizedBox(
-      height: 44,
+      height: 44.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+        padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 4.h),
         itemCount: _filterLabels.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, __) => SizedBox(width: 10.w),
         itemBuilder: (context, index) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
               border: Border.all(color: cs.outlineVariant),
             ),
             child: Row(
@@ -406,15 +407,15 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   _filterLabels[index],
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4.w),
                 Icon(
                   Icons.keyboard_arrow_down,
                   color: cs.onSurfaceVariant,
-                  size: 18,
+                  size: 18.r,
                 ),
               ],
             ),
@@ -431,28 +432,28 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     if (_properties.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 16),
+      padding: EdgeInsets.only(top: 16.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+            padding: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 10.h),
             child: Text(
               '${_properties.length} Properties Found',
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
           SizedBox(
-            height: 180,
+            height: 180.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               itemCount: _properties.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, __) => SizedBox(width: 12.w),
               itemBuilder: (context, index) {
                 return _buildOverlayPropertyCard(_properties[index]);
               },
@@ -476,10 +477,10 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
         );
       },
       child: Container(
-        width: 240,
+        width: 240.w,
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: isSelected ? AppColors.primary : cs.outlineVariant,
             width: isSelected ? 2 : 1,
@@ -498,7 +499,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
           children: [
             // Image
             SizedBox(
-              height: 100,
+              height: 100.h,
               width: double.infinity,
               child: Image.network(
                 property.images.isNotEmpty ? property.images.first : '',
@@ -507,7 +508,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   color: cs.surfaceContainerHighest,
                   child: Center(
                     child: Icon(Icons.home_outlined,
-                        color: cs.outline, size: 32),
+                        color: cs.outline, size: 32.r),
                   ),
                 ),
                 loadingBuilder: (context, child, loadingProgress) {
@@ -526,7 +527,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             ),
             // Info
             Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              padding: EdgeInsets.fromLTRB(10.w, 8.h, 10.w, 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -534,55 +535,55 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                     children: [
                       Text(
                         property.price,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.primary,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const Spacer(),
                       Icon(Icons.favorite_border,
-                          color: cs.outline, size: 18),
+                          color: cs.outline, size: 18.r),
                     ],
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3.h),
                   Text(
                     '${property.title}, ${property.location}',
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Row(
                     children: [
-                      Icon(Icons.bed_outlined, color: cs.outline, size: 14),
-                      const SizedBox(width: 3),
+                      Icon(Icons.bed_outlined, color: cs.outline, size: 14.r),
+                      SizedBox(width: 3.w),
                       Text(
                         '${property.beds}',
                         style: TextStyle(
-                            color: cs.onSurfaceVariant, fontSize: 12),
+                            color: cs.onSurfaceVariant, fontSize: 12.sp),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10.w),
                       Icon(Icons.bathtub_outlined,
-                          color: cs.outline, size: 14),
-                      const SizedBox(width: 3),
+                          color: cs.outline, size: 14.r),
+                      SizedBox(width: 3.w),
                       Text(
                         '${property.baths}',
                         style: TextStyle(
-                            color: cs.onSurfaceVariant, fontSize: 12),
+                            color: cs.onSurfaceVariant, fontSize: 12.sp),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10.w),
                       Icon(Icons.square_foot_outlined,
-                          color: cs.outline, size: 14),
-                      const SizedBox(width: 3),
+                          color: cs.outline, size: 14.r),
+                      SizedBox(width: 3.w),
                       Text(
                         '${property.sqft} sqft',
                         style: TextStyle(
-                            color: cs.onSurfaceVariant, fontSize: 12),
+                            color: cs.onSurfaceVariant, fontSize: 12.sp),
                       ),
                     ],
                   ),
@@ -604,7 +605,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     if (featured.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -614,37 +615,37 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 'Featured Listings',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF3C7),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
-                child: const Text(
+                child: Text(
                   'TOP',
                   style: TextStyle(
-                    color: Color(0xFFF59E0B),
-                    fontSize: 10,
+                    color: const Color(0xFFF59E0B),
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           ...featured.map((prop) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.only(bottom: 12.h),
                 child: Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: EdgeInsets.all(14.r),
                   decoration: BoxDecoration(
                     color: cs.surface,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14.r),
                     border: Border.all(
                       color: const Color(0xFFFDE68A),
                     ),
@@ -659,10 +660,10 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   child: Row(
                     children: [
                       Container(
-                        width: 56,
-                        height: 56,
+                        width: 56.w,
+                        height: 56.h,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: prop.images.isNotEmpty
@@ -672,16 +673,16 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                                 errorBuilder: (_, _, _) => Container(
                                   color: cs.surfaceContainerHighest,
                                   child: Icon(Icons.home_outlined,
-                                      color: AppColors.primary, size: 28),
+                                      color: AppColors.primary, size: 28.r),
                                 ),
                               )
                             : Container(
                                 color: cs.surfaceContainerHighest,
                                 child: Icon(Icons.home_outlined,
-                                    color: AppColors.primary, size: 28),
+                                    color: AppColors.primary, size: 28.r),
                               ),
                       ),
-                      const SizedBox(width: 14),
+                      SizedBox(width: 14.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,36 +691,36 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                               prop.title,
                               style: TextStyle(
                                 color: cs.onSurface,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2.h),
                             Text(
                               prop.location,
                               style: TextStyle(
                                 color: cs.onSurfaceVariant,
-                                fontSize: 12,
+                                fontSize: 12.sp,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4.h),
                             Row(
                               children: [
                                 Text(
                                   '${prop.beds} Bed',
                                   style: TextStyle(
                                     color: cs.onSurfaceVariant,
-                                    fontSize: 11,
+                                    fontSize: 11.sp,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8.w),
                                 Text(
                                   '${prop.baths} Bath',
                                   style: TextStyle(
                                     color: cs.onSurfaceVariant,
-                                    fontSize: 11,
+                                    fontSize: 11.sp,
                                   ),
                                 ),
                               ],
@@ -729,9 +730,9 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                       ),
                       Text(
                         prop.price,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.primary,
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -756,7 +757,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     final avgBeds = _marketStats['average_beds'] ?? 0;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -764,16 +765,16 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             'Market Stats',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 17,
+              fontSize: 17.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(18.r),
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: cs.outlineVariant),
               boxShadow: [
                 BoxShadow(
@@ -787,19 +788,19 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               children: [
                 _buildStatRow('Listed Properties', '$total', Icons.home_outlined,
                     AppColors.primary),
-                Divider(height: 24, color: cs.outlineVariant),
+                Divider(height: 24.h, color: cs.outlineVariant),
                 _buildStatRow('For Rent', '$forRent', Icons.vpn_key_outlined,
                     const Color(0xFF22C55E)),
-                Divider(height: 24, color: cs.outlineVariant),
+                Divider(height: 24.h, color: cs.outlineVariant),
                 _buildStatRow('For Sale', '$forSale', Icons.sell_outlined,
                     const Color(0xFFF59E0B)),
-                Divider(height: 24, color: cs.outlineVariant),
+                Divider(height: 24.h, color: cs.outlineVariant),
                 _buildStatRow('Avg Rating', avgRating, Icons.star_outline,
                     const Color(0xFFF59E0B)),
-                Divider(height: 24, color: cs.outlineVariant),
+                Divider(height: 24.h, color: cs.outlineVariant),
                 _buildStatRow('Avg Size', '$avgSqft sqft', Icons.square_foot,
                     AppColors.primary),
-                Divider(height: 24, color: cs.outlineVariant),
+                Divider(height: 24.h, color: cs.outlineVariant),
                 _buildStatRow('Avg Beds', '$avgBeds', Icons.bed_outlined,
                     const Color(0xFF6366F1)),
               ],
@@ -816,21 +817,21 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     return Row(
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: 40.w,
+          height: 40.h,
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Center(child: Icon(icon, color: iconColor, size: 20)),
+          child: Center(child: Icon(icon, color: iconColor, size: 20.r)),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14.w),
         Expanded(
           child: Text(
             label,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -839,7 +840,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
           value,
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -854,7 +855,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     if (_topAgents.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -865,30 +866,30 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 'Top Local Agents',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const Text(
+              Text(
                 'SEE ALL',
                 style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           ..._topAgents.map((agent) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.only(bottom: 12.h),
               child: Container(
-                padding: const EdgeInsets.all(14),
+                padding: EdgeInsets.all(14.r),
                 decoration: BoxDecoration(
                   color: cs.surface,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(14.r),
                   border: Border.all(color: cs.outlineVariant),
                   boxShadow: [
                     BoxShadow(
@@ -901,8 +902,8 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                 child: Row(
                   children: [
                     Container(
-                      width: 48,
-                      height: 48,
+                      width: 48.w,
+                      height: 48.h,
                       decoration: BoxDecoration(
                         color: cs.primaryContainer,
                         shape: BoxShape.circle,
@@ -910,15 +911,15 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                       child: Center(
                         child: Text(
                           agent.initials,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.primary,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -927,32 +928,32 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                             agent.name,
                             style: TextStyle(
                               color: cs.onSurface,
-                              fontSize: 15,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 3),
+                          SizedBox(height: 3.h),
                           Row(
                             children: [
                               if (agent.rating > 0) ...[
-                                const Icon(Icons.star,
-                                    color: Color(0xFFF59E0B), size: 14),
-                                const SizedBox(width: 3),
+                                Icon(Icons.star,
+                                    color: const Color(0xFFF59E0B), size: 14.r),
+                                SizedBox(width: 3.w),
                                 Text(
                                   agent.rating.toString(),
                                   style: TextStyle(
                                     color: cs.onSurface,
-                                    fontSize: 13,
+                                    fontSize: 13.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                SizedBox(width: 12.w),
                               ],
                               Text(
                                 agent.deals > 0 ? '${agent.deals} deals' : '${agent.propertyCount} properties',
                                 style: TextStyle(
                                   color: cs.onSurfaceVariant,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -966,12 +967,12 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 8),
-                        textStyle: const TextStyle(
-                          fontSize: 12,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 14.w, vertical: 8.h),
+                        textStyle: TextStyle(
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -1015,7 +1016,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     if (display.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1023,11 +1024,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             'Trusted Services',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 17,
+              fontSize: 17.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(display.length, (i) {
@@ -1041,22 +1042,22 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               return Column(
                 children: [
                   Container(
-                    width: 56,
-                    height: 56,
+                    width: 56.w,
+                    height: 56.h,
                     decoration: BoxDecoration(
                       color: colorPair.$1,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: Icon(icon, color: colorPair.$2, size: 24),
+                      child: Icon(icon, color: colorPair.$2, size: 24.r),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     svc.name,
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.3,
                     ),

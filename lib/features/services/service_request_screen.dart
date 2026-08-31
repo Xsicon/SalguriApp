@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/models/rental.dart';
@@ -211,7 +212,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 20,
+            size: 20.r,
             color: cs.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -220,7 +221,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           l.tr('serviceRequest'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -231,34 +232,34 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           ? Center(
               child: Text(
                 l.tr('noCategoriesAvailable'),
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 15.sp),
               ),
             )
           : Column(
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 20.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildSelectedProperty(cs),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         _buildCategorySelector(cs),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         _buildServiceItems(cs),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         _buildDescription(cs),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         _buildUrgencySelector(cs),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         if (_selectedItems.isNotEmpty ||
                             _urgency != _Urgency.standard)
                           _buildSelectedSummary(cs),
-                        const SizedBox(height: 100),
+                        SizedBox(height: 100.h),
                       ],
                     ),
                   ),
@@ -292,37 +293,37 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           l.tr('selectedProperty'),
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10.h),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: Row(
             children: [
               Container(
-                width: 38,
-                height: 38,
+                width: 38.w,
+                height: 38.h,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.location_on_outlined,
                     color: AppColors.primary,
-                    size: 20,
+                    size: 20.r,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,16 +332,16 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                       address,
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2.h),
                     Text(
                       subtitle,
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
@@ -349,7 +350,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
               Icon(
                 Icons.keyboard_arrow_down_rounded,
                 color: cs.onSurfaceVariant,
-                size: 22,
+                size: 22.r,
               ),
             ],
           ),
@@ -371,17 +372,17 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           l.tr('selectCategory'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
         SizedBox(
-          height: 90,
+          height: 90.h,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: _categories.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 14),
+            separatorBuilder: (context, index) => SizedBox(width: 14.w),
             itemBuilder: (context, index) {
               final cat = _categories[index];
               final isActive = _activeCategoryId == cat.id;
@@ -396,15 +397,15 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      width: 58,
-                      height: 58,
+                      width: 58.w,
+                      height: 58.h,
                       decoration: BoxDecoration(
                         color: isActive
                             ? AppColors.primary
                             : hasSelections
                             ? AppColors.primary.withValues(alpha: 0.1)
                             : cs.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
                           color: isMarked
                               ? AppColors.primary
@@ -422,13 +423,13 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                                   : hasSelections
                                   ? AppColors.primary
                                   : cs.onSurfaceVariant,
-                              size: 26,
+                              size: 26.r,
                             ),
                           ),
                           if (isActive || hasSelections)
                             Positioned(
-                              top: 5,
-                              right: 5,
+                              top: 5.h,
+                              right: 5.w,
                               child: Icon(
                                 hasSelections
                                     ? Icons.check_circle_rounded
@@ -436,20 +437,20 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                                 color: isActive
                                     ? Colors.white
                                     : AppColors.primary,
-                                size: 15,
+                                size: 15.r,
                               ),
                             ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6.h),
                     Text(
                       cat.name,
                       style: TextStyle(
                         color: isMarked
                             ? AppColors.primary
                             : cs.onSurfaceVariant,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: isMarked
                             ? FontWeight.w700
                             : FontWeight.w500,
@@ -479,13 +480,13 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           _serviceItemsTitle(l),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
         SizedBox(
-          height: 140,
+          height: 140.h,
           child: _isLoadingActiveItems
               ? const Center(child: CircularProgressIndicator())
               : items.isEmpty
@@ -494,13 +495,13 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                     _activeCategoryId == null
                         ? l.tr('selectCategoryFirst')
                         : l.tr('noItemsAvailable'),
-                    style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+                    style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
                   ),
                 )
               : ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: items.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 12),
+                  separatorBuilder: (_, _) => SizedBox(width: 12.w),
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final isSelected = _selectedItemIds.contains(item.id);
@@ -508,11 +509,11 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                       onTap: () => _toggleItem(item),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
-                        width: 130,
-                        padding: const EdgeInsets.all(14),
+                        width: 130.w,
+                        padding: EdgeInsets.all(14.r),
                         decoration: BoxDecoration(
                           color: cs.surface,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: isSelected
                                 ? AppColors.primary
@@ -527,33 +528,33 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: 36,
-                                  height: 36,
+                                  width: 36.w,
+                                  height: 36.h,
                                   decoration: BoxDecoration(
                                     color: cs.surfaceContainerHighest,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10.r),
                                   ),
                                   child: Center(
                                     child: Icon(
                                       item.icon,
-                                      size: 18,
+                                      size: 18.r,
                                       color: cs.onSurfaceVariant,
                                     ),
                                   ),
                                 ),
                                 if (isSelected)
                                   Container(
-                                    width: 22,
-                                    height: 22,
+                                    width: 22.w,
+                                    height: 22.h,
                                     decoration: const BoxDecoration(
                                       color: AppColors.primary,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Center(
+                                    child: Center(
                                       child: Icon(
                                         Icons.check_rounded,
                                         color: Colors.white,
-                                        size: 14,
+                                        size: 14.r,
                                       ),
                                     ),
                                   ),
@@ -564,18 +565,18 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                               item.name,
                               style: TextStyle(
                                 color: cs.onSurface,
-                                fontSize: 13,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4.h),
                             Text(
                               '\$${item.price.toStringAsFixed(0)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -603,25 +604,25 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           l.tr('description'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: TextField(
             controller: _descController,
             maxLines: 4,
-            style: TextStyle(color: cs.onSurface, fontSize: 14),
+            style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
             decoration: InputDecoration(
               hintText: l.tr('descriptionHint'),
-              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-              contentPadding: const EdgeInsets.all(16),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              contentPadding: EdgeInsets.all(16.r),
               border: InputBorder.none,
             ),
           ),
@@ -643,11 +644,11 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           l.tr('urgencyLevel'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
         Row(
           children: _Urgency.values.map((u) {
             final isSelected = _urgency == u;
@@ -657,14 +658,14 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   margin: EdgeInsets.only(
-                    right: u != _Urgency.standard ? 10 : 0,
+                    right: u != _Urgency.standard ? 10.w : 0,
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.05)
                         : cs.surface,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: isSelected ? AppColors.primary : cs.outlineVariant,
                       width: isSelected ? 2 : 1,
@@ -676,18 +677,18 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                         u.localizedLabel(l),
                         style: TextStyle(
                           color: isSelected ? AppColors.primary : cs.onSurface,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         u.surchargeLabel,
                         style: TextStyle(
                           color: isSelected
                               ? AppColors.primary
                               : cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -709,10 +710,10 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
   Widget _buildSelectedSummary(ColorScheme cs) {
     final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Column(
@@ -722,11 +723,11 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
             l.tr('selectedServices'),
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 15,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           ..._selectedItems.map(
             (item) => _buildSummaryRow(
               item.name,
@@ -740,7 +741,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
               '\$${_urgency.surcharge.toStringAsFixed(2)}',
               cs,
             ),
-          Divider(color: cs.outlineVariant, height: 24),
+          Divider(color: cs.outlineVariant, height: 24.h),
           _buildSummaryRow(
             l.tr('serviceFee'),
             '\$${_serviceFee.toStringAsFixed(2)}',
@@ -753,16 +754,16 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
 
   Widget _buildSummaryRow(String label, String value, ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14)),
+          Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14.sp)),
           Text(
             value,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -779,7 +780,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
     final l = AppLocalizations.of(context);
     final hasItems = _selectedItems.isNotEmpty;
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
@@ -800,22 +801,22 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                 l.tr('totalPrice'),
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2.h),
               Text(
                 '\$${_total.toStringAsFixed(2)}',
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 22,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: ElevatedButton(
               onPressed: hasItems
@@ -861,12 +862,12 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: cs.onSurfaceVariant,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),

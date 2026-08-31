@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
@@ -9,8 +10,8 @@ import '../../services/api_service.dart';
 // import '../../services/supabase_service.dart'; // Disabled – landlord feature
 import 'contact_agent_screen.dart';
 // import 'edit_property_screen.dart'; // Disabled – landlord feature
-import 'rent_property_screen.dart';
 import 'schedule_showing_screen.dart';
+import 'submit_application_screen.dart';
 
 class PropertyDetailsScreen extends StatefulWidget {
   final Property property;
@@ -93,13 +94,13 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     SliverToBoxAdapter(child: _buildAmenities()),
                     SliverToBoxAdapter(child: _buildAgentCard()),
                     SliverToBoxAdapter(child: _buildLocationMap()),
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    SliverToBoxAdapter(child: SizedBox(height: 16.h)),
                   ],
                 ),
                 // Sticky back button
                 Positioned(
-                  top: MediaQuery.of(context).padding.top + 8,
-                  left: 12,
+                  top: MediaQuery.of(context).padding.top + 8.h,
+                  left: 12.w,
                   child: _buildCircleButton(
                     icon: Icons.arrow_back,
                     onTap: () => Navigator.of(context).pop(),
@@ -120,11 +121,11 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     final cs = Theme.of(context).colorScheme;
     if (p.images.isEmpty) {
       return SizedBox(
-        height: 280,
+        height: 280.h,
         child: Container(
           color: cs.surfaceContainerHighest,
           child: Center(
-            child: Icon(Icons.home_outlined, color: cs.outline, size: 48),
+            child: Icon(Icons.home_outlined, color: cs.outline, size: 48.r),
           ),
         ),
       );
@@ -132,7 +133,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     return Stack(
       children: [
         SizedBox(
-          height: 280,
+          height: 280.h,
           child: PageView.builder(
             controller: _pageController,
             itemCount: p.images.length,
@@ -147,7 +148,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 errorBuilder: (_, _, _) => Container(
                   color: cs.surfaceContainerHighest,
                   child: Center(
-                    child: Icon(Icons.home_outlined, color: cs.outline, size: 48),
+                    child: Icon(Icons.home_outlined, color: cs.outline, size: 48.r),
                   ),
                 ),
                 loadingBuilder: (context, child, loadingProgress) {
@@ -171,8 +172,8 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         ),
         // Share button
         Positioned(
-          top: MediaQuery.of(context).padding.top + 8,
-          right: 56,
+          top: MediaQuery.of(context).padding.top + 8.h,
+          right: 56.w,
           child: _buildCircleButton(
             icon: Icons.share_outlined,
             onTap: () {},
@@ -180,13 +181,13 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         ),
         // Favorite button
         Positioned(
-          top: MediaQuery.of(context).padding.top + 8,
-          right: 12,
+          top: MediaQuery.of(context).padding.top + 8.h,
+          right: 12.w,
           child: GestureDetector(
             onTap: _toggleSave,
             child: Container(
-              width: 36,
-              height: 36,
+              width: 36.w,
+              height: 36.h,
               decoration: const BoxDecoration(
                 color: Colors.black38,
                 shape: BoxShape.circle,
@@ -194,27 +195,27 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               child: Icon(
                 _isSaved ? Icons.favorite : Icons.favorite_border,
                 color: _isSaved ? const Color(0xFFEF4444) : AppColors.white,
-                size: 20,
+                size: 20.r,
               ),
             ),
           ),
         ),
         // Image indicators
         Positioned(
-          bottom: 16,
-          left: 0,
-          right: 0,
+          bottom: 16.h,
+          left: 0.w,
+          right: 0.w,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(p.images.length, (index) {
               final isActive = index == _currentImageIndex;
               return Container(
-                width: isActive ? 24 : 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: isActive ? 24.w : 8.w,
+                height: 8.h,
+                margin: EdgeInsets.symmetric(horizontal: 3.w),
                 decoration: BoxDecoration(
                   color: isActive ? AppColors.white : AppColors.white.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
               );
             }),
@@ -222,19 +223,19 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         ),
         // Image counter
         Positioned(
-          bottom: 16,
-          right: 16,
+          bottom: 16.h,
+          right: 16.w,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
               color: Colors.black54,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Text(
               '${_currentImageIndex + 1}/${p.images.length}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.white,
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -251,14 +252,14 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            width: 40,
-            height: 40,
+            width: 40.w,
+            height: 40.h,
             decoration: BoxDecoration(
               color: AppColors.black.withValues(alpha: 0.3),
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.white.withValues(alpha: 0.15)),
             ),
-            child: Icon(icon, color: AppColors.white, size: 20),
+            child: Icon(icon, color: AppColors.white, size: 20.r),
           ),
         ),
       ),
@@ -270,7 +271,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildTitleSection() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -278,88 +279,88 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Text(
                   p.type,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.white,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               const Spacer(),
-              const Icon(Icons.star, color: Color(0xFFF59E0B), size: 18),
-              const SizedBox(width: 4),
+              Icon(Icons.star, color: const Color(0xFFF59E0B), size: 18.r),
+              SizedBox(width: 4.w),
               Text(
                 p.rating.toString(),
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4.w),
               Text(
                 '(${p.reviews} reviews)',
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           // Title
           Text(
             p.title,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 24,
+              fontSize: 24.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           // Location
           Row(
             children: [
-              Icon(Icons.location_on_outlined, color: cs.onSurfaceVariant, size: 18),
-              const SizedBox(width: 4),
+              Icon(Icons.location_on_outlined, color: cs.onSurfaceVariant, size: 18.r),
+              SizedBox(width: 4.w),
               Text(
                 p.location,
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           // Price
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 p.price,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 26,
+                  fontSize: 26.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               if (p.priceLabel.isNotEmpty) ...[
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 3),
+                  padding: EdgeInsets.only(bottom: 3.h),
                   child: Text(
                     p.priceLabel,
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                     ),
                   ),
                 ),
@@ -376,12 +377,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildSpecsGrid() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
           color: cs.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
         ),
         child: Row(
@@ -404,22 +405,22 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: AppColors.primary, size: 22),
-          const SizedBox(height: 6),
+          Icon(icon, color: AppColors.primary, size: 22.r),
+          SizedBox(height: 6.h),
           Text(
             value,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2.h),
           Text(
             label,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 12,
+              fontSize: 12.sp,
             ),
           ),
         ],
@@ -430,8 +431,8 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildSpecDivider() {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: 1,
-      height: 40,
+      width: 1.w,
+      height: 40.h,
       color: cs.outlineVariant,
     );
   }
@@ -441,30 +442,30 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildPaymentEstimator() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: cs.primaryContainer.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 40.w,
+              height: 40.h,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.calculate_outlined,
                 color: AppColors.primary,
-                size: 22,
+                size: 22.r,
               ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -473,23 +474,23 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     'Monthly Payment Estimate',
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     p.priceLabel.isNotEmpty ? p.priceLabel : 'Contact agent',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 22),
+            Icon(Icons.chevron_right, color: cs.onSurfaceVariant, size: 22.r),
           ],
         ),
       ),
@@ -501,7 +502,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   Widget _buildDescription() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -509,16 +510,16 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             'Description',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Text(
             p.description,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
               height: 1.6,
             ),
           ),
@@ -547,7 +548,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     };
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -555,33 +556,33 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             'Amenities',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 10.w,
+            runSpacing: 10.h,
             children: p.amenities.map((amenity) {
               final icon = amenityIcons[amenity] ?? Icons.check_circle_outline;
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: cs.surfaceContainerLowest,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                   border: Border.all(color: cs.outlineVariant),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(icon, color: AppColors.primary, size: 18),
-                    const SizedBox(width: 8),
+                    Icon(icon, color: AppColors.primary, size: 18.r),
+                    SizedBox(width: 8.w),
                     Text(
                       amenity,
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -603,7 +604,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     if (agent == null) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -611,24 +612,24 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             'Property Agent',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(
               color: cs.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: cs.outlineVariant),
             ),
             child: Row(
               children: [
                 // Avatar
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: 50.w,
+                  height: 50.h,
                   decoration: BoxDecoration(
                     color: cs.primaryContainer,
                     shape: BoxShape.circle,
@@ -636,15 +637,15 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                   child: Center(
                     child: Text(
                       agent.initials,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.primary,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: 14.w),
                 // Info
                 Expanded(
                   child: Column(
@@ -654,39 +655,39 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                         agent.name,
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      SizedBox(height: 2.h),
                       Text(
                         agent.role,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Color(0xFFF59E0B), size: 14),
-                          const SizedBox(width: 3),
+                          Icon(Icons.star, color: const Color(0xFFF59E0B), size: 14.r),
+                          SizedBox(width: 3.w),
                           Text(
                             agent.rating.toString(),
                             style: TextStyle(
                               color: cs.onSurface,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Icon(Icons.handshake_outlined, color: cs.outline, size: 14),
-                          const SizedBox(width: 3),
+                          SizedBox(width: 12.w),
+                          Icon(Icons.handshake_outlined, color: cs.outline, size: 14.r),
+                          SizedBox(width: 3.w),
                           Text(
                             '${agent.deals} deals',
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
@@ -707,7 +708,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                       },
                       child: _buildContactButton(Icons.phone_outlined),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -730,13 +731,13 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   Widget _buildContactButton(IconData icon) {
     return Container(
-      width: 38,
-      height: 38,
+      width: 38.w,
+      height: 38.h,
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
       ),
-      child: Icon(icon, color: AppColors.primary, size: 18),
+      child: Icon(icon, color: AppColors.primary, size: 18.r),
     );
   }
 
@@ -747,7 +748,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     final propertyLocation = LatLng(p.latitude, p.longitude);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -755,32 +756,32 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             'Location',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h),
           Row(
             children: [
               Icon(Icons.location_on_outlined,
-                  color: cs.onSurfaceVariant, size: 16),
-              const SizedBox(width: 4),
+                  color: cs.onSurfaceVariant, size: 16.r),
+              SizedBox(width: 4.w),
               Text(
                 p.location,
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Container(
-            height: 200,
+            height: 200.h,
             width: double.infinity,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: cs.outlineVariant),
             ),
             child: FlutterMap(
@@ -801,12 +802,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                   markers: [
                     Marker(
                       point: propertyLocation,
-                      width: 40,
-                      height: 40,
-                      child: const Icon(
+                      width: 40.w,
+                      height: 40.h,
+                      child: Icon(
                         Icons.location_on,
                         color: AppColors.primary,
-                        size: 40,
+                        size: 40.r,
                       ),
                     ),
                   ],
@@ -831,10 +832,10 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     final cs = Theme.of(context).colorScheme;
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20,
-        14,
-        20,
-        MediaQuery.of(context).padding.bottom + 14,
+        20.w,
+        14.h,
+        20.w,
+        MediaQuery.of(context).padding.bottom + 14.h,
       ),
       decoration: BoxDecoration(
         color: cs.surface,
@@ -855,21 +856,21 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   Widget _buildRentedBanner() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: AppColors.successSoft,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
         children: [
-          const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 22),
-          const SizedBox(width: 12),
-          const Expanded(
+          Icon(Icons.check_circle_rounded, color: AppColors.success, size: 22.r),
+          SizedBox(width: 12.w),
+          Expanded(
             child: Text(
               'You are currently renting this property',
               style: TextStyle(
                 color: AppColors.success,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -930,23 +931,23 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 ),
               );
             },
-            icon: const Icon(Icons.calendar_today_outlined, size: 16),
+            icon: Icon(Icons.calendar_today_outlined, size: 16.r),
             label: const Text('TOUR'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 13),
-              textStyle: const TextStyle(
-                fontSize: 13,
+              padding: EdgeInsets.symmetric(vertical: 13.h),
+              textStyle: TextStyle(
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         // Contact button
         Expanded(
           child: OutlinedButton.icon(
@@ -957,50 +958,56 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 ),
               );
             },
-            icon: const Icon(Icons.chat_outlined, size: 16),
+            icon: Icon(Icons.chat_outlined, size: 16.r),
             label: const Text('CHAT'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.textSecondary,
               side: const BorderSide(color: AppColors.border),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 13),
-              textStyle: const TextStyle(
-                fontSize: 13,
+              padding: EdgeInsets.symmetric(vertical: 13.h),
+              textStyle: TextStyle(
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        // Rent button
+        SizedBox(width: 8.w),
+        // Apply button — submits a rental application for staff review; it
+        // does not instantly create a lease (there is no self-service
+        // booking path, matching how the rest of the rental pipeline works).
         Expanded(
           flex: 2,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => RentPropertyScreen(property: p),
-                ),
-              );
-            },
+            onPressed: p.isAvailableToApply
+                ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => SubmitApplicationScreen(property: p),
+                      ),
+                    );
+                  }
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.white,
+              disabledBackgroundColor: AppColors.divider,
+              disabledForegroundColor: AppColors.textMuted,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 15),
+              padding: EdgeInsets.symmetric(vertical: 15.h),
               elevation: 2,
               shadowColor: AppColors.primary.withValues(alpha: 0.3),
-              textStyle: const TextStyle(
-                fontSize: 14,
+              textStyle: TextStyle(
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
             ),
-            child: const Text('RENT NOW'),
+            child: Text(p.isAvailableToApply ? 'APPLY TO RENT' : 'NOT AVAILABLE'),
           ),
         ),
       ],

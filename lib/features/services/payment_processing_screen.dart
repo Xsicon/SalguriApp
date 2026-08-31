@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../services/api_service.dart';
 
@@ -119,29 +120,29 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: cs.onSurface),
+              size: 20.r, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Payment Processing',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+        padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
         child: Column(
           children: [
             _buildSummaryCard(cs),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             if (_state == _PayState.confirming) ...[
               _buildConfirmCard(cs),
             ] else if (_state == _PayState.processing) ...[
               _buildStatusCard(cs),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               _buildSteps(cs),
             ] else if (_state == _PayState.failed) ...[
               _buildFailedCard(cs),
@@ -162,7 +163,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -177,7 +178,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
         children: [
           // Blue gradient banner
           Container(
-            height: 100,
+            height: 100.h,
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -188,22 +189,22 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
             ),
             child: Center(
               child: Container(
-                width: 60,
-                height: 60,
+                width: 60.w,
+                height: 60.h,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(Icons.payments_outlined,
-                      color: Colors.white, size: 30),
+                      color: Colors.white, size: 30.r),
                 ),
               ),
             ),
           ),
           // Amount + details
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -211,28 +212,28 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                   'MERCHANT',
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.8,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   '\$${widget.totalAmount.toStringAsFixed(2)}',
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 26,
+                    fontSize: 26.sp,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 Row(
                   children: [
                     Text(
                       'Salguri Platform',
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -250,26 +251,26 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 5.h),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               'Ref: $_refNumber',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.primary,
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.copy_outlined,
-                                color: AppColors.primary, size: 13),
+                            SizedBox(width: 4.w),
+                            Icon(Icons.copy_outlined,
+                                color: AppColors.primary, size: 13.r),
                           ],
                         ),
                       ),
@@ -290,10 +291,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
 
   Widget _buildStatusCard(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(
             color: AppColors.primary.withValues(alpha: 0.15)),
       ),
@@ -303,12 +304,12 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
             children: [
               // Pulsing dot
               _PulsingDot(),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 '${widget.paymentMethodLabel.toUpperCase()} PAYMENT',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
                 ),
@@ -316,16 +317,16 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
               const Spacer(),
               Text(
                 _timerLabel,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   fontFeatures: [FontFeature.tabularFigures()],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           Row(
             children: [
               Expanded(
@@ -333,33 +334,33 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                   'Waiting for your input on phone...',
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               AnimatedBuilder(
                 animation: _progressAnim,
                 builder: (context, _) => Text(
                   '${(_progressAnim.value * 100).toInt()}%',
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
             child: AnimatedBuilder(
               animation: _progressAnim,
               builder: (context, _) => LinearProgressIndicator(
                 value: _progressAnim.value,
-                minHeight: 8,
+                minHeight: 8.h,
                 backgroundColor: cs.surfaceContainerHighest,
                 color: AppColors.primary,
               ),
@@ -404,11 +405,11 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
           'How to pay:',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         ...List.generate(steps.length, (i) {
           final step = steps[i];
           final isLast = i == steps.length - 1;
@@ -420,8 +421,8 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 Column(
                   children: [
                     Container(
-                      width: 32,
-                      height: 32,
+                      width: 32.w,
+                      height: 32.h,
                       decoration: const BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
@@ -429,9 +430,9 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                       child: Center(
                         child: Text(
                           '${i + 1}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -440,18 +441,18 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                     if (!isLast)
                       Expanded(
                         child: Container(
-                          width: 2,
-                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          width: 2.w,
+                          margin: EdgeInsets.symmetric(vertical: 4.h),
                           color: cs.outlineVariant,
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: 14.w),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
-                        top: 6, bottom: isLast ? 0 : 24),
+                        top: 6.h, bottom: isLast ? 0.h : 24.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -459,16 +460,16 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                           step.title,
                           style: TextStyle(
                             color: cs.onSurface,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        SizedBox(height: 3.h),
                         RichText(
                           text: TextSpan(
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                             ),
                             children: [
                               TextSpan(text: step.body),
@@ -502,10 +503,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
   Widget _buildConfirmCard(ColorScheme cs) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -518,25 +519,25 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
       child: Column(
         children: [
           Icon(Icons.receipt_long_outlined,
-              color: AppColors.primary, size: 48),
-          const SizedBox(height: 16),
+              color: AppColors.primary, size: 48.r),
+          SizedBox(height: 16.h),
           Text(
             'CONFIRM PAYMENT',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.3,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           _confirmRow(cs, 'Amount',
               '\$${widget.totalAmount.toStringAsFixed(2)}'),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           _confirmRow(cs, 'Method', widget.paymentMethodLabel),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           _confirmRow(cs, 'Reference', _refNumber),
-          const SizedBox(height: 28),
+          SizedBox(height: 28.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -545,11 +546,11 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -557,7 +558,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
               child: const Text('CONFIRM PAYMENT'),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
@@ -566,10 +567,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 foregroundColor: cs.onSurfaceVariant,
                 side: BorderSide(color: cs.outlineVariant, width: 1.5),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -590,7 +591,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
           label,
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -598,7 +599,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
           value,
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -613,10 +614,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
   Widget _buildFailedCard(ColorScheme cs) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(28.r),
       decoration: BoxDecoration(
         color: const Color(0xFFFEF2F2),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: const Color(0xFFEF4444), width: 2),
         boxShadow: [
           BoxShadow(
@@ -635,39 +636,39 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
             builder: (_, v, child) =>
                 Transform.scale(scale: v, child: child),
             child: Container(
-              width: 72,
-              height: 72,
+              width: 72.w,
+              height: 72.h,
               decoration: const BoxDecoration(
                 color: Color(0xFFEF4444),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(Icons.close_rounded,
-                    color: Colors.white, size: 40),
+                    color: Colors.white, size: 40.r),
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: 20.h),
+          Text(
             'PAYMENT FAILED',
             style: TextStyle(
-              color: Color(0xFF991B1B),
-              fontSize: 20,
+              color: const Color(0xFF991B1B),
+              fontSize: 20.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.3,
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
+          SizedBox(height: 10.h),
+          Text(
             'Please try again or use a different payment method.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFFB91C1C),
-              fontSize: 14,
+              color: const Color(0xFFB91C1C),
+              fontSize: 14.sp,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: 28.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -678,11 +679,11 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -690,7 +691,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
               child: const Text('RETRY'),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
@@ -699,10 +700,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 foregroundColor: cs.onSurfaceVariant,
                 side: BorderSide(color: cs.outlineVariant, width: 1.5),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -722,10 +723,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
   Widget _buildSuccessCard(ColorScheme cs) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: EdgeInsets.all(28.r),
       decoration: BoxDecoration(
         color: const Color(0xFFF0FDF4),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: const Color(0xFF22C55E), width: 2),
         boxShadow: [
           BoxShadow(
@@ -745,39 +746,39 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
             builder: (_, v, child) =>
                 Transform.scale(scale: v, child: child),
             child: Container(
-              width: 72,
-              height: 72,
+              width: 72.w,
+              height: 72.h,
               decoration: const BoxDecoration(
                 color: Color(0xFF22C55E),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(Icons.check_rounded,
-                    color: Colors.white, size: 40),
+                    color: Colors.white, size: 40.r),
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: 20.h),
+          Text(
             'PAYMENT RECEIVED!',
             style: TextStyle(
-              color: Color(0xFF166534),
-              fontSize: 20,
+              color: const Color(0xFF166534),
+              fontSize: 20.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.3,
             ),
           ),
-          const SizedBox(height: 10),
-          const Text(
+          SizedBox(height: 10.h),
+          Text(
             'Your request for Salguri services has been confirmed. A receipt has been sent to your inbox.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF15803D),
-              fontSize: 14,
+              color: const Color(0xFF15803D),
+              fontSize: 14.sp,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: 28.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -786,11 +787,11 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -798,7 +799,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
               child: const Text('BACK TO HOME'),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
@@ -808,10 +809,10 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                 side: const BorderSide(
                     color: AppColors.primary, width: 1.5),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                textStyle: const TextStyle(
-                  fontSize: 14,
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -864,8 +865,8 @@ class _PulsingDotState extends State<_PulsingDot>
       builder: (context, _) => Opacity(
         opacity: _anim.value,
         child: Container(
-          width: 8,
-          height: 8,
+          width: 8.w,
+          height: 8.h,
           decoration: const BoxDecoration(
             color: AppColors.primary,
             shape: BoxShape.circle,

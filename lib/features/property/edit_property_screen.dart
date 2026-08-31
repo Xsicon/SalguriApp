@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -208,14 +209,14 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: cs.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20.r, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Edit Listing',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -243,7 +244,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   Widget _buildStepIndicator(ColorScheme cs) {
     const labels = ['Basic Info', 'Details', 'Images'];
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       color: cs.surface,
       child: Row(
         children: List.generate(3, (i) {
@@ -259,13 +260,13 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                       if (i > 0)
                         Expanded(
                           child: Container(
-                            height: 2,
+                            height: 2.h,
                             color: isDone || isActive ? AppColors.primary : cs.outlineVariant,
                           ),
                         ),
                       Container(
-                        width: 28,
-                        height: 28,
+                        width: 28.w,
+                        height: 28.h,
                         decoration: BoxDecoration(
                           color: isDone
                               ? AppColors.primary
@@ -277,12 +278,12 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                         ),
                         child: Center(
                           child: isDone
-                              ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                              ? Icon(Icons.check_rounded, color: Colors.white, size: 16.r)
                               : Text(
                                   '${i + 1}',
                                   style: TextStyle(
                                     color: isActive ? AppColors.primary : cs.onSurfaceVariant,
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -291,7 +292,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                       if (i < 2)
                         Expanded(
                           child: Container(
-                            height: 2,
+                            height: 2.h,
                             color: isDone && i < _currentStep - 1
                                 ? AppColors.primary
                                 : i < _currentStep
@@ -301,12 +302,12 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     labels[i],
                     style: TextStyle(
                       color: isActive ? AppColors.primary : cs.onSurfaceVariant,
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
@@ -322,22 +323,22 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   // Step 1
   Widget _buildStep1BasicInfo(ColorScheme cs) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionLabel('BASIC INFORMATION', cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildTextField(controller: _titleController, label: 'Title', hint: 'e.g. Modern Villa in Hodan', cs: cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildDescriptionField(cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildTypeSelector(cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildTextField(controller: _priceController, label: 'Price', hint: 'e.g. \$275,000', cs: cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildTextField(controller: _priceLabelController, label: 'Price Label', hint: 'e.g. Est. \$1,450/mo', cs: cs),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -346,36 +347,36 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   // Step 2
   Widget _buildStep2Details(ColorScheme cs) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionLabel('PROPERTY DETAILS', cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Row(
             children: [
               Expanded(child: _buildNumberField(controller: _bedsController, label: 'Beds', hint: '3', cs: cs)),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(child: _buildNumberField(controller: _bathsController, label: 'Baths', hint: '2', cs: cs)),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Row(
             children: [
               Expanded(child: _buildNumberField(controller: _sqftController, label: 'Sqft', hint: '1800', cs: cs)),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(child: _buildNumberField(controller: _yearBuiltController, label: 'Year Built', hint: '2024', cs: cs)),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildTextField(controller: _locationController, label: 'Location', hint: 'e.g. Hodan, Mogadishu', cs: cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildLocationPicker(cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _buildAgentSelector(cs),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildAmenitiesSelector(cs),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -384,23 +385,23 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   // Step 3
   Widget _buildStep3Images(ColorScheme cs) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionLabel('PROPERTY IMAGES', cs),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             'Manage existing images',
-            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13, fontWeight: FontWeight.w500),
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13.sp, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           if (_imageUrls.isNotEmpty) ...[
             Text(
               '${_imageUrls.length} image${_imageUrls.length > 1 ? 's' : ''}',
-              style: TextStyle(color: cs.onSurface, fontSize: 15, fontWeight: FontWeight.w700),
+              style: TextStyle(color: cs.onSurface, fontSize: 15.sp, fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -415,7 +416,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                 return Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                       child: Image.network(
                         _imageUrls[index],
                         width: double.infinity,
@@ -428,36 +429,36 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                       ),
                     ),
                     Positioned(
-                      top: 4,
-                      right: 4,
+                      top: 4.h,
+                      right: 4.w,
                       child: GestureDetector(
                         onTap: () => _removeImage(index),
                         child: Container(
-                          width: 24,
-                          height: 24,
+                          width: 24.w,
+                          height: 24.h,
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.6),
                             shape: BoxShape.circle,
                           ),
-                          child: const Center(
-                            child: Icon(Icons.close_rounded, color: Colors.white, size: 14),
+                          child: Center(
+                            child: Icon(Icons.close_rounded, color: Colors.white, size: 14.r),
                           ),
                         ),
                       ),
                     ),
                     if (index == 0)
                       Positioned(
-                        bottom: 4,
-                        left: 4,
+                        bottom: 4.h,
+                        left: 4.w,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                           decoration: BoxDecoration(
                             color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(6.r),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Cover',
-                            style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                            style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
@@ -467,12 +468,12 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
             ),
           ] else
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
+              padding: EdgeInsets.symmetric(vertical: 32.h),
               child: Center(
-                child: Text('No images', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14)),
+                child: Text('No images', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp)),
               ),
             ),
-          const SizedBox(height: 40),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -488,25 +489,25 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
           'Pin Location',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
           'Tap on the map to set the property location',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Container(
-          height: 200,
+          height: 200.h,
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: FlutterMap(
@@ -526,12 +527,12 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                 markers: [
                   Marker(
                     point: _selectedLocation,
-                    width: 40,
-                    height: 40,
-                    child: const Icon(
+                    width: 40.w,
+                    height: 40.h,
+                    child: Icon(
                       Icons.location_on,
                       color: AppColors.primary,
-                      size: 40,
+                      size: 40.r,
                     ),
                   ),
                 ],
@@ -539,13 +540,13 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: 6.h),
         Text(
           'Lat: ${_selectedLocation.latitude.toStringAsFixed(5)}, '
           'Lng: ${_selectedLocation.longitude.toStringAsFixed(5)}',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 11,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -556,7 +557,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
   Widget _buildSectionLabel(String text, ColorScheme cs) {
     return Text(
       text,
-      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.8),
+      style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp, fontWeight: FontWeight.w600, letterSpacing: 0.8),
     );
   }
 
@@ -569,21 +570,21 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+        SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: TextField(
             controller: controller,
-            style: TextStyle(color: cs.onSurface, fontSize: 14),
+            style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               border: InputBorder.none,
             ),
           ),
@@ -601,23 +602,23 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Text(label, style: TextStyle(color: cs.onSurface, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+        SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: TextStyle(color: cs.onSurface, fontSize: 14),
+            style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               border: InputBorder.none,
             ),
           ),
@@ -630,22 +631,22 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Description', style: TextStyle(color: cs.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Text('Description', style: TextStyle(color: cs.onSurface, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+        SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
           child: TextField(
             controller: _descriptionController,
             maxLines: 4,
-            style: TextStyle(color: cs.onSurface, fontSize: 14),
+            style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
             decoration: InputDecoration(
               hintText: 'Describe the property...',
-              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
-              contentPadding: const EdgeInsets.all(16),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
+              contentPadding: EdgeInsets.all(16.r),
               border: InputBorder.none,
             ),
           ),
@@ -658,8 +659,8 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Type', style: TextStyle(color: cs.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Text('Type', style: TextStyle(color: cs.onSurface, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+        SizedBox(height: 8.h),
         Row(
           children: ['For Rent', 'For Sale'].map((type) {
             final isSelected = _type == type;
@@ -669,13 +670,13 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   margin: EdgeInsets.only(
-                    right: type == 'For Rent' ? 10 : 0,
-                    left: type == 'For Sale' ? 10 : 0,
+                    right: type == 'For Rent' ? 10.w : 0,
+                    left: type == 'For Sale' ? 10.w : 0,
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : cs.surface,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
                       color: isSelected ? AppColors.primary : cs.outlineVariant,
                       width: isSelected ? 2 : 1,
@@ -686,7 +687,7 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                       type,
                       style: TextStyle(
                         color: isSelected ? AppColors.primary : cs.onSurface,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -710,37 +711,37 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Assign Agent', style: TextStyle(color: cs.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
+        Text('Assign Agent', style: TextStyle(color: cs.onSurface, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+        SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
             color: cs.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: cs.outlineVariant),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: currentValue,
               isExpanded: true,
               hint: Text(
                 _agents.isEmpty ? 'Loading agents...' : 'Select an agent (optional)',
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
               ),
               icon: Icon(Icons.keyboard_arrow_down, color: cs.onSurfaceVariant),
               dropdownColor: cs.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               items: [
                 DropdownMenuItem<String>(
                   value: '',
-                  child: Text('None', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14)),
+                  child: Text('None', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp)),
                 ),
                 ..._agents.map((agent) {
                   return DropdownMenuItem<String>(
                     value: agent.id,
                     child: Text(
                       '${agent.name}${agent.role.isNotEmpty ? ' — ${agent.role}' : ''}',
-                      style: TextStyle(color: cs.onSurface, fontSize: 14),
+                      style: TextStyle(color: cs.onSurface, fontSize: 14.sp),
                     ),
                   );
                 }),
@@ -765,11 +766,11 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Amenities', style: TextStyle(color: cs.onSurface, fontSize: 17, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 14),
+        Text('Amenities', style: TextStyle(color: cs.onSurface, fontSize: 17.sp, fontWeight: FontWeight.w700)),
+        SizedBox(height: 14.h),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 8.w,
+          runSpacing: 8.h,
           children: _amenityOptions.map((amenity) {
             final isSelected = _selectedAmenities.contains(amenity);
             return GestureDetector(
@@ -784,10 +785,10 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : cs.surface,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected ? AppColors.primary : cs.outlineVariant,
                     width: isSelected ? 2 : 1,
@@ -797,14 +798,14 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (isSelected) ...[
-                      const Icon(Icons.check_rounded, color: AppColors.primary, size: 16),
-                      const SizedBox(width: 6),
+                      Icon(Icons.check_rounded, color: AppColors.primary, size: 16.r),
+                      SizedBox(width: 6.w),
                     ],
                     Text(
                       amenity,
                       style: TextStyle(
                         color: isSelected ? AppColors.primary : cs.onSurface,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                       ),
                     ),
@@ -822,14 +823,14 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
     final isLastStep = _currentStep == 2;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
           BoxShadow(
             color: cs.shadow.withValues(alpha: 0.08),
             blurRadius: 12,
-            offset: const Offset(0, -3),
+            offset: Offset(0, -3.h),
           ),
         ],
       ),
@@ -842,14 +843,14 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: cs.onSurface,
                   side: BorderSide(color: cs.outlineVariant),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
                 ),
                 child: const Text('BACK'),
               ),
             ),
-          if (_currentStep > 0) const SizedBox(width: 12),
+          if (_currentStep > 0) SizedBox(width: 12.w),
           Expanded(
             child: ElevatedButton(
               onPressed: _isSubmitting
@@ -862,16 +863,16 @@ class _EditPropertyScreenState extends State<EditPropertyScreen> {
                 disabledBackgroundColor: cs.surfaceContainerHighest,
                 foregroundColor: Colors.white,
                 disabledForegroundColor: cs.onSurfaceVariant,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
                 elevation: 0,
-                textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+                textStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700, letterSpacing: 0.5),
               ),
               child: _isSubmitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  ? SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : Text(isLastStep ? 'SAVE CHANGES' : 'NEXT'),
             ),

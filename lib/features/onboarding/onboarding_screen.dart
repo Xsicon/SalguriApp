@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../auth/sign_up_screen.dart';
 
@@ -92,16 +93,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 0),
       child: SizedBox(
-        height: 32,
+        height: 32.h,
         child: _isLastPage
             ? Center(
                 child: Text(
                   'Salguri',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                   ),
@@ -115,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     'SKIP',
                     style: TextStyle(
                       color: AppColors.primary.withValues(alpha: 0.7),
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
                     ),
@@ -130,11 +131,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildFooter() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+      padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 48.h),
       child: Column(
         children: [
           _buildPageDots(),
-          const SizedBox(height: 32),
+          SizedBox(height: 32.h),
           _isLastPage ? _buildGetStartedButton() : _buildBackNextButtons(),
         ],
       ),
@@ -150,10 +151,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: GestureDetector(
             onTap: _currentPage > 0 ? _onBack : null,
             child: Container(
-              height: 56,
+              height: 56.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(
                 'Back',
@@ -161,24 +162,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: _currentPage > 0
                       ? cs.onSurfaceVariant
                       : cs.outlineVariant,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16.w),
         // Next
         Expanded(
           child: GestureDetector(
             onTap: _onNext,
             child: Container(
-              height: 56,
+              height: 56.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withValues(alpha: 0.25),
@@ -187,19 +188,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'Next',
                     style: TextStyle(
                       color: AppColors.white,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, color: AppColors.white, size: 18),
+                  SizedBox(width: 8.w),
+                  Icon(Icons.arrow_forward, color: AppColors.white, size: 18.r),
                 ],
               ),
             ),
@@ -213,12 +214,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return GestureDetector(
       onTap: _onFinish,
       child: Container(
-        height: 56,
+        height: 56.h,
         width: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.primary,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withValues(alpha: 0.25),
@@ -227,11 +228,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
-        child: const Text(
+        child: Text(
           'GET STARTED',
           style: TextStyle(
             color: AppColors.white,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 1,
           ),
@@ -249,12 +250,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          height: 8,
-          width: isActive ? 24 : 8,
+          margin: EdgeInsets.symmetric(horizontal: 4.w),
+          height: 8.h,
+          width: isActive ? 24.w : 8.w,
           decoration: BoxDecoration(
             color: isActive ? AppColors.primary : cs.outlineVariant,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
           ),
         );
       }),
@@ -288,32 +289,32 @@ class _PageContent extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildIllustration(illuSize),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32.h),
                   Text(
                     title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 28,
+                      fontSize: 28.sp,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.3,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
                     child: Text(
                       description,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: cs.onSurfaceVariant,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w400,
                         height: 1.6,
                       ),
@@ -371,13 +372,13 @@ class _DreamHomeIllustration extends StatelessWidget {
             ),
           ),
           ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             child: Container(
               width: size * 0.78,
               height: size * 0.65,
               decoration: BoxDecoration(
                 color: cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
                 Icons.home_rounded,
@@ -431,7 +432,7 @@ class _RequestServicesIllustration extends StatelessWidget {
             height: cardSize,
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: AppColors.primary.withValues(alpha: 0.1),
               ),
@@ -453,11 +454,11 @@ class _RequestServicesIllustration extends StatelessWidget {
             top: size * 0.06,
             right: size * 0.06,
             child: Container(
-              width: 48,
-              height: 48,
+              width: 48.w,
+              height: 48.h,
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(14.r),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primary.withValues(alpha: 0.3),
@@ -466,24 +467,24 @@ class _RequestServicesIllustration extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(Icons.build_rounded,
-                  color: AppColors.white, size: 22),
+              child: Icon(Icons.build_rounded,
+                  color: AppColors.white, size: 22.r),
             ),
           ),
           Positioned(
             bottom: size * 0.12,
             left: size * 0.02,
             child: Container(
-              width: 40,
-              height: 40,
+              width: 40.w,
+              height: 40.h,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(
                 Icons.verified_rounded,
                 color: AppColors.primary,
-                size: 20,
+                size: 20.r,
               ),
             ),
           ),
@@ -520,10 +521,10 @@ class _PayRentIllustration extends StatelessWidget {
           ),
           Container(
             width: size * 0.52,
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.r),
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24.r),
               border: Border.all(
                 color: AppColors.primary.withValues(alpha: 0.1),
               ),
@@ -539,8 +540,8 @@ class _PayRentIllustration extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 48.w,
+                  height: 48.h,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -548,41 +549,41 @@ class _PayRentIllustration extends StatelessWidget {
                   child: Icon(
                     Icons.check_circle,
                     color: AppColors.primary,
-                    size: 28,
+                    size: 28.r,
                   ),
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
                 Container(
-                  height: 8,
-                  width: 96,
+                  height: 8.h,
+                  width: 96.w,
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Container(
-                  height: 8,
-                  width: 64,
+                  height: 8.h,
+                  width: 64.w,
                   decoration: BoxDecoration(
                     color: cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Container(
-                  height: 40,
+                  height: 40.h,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   alignment: Alignment.center,
-                  child: const Text(
+                  child: Text(
                     'PAID',
                     style: TextStyle(
                       color: AppColors.white,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.5,
                     ),
@@ -630,10 +631,10 @@ class _PaymentChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.15),
         ),
@@ -649,8 +650,8 @@ class _PaymentChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 24,
-            height: 24,
+            width: 24.w,
+            height: 24.h,
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
@@ -658,19 +659,19 @@ class _PaymentChip extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               letter,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.white,
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           Text(
             label,
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 
 enum MfaMethod { sms, authenticator }
@@ -30,13 +31,13 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 28),
+                      SizedBox(height: 28.h),
                       _buildHeader(),
-                      const SizedBox(height: 28),
+                      SizedBox(height: 28.h),
                       _buildOptionCard(
                         method: MfaMethod.sms,
                         icon: Icons.sms_outlined,
@@ -45,7 +46,7 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
                             'Receive a code via text message to your registered mobile number.',
                         badge: null,
                       ),
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14.h),
                       _buildOptionCard(
                         method: MfaMethod.authenticator,
                         icon: Icons.lock_outlined,
@@ -54,13 +55,13 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
                             'Use Google Authenticator, Authy, or Microsoft Authenticator for the highest level of security.',
                         badge: 'RECOMMENDED',
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                       _buildInfoBox(),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                       _buildRemindLater(),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       _buildContinueButton(),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                     ],
                   ),
                 ),
@@ -77,13 +78,13 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
   Widget _buildAppBar() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
             icon: Icon(Icons.arrow_back, color: cs.onSurface),
-            iconSize: 24,
+            iconSize: 24.r,
           ),
           Expanded(
             child: Text(
@@ -91,13 +92,13 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
             ),
           ),
-          const SizedBox(width: 48),
+          SizedBox(width: 48.w),
         ],
       ),
     );
@@ -114,17 +115,17 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
           'Secure Your Account',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 26,
+            fontSize: 26.sp,
             fontWeight: FontWeight.w700,
             height: 1.2,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           'Choose how you want to receive your verification codes to keep your Salguri account safe.',
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w400,
             height: 1.5,
           ),
@@ -149,12 +150,12 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
       onTap: () => setState(() => _selected = method),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.06)
               : cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: isSelected ? AppColors.primary : cs.outlineVariant,
             width: isSelected ? 1.8 : 1,
@@ -165,9 +166,9 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
           children: [
             // Radio indicator
             Container(
-              width: 22,
-              height: 22,
-              margin: const EdgeInsets.only(top: 2),
+              width: 22.w,
+              height: 22.h,
+              margin: EdgeInsets.only(top: 2.h),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -178,8 +179,8 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
               child: isSelected
                   ? Center(
                       child: Container(
-                        width: 12,
-                        height: 12,
+                        width: 12.w,
+                        height: 12.h,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.primary,
@@ -188,26 +189,26 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
                     )
                   : null,
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             // Icon
             Container(
-              width: 44,
-              height: 44,
+              width: 44.w,
+              height: 44.h,
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.primary.withValues(alpha: 0.12)
                     : cs.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Center(
                 child: Icon(
                   icon,
                   color: isSelected ? AppColors.primary : cs.onSurfaceVariant,
-                  size: 24,
+                  size: 24.r,
                 ),
               ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             // Text content
             Expanded(
               child: Column(
@@ -219,24 +220,24 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
                         title,
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       if (badge != null) ...[
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 3.h),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
                             badge,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.primary,
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.4,
                             ),
@@ -245,12 +246,12 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
                       ],
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     description,
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w400,
                       height: 1.4,
                     ),
@@ -269,10 +270,10 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
   Widget _buildInfoBox() {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.15),
         ),
@@ -283,15 +284,15 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
           Icon(
             Icons.info_outline_rounded,
             color: AppColors.primary,
-            size: 20,
+            size: 20.r,
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
             child: Text(
               'Two-factor authentication adds an extra layer of security. Even if someone discovers your password, they won\u2019t be able to access your account.',
               style: TextStyle(
                 color: cs.onSurfaceVariant,
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
                 height: 1.5,
               ),
@@ -315,7 +316,7 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
           'Not now, remind me later',
           style: TextStyle(
             color: AppColors.primary,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -328,19 +329,19 @@ class _MfaSelectionScreenState extends State<MfaSelectionScreen> {
   Widget _buildContinueButton() {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 56.h,
       child: ElevatedButton(
         onPressed: _onContinue,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 17),
-          textStyle: const TextStyle(
-            fontSize: 16,
+          padding: EdgeInsets.symmetric(vertical: 17.h),
+          textStyle: TextStyle(
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 1,
           ),

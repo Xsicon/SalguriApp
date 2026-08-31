@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/rental.dart';
 
@@ -145,38 +146,38 @@ class _PayRentScreenState extends State<PayRentScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: cs.onSurface),
+              size: 20.r, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Pay Rent',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.history_rounded,
-                color: cs.onSurfaceVariant, size: 22),
+                color: cs.onSurfaceVariant, size: 22.r),
             onPressed: () {},
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 120.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildResidenceCard(cs),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _buildAmountSection(cs),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _buildPaymentMethodSection(cs),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _buildAutoPayRow(cs),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             _buildSummaryCard(cs),
           ],
         ),
@@ -208,10 +209,10 @@ class _PayRentScreenState extends State<PayRentScreen> {
             : const Color(0xFFEEF2FF);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -224,16 +225,16 @@ class _PayRentScreenState extends State<PayRentScreen> {
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 48.w,
+            height: 48.h,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: const Icon(Icons.apartment_rounded,
-                color: AppColors.primary, size: 24),
+            child: Icon(Icons.apartment_rounded,
+                color: AppColors.primary, size: 24.r),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,26 +243,26 @@ class _PayRentScreenState extends State<PayRentScreen> {
                   'CURRENT RESIDENCE',
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.8,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3.h),
                 Text(
                   widget.rental.address,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.h),
                 Text(
                   widget.rental.location,
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                   ),
                 ),
               ],
@@ -269,16 +270,16 @@ class _PayRentScreenState extends State<PayRentScreen> {
           ),
           Container(
             padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
             decoration: BoxDecoration(
               color: dueBgColor,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
               dueText,
               style: TextStyle(
                 color: dueColor,
-                fontSize: 10,
+                fontSize: 10.sp,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.3,
               ),
@@ -299,11 +300,11 @@ class _PayRentScreenState extends State<PayRentScreen> {
           'Select Amount',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Row(
           children: [
             _AmountChip(
@@ -314,7 +315,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
               onTap: () =>
                   setState(() => _amountOption = _AmountOption.full),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10.w),
             _AmountChip(
               label: 'Partial',
               sublabel:
@@ -323,7 +324,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
               onTap: () =>
                   setState(() => _amountOption = _AmountOption.partial),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10.w),
             _AmountChip(
               label: 'Other',
               sublabel: 'Custom',
@@ -334,7 +335,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
           ],
         ),
         if (_amountOption == _AmountOption.custom) ...[
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           TextField(
             controller: _customController,
             keyboardType:
@@ -349,20 +350,20 @@ class _PayRentScreenState extends State<PayRentScreen> {
               filled: true,
               fillColor: cs.surface,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide(color: cs.outlineVariant),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 1.5),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide(color: cs.outlineVariant),
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 14),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.w, vertical: 14.h),
             ),
           ),
         ],
@@ -380,26 +381,26 @@ class _PayRentScreenState extends State<PayRentScreen> {
           'Payment Method',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         ..._PaymentMethod.values.map((method) {
           final isSelected = _paymentMethod == method;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(bottom: 10.h),
             child: GestureDetector(
               onTap: () => setState(() => _paymentMethod = method),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.05)
                       : cs.surface,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(14.r),
                   border: Border.all(
                     color: isSelected
                         ? AppColors.primary
@@ -410,16 +411,16 @@ class _PayRentScreenState extends State<PayRentScreen> {
                 child: Row(
                   children: [
                     Container(
-                      width: 42,
-                      height: 42,
+                      width: 42.w,
+                      height: 42.h,
                       decoration: BoxDecoration(
                         color: method.color.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Icon(method.icon,
-                          color: method.color, size: 22),
+                          color: method.color, size: 22.r),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,24 +429,24 @@ class _PayRentScreenState extends State<PayRentScreen> {
                             method.label,
                             style: TextStyle(
                               color: cs.onSurface,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2.h),
                           Text(
                             method.subtitle,
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      width: 22,
-                      height: 22,
+                      width: 22.w,
+                      height: 22.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -459,8 +460,8 @@ class _PayRentScreenState extends State<PayRentScreen> {
                             : Colors.transparent,
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 14)
+                          ? Icon(Icons.check,
+                              color: Colors.white, size: 14.r)
                           : null,
                     ),
                   ],
@@ -477,25 +478,25 @@ class _PayRentScreenState extends State<PayRentScreen> {
 
   Widget _buildAutoPayRow(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 42.w,
+            height: 42.h,
             decoration: BoxDecoration(
               color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            child: const Icon(Icons.autorenew_rounded,
-                color: Color(0xFFF59E0B), size: 22),
+            child: Icon(Icons.autorenew_rounded,
+                color: const Color(0xFFF59E0B), size: 22.r),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,16 +505,16 @@ class _PayRentScreenState extends State<PayRentScreen> {
                   'Recurring Auto-pay',
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2.h),
                 Text(
                   'Enable monthly automatic payments',
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],
@@ -534,10 +535,10 @@ class _PayRentScreenState extends State<PayRentScreen> {
 
   Widget _buildSummaryCard(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: cs.outlineVariant),
       ),
       child: Column(
@@ -547,19 +548,19 @@ class _PayRentScreenState extends State<PayRentScreen> {
             'Payment Summary',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 15,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           _buildSummaryRow(cs, 'Monthly Rent',
               '\$${_baseAmount.toStringAsFixed(2)}'),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           _buildSummaryRow(
               cs, 'Platform Fee (2%)', '\$${_platformFee.toStringAsFixed(2)}',
               valueColor: const Color(0xFFF59E0B)),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: 12.h),
             child: Divider(height: 1, color: cs.outlineVariant),
           ),
           _buildSummaryRow(
@@ -589,7 +590,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
           label,
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: labelBold ? FontWeight.w700 : FontWeight.w400,
           ),
         ),
@@ -597,7 +598,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
           value,
           style: TextStyle(
             color: valueColor ?? cs.onSurface,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: valueBold ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
@@ -609,7 +610,7 @@ class _PayRentScreenState extends State<PayRentScreen> {
 
   Widget _buildPayButton(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
@@ -633,33 +634,33 @@ class _PayRentScreenState extends State<PayRentScreen> {
                 disabledBackgroundColor:
                     AppColors.primary.withValues(alpha: 0.6),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                padding: const EdgeInsets.symmetric(vertical: 17),
+                    borderRadius: BorderRadius.circular(14.r)),
+                padding: EdgeInsets.symmetric(vertical: 17.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                  fontSize: 15,
+                textStyle: TextStyle(
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
                 ),
               ),
               child: _isPaying
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
+                  ? SizedBox(
+                      width: 22.w,
+                      height: 22.h,
+                      child: const CircularProgressIndicator(
                           color: Colors.white, strokeWidth: 2.5),
                     )
                   : Text('PAY \$${_totalAmount.toStringAsFixed(2)} NOW'),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Text(
             'By proceeding, you agree to our Terms of Service. '
             'Your payment is secured and encrypted.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 11,
+              fontSize: 11.sp,
               height: 1.5,
             ),
           ),
@@ -694,12 +695,12 @@ class _AmountChip extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: EdgeInsets.symmetric(vertical: 14.h),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary
                 : cs.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(
               color: isSelected ? AppColors.primary : cs.outlineVariant,
               width: isSelected ? 1.5 : 1,
@@ -711,18 +712,18 @@ class _AmountChip extends StatelessWidget {
                 label,
                 style: TextStyle(
                   color: isSelected ? Colors.white : cs.onSurface,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 3),
+              SizedBox(height: 3.h),
               Text(
                 sublabel,
                 style: TextStyle(
                   color: isSelected
                       ? Colors.white70
                       : cs.onSurfaceVariant,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
               ),
             ],
@@ -754,7 +755,7 @@ class _PaySuccessSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+      padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 40.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -765,41 +766,41 @@ class _PaySuccessSheet extends StatelessWidget {
             builder: (_, v, child) =>
                 Transform.scale(scale: v, child: child),
             child: Container(
-              width: 72,
-              height: 72,
+              width: 72.w,
+              height: 72.h,
               decoration: const BoxDecoration(
                 color: Color(0xFF22C55E),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_rounded,
-                  color: Colors.white, size: 40),
+              child: Icon(Icons.check_rounded,
+                  color: Colors.white, size: 40.r),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: 20.h),
+          Text(
             'Payment Successful!',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             '\$${amount.toStringAsFixed(2)} paid via $method',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             'for $address',
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: 28.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -808,11 +809,11 @@ class _PaySuccessSheet extends StatelessWidget {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                    borderRadius: BorderRadius.circular(12.r)),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
                 elevation: 0,
-                textStyle: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w700),
+                textStyle: TextStyle(
+                    fontSize: 14.sp, fontWeight: FontWeight.w700),
               ),
               child: const Text('BACK TO MY RENTAL'),
             ),

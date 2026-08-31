@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
 import '../../services/api_service.dart';
@@ -194,7 +195,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     _buildSizeSection(cs),
                     _divider(cs),
                     _buildAmenitiesSection(cs),
-                    const SizedBox(height: 100),
+                    SizedBox(height: 100.h),
                   ],
                 ),
               ),
@@ -207,7 +208,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   }
 
   Widget _divider(ColorScheme cs) {
-    return Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3));
+    return Divider(height: 1.h, color: cs.outlineVariant.withValues(alpha: 0.3));
   }
 
   // ---------- Header ----------
@@ -216,28 +217,28 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
           child: Row(
             children: [
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Text(
                   'Filters',
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
               TextButton(
                 onPressed: _resetAll,
-                child: const Text(
+                child: Text(
                   'Reset all',
                   style: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                 ),
               ),
@@ -246,34 +247,34 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         ),
         // Search bar
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 12.h),
           child: TextField(
             controller: _searchController,
-            style: TextStyle(fontSize: 14, color: cs.onSurface),
+            style: TextStyle(fontSize: 14.sp, color: cs.onSurface),
             decoration: InputDecoration(
               hintText: 'Search by neighborhood in Mogadishu...',
-              hintStyle: TextStyle(color: cs.outline, fontSize: 14),
-              prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+              hintStyle: TextStyle(color: cs.outline, fontSize: 14.sp),
+              prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
               filled: true,
               fillColor: cs.surfaceContainerHighest,
-              contentPadding: const EdgeInsets.symmetric(vertical: 14),
+              contentPadding: EdgeInsets.symmetric(vertical: 14.h),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide:
                     const BorderSide(color: AppColors.primary, width: 1.5),
               ),
             ),
           ),
         ),
-        Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3)),
+        Divider(height: 1.h, color: cs.outlineVariant.withValues(alpha: 0.3)),
       ],
     );
   }
@@ -282,15 +283,15 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   Widget _buildLocationSection(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('LOCATION (DISTRICTS)', cs),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8.w,
+            runSpacing: 8.h,
             children: _districts.map((district) {
               final selected = _selectedDistricts.contains(district);
               return GestureDetector(
@@ -307,12 +308,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                   decoration: BoxDecoration(
                     color: selected
                         ? AppColors.primary
                         : cs.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(24.r),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -321,13 +322,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         district,
                         style: TextStyle(
                           color: selected ? Colors.white : cs.onSurfaceVariant,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       if (selected) ...[
-                        const SizedBox(width: 4),
-                        const Icon(Icons.close, size: 16, color: Colors.white),
+                        SizedBox(width: 4.w),
+                        Icon(Icons.close, size: 16.r, color: Colors.white),
                       ],
                     ],
                   ),
@@ -349,19 +350,19 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       ('Land', Icons.landscape),
     ];
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('PROPERTY TYPE', cs),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Row(
             children: types.map((t) {
               final selected = _selectedType == t.$1;
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: t.$1 != 'Land' ? 10 : 0,
+                    right: t.$1 != 'Land' ? 10.w : 0.w,
                   ),
                   child: GestureDetector(
                     onTap: () {
@@ -372,12 +373,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
                       decoration: BoxDecoration(
                         color: selected
                             ? AppColors.primary.withValues(alpha: 0.05)
                             : cs.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color:
                               selected ? AppColors.primary : Colors.transparent,
@@ -391,16 +392,16 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             color: selected
                                 ? AppColors.primary
                                 : cs.onSurfaceVariant,
-                            size: 28,
+                            size: 28.r,
                           ),
-                          const SizedBox(height: 6),
+                          SizedBox(height: 6.h),
                           Text(
                             t.$1,
                             style: TextStyle(
                               color: selected
                                   ? AppColors.primary
                                   : cs.onSurfaceVariant,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -421,7 +422,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   Widget _buildPriceRangeSection(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         children: [
           Row(
@@ -430,24 +431,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               _sectionTitle('PRICE RANGE (USD)', cs),
               Text(
                 '\$${_formatNumber(_priceRange.start.round())} - \$${_formatNumber(_priceRange.end.round())}${_priceRange.end >= 10000 ? '+' : ''}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: AppColors.primary,
               inactiveTrackColor: cs.outlineVariant.withValues(alpha: 0.3),
               thumbColor: AppColors.primary,
               overlayColor: AppColors.primary.withValues(alpha: 0.1),
-              trackHeight: 5,
+              trackHeight: 5.h,
               thumbShape:
-                  const RoundSliderThumbShape(enabledThumbRadius: 10),
+                  RoundSliderThumbShape(enabledThumbRadius: 10.r),
             ),
             child: RangeSlider(
               values: _priceRange,
@@ -459,16 +460,16 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('\$0',
                     style:
-                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp)),
                 Text('\$10,000+',
                     style:
-                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp)),
               ],
             ),
           ),
@@ -481,12 +482,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   Widget _buildBedroomsBathroomsSection(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('BEDROOMS', cs),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           _buildChipRow(
             ['Any', '1', '2', '3', '4+'],
             _selectedBedrooms,
@@ -496,9 +497,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             },
             cs,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           _sectionTitle('BATHROOMS', cs),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           _buildChipRow(
             ['Any', '1', '2', '3+'],
             _selectedBathrooms,
@@ -524,24 +525,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         final isSelected = selected == opt;
         return Expanded(
           child: Padding(
-            padding: EdgeInsets.only(right: opt != options.last ? 8 : 0),
+            padding: EdgeInsets.only(right: opt != options.last ? 8.w : 0.w),
             child: GestureDetector(
               onTap: () => onSelect(opt),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 10.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary
                       : cs.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   opt,
                   style: TextStyle(
                     color: isSelected ? Colors.white : cs.onSurfaceVariant,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -557,7 +558,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   Widget _buildSizeSection(ColorScheme cs) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         children: [
           Row(
@@ -566,24 +567,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               _sectionTitle('SIZE (SQM)', cs),
               Text(
                 '${_sizeRange.start.round()} - ${_sizeRange.end.round()}${_sizeRange.end >= 1000 ? '+' : ''} sqm',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: AppColors.primary,
               inactiveTrackColor: cs.outlineVariant.withValues(alpha: 0.3),
               thumbColor: AppColors.primary,
               overlayColor: AppColors.primary.withValues(alpha: 0.1),
-              trackHeight: 5,
+              trackHeight: 5.h,
               thumbShape:
-                  const RoundSliderThumbShape(enabledThumbRadius: 10),
+                  RoundSliderThumbShape(enabledThumbRadius: 10.r),
             ),
             child: RangeSlider(
               values: _sizeRange,
@@ -595,16 +596,16 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('0 sqm',
                     style:
-                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp)),
                 Text('1,000+ sqm',
                     style:
-                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
+                        TextStyle(color: cs.onSurfaceVariant, fontSize: 12.sp)),
               ],
             ),
           ),
@@ -618,20 +619,20 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   Widget _buildAmenitiesSection(ColorScheme cs) {
     final keys = _amenities.keys.toList();
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('AMENITIES', cs),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 12,
-              mainAxisExtent: 32,
+              mainAxisSpacing: 16.h,
+              crossAxisSpacing: 12.w,
+              mainAxisExtent: 32.h,
             ),
             itemCount: keys.length,
             itemBuilder: (context, index) {
@@ -646,11 +647,11 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      width: 24,
-                      height: 24,
+                      width: 24.w,
+                      height: 24.h,
                       decoration: BoxDecoration(
                         color: checked ? AppColors.primary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(4.r),
                         border: Border.all(
                           color: checked
                               ? AppColors.primary
@@ -659,17 +660,17 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         ),
                       ),
                       child: checked
-                          ? const Icon(Icons.check,
-                              size: 16, color: Colors.white)
+                          ? Icon(Icons.check,
+                              size: 16.r, color: Colors.white)
                           : null,
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10.w),
                     Flexible(
                       child: Text(
                         key,
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -689,7 +690,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   Widget _buildBottomActions(ColorScheme cs) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 12.h),
       decoration: BoxDecoration(
         color: cs.surface,
         border: Border(
@@ -708,18 +709,18 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   foregroundColor: AppColors.primary,
                   side: BorderSide.none,
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Clear Filters',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               flex: 2,
               child: ElevatedButton(
@@ -729,24 +730,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   foregroundColor: Colors.white,
                   elevation: 4,
                   shadowColor: AppColors.primary.withValues(alpha: 0.3),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                        child: const CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.white,
                         ),
                       )
                     : Text(
                         'Show $_resultCount Results',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 14),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 14.sp),
                       ),
               ),
             ),
@@ -763,7 +764,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       text,
       style: TextStyle(
         color: cs.onSurfaceVariant,
-        fontSize: 12,
+        fontSize: 12.sp,
         fontWeight: FontWeight.w700,
         letterSpacing: 1,
       ),
@@ -797,7 +798,7 @@ class _FilteredResultsScreen extends StatelessWidget {
           children: [
             // App bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
               child: Row(
                 children: [
                   IconButton(
@@ -810,27 +811,27 @@ class _FilteredResultsScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: cs.onSurface,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 48),
+                  SizedBox(width: 48.w),
                 ],
               ),
             ),
-            Divider(height: 1, color: cs.surfaceContainerHighest),
+            Divider(height: 1.h, color: cs.surfaceContainerHighest),
             // Result count
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+              padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 14.h),
               child: Row(
                 children: [
                   Text(
                     '$resultCount Properties Found',
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -845,29 +846,29 @@ class _FilteredResultsScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.search_off,
-                              size: 64, color: cs.outlineVariant),
-                          const SizedBox(height: 16),
+                              size: 64.r, color: cs.outlineVariant),
+                          SizedBox(height: 16.h),
                           Text(
                             'No properties match your filters',
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h),
                           Text(
                             'Try adjusting your search criteria',
                             style: TextStyle(
                               color: cs.outline,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                             ),
                           ),
                         ],
                       ),
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      padding: EdgeInsets.fromLTRB(20.w, 0.h, 20.w, 24.h),
                       itemCount: properties.length,
                       itemBuilder: (context, index) {
                         return _buildPropertyCard(
@@ -892,10 +893,10 @@ class _FilteredResultsScreen extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
           color: cs.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -913,7 +914,7 @@ class _FilteredResultsScreen extends StatelessWidget {
             Stack(
               children: [
                 SizedBox(
-                  height: 180,
+                  height: 180.h,
                   width: double.infinity,
                   child: property.images.isNotEmpty
                       ? Image.network(
@@ -923,7 +924,7 @@ class _FilteredResultsScreen extends StatelessWidget {
                             color: cs.surfaceContainerHighest,
                             child: Center(
                               child: Icon(Icons.home_outlined,
-                                  color: cs.outline, size: 40),
+                                  color: cs.outline, size: 40.r),
                             ),
                           ),
                           loadingBuilder: (context, child, loadingProgress) {
@@ -941,26 +942,26 @@ class _FilteredResultsScreen extends StatelessWidget {
                           color: cs.surfaceContainerHighest,
                           child: Center(
                             child: Icon(Icons.home_outlined,
-                                color: cs.outline, size: 40),
+                                color: cs.outline, size: 40.r),
                           ),
                         ),
                 ),
                 // Price badge
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 12.h,
+                  right: 12.w,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
                       property.price,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.white,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -968,20 +969,20 @@ class _FilteredResultsScreen extends StatelessWidget {
                 ),
                 // Type badge
                 Positioned(
-                  top: 12,
-                  left: 12,
+                  top: 12.h,
+                  left: 12.w,
                   child: Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                     decoration: BoxDecoration(
                       color: const Color(0xFFDCFCE7),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
                       property.type,
-                      style: const TextStyle(
-                        color: Color(0xFF16A34A),
-                        fontSize: 12,
+                      style: TextStyle(
+                        color: const Color(0xFF16A34A),
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -991,7 +992,7 @@ class _FilteredResultsScreen extends StatelessWidget {
             ),
             // Info
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1002,48 +1003,48 @@ class _FilteredResultsScreen extends StatelessWidget {
                           property.title,
                           style: TextStyle(
                             color: cs.onSurface,
-                            fontSize: 17,
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                      const Icon(Icons.star,
-                          color: Color(0xFFF59E0B), size: 16),
-                      const SizedBox(width: 3),
+                      Icon(Icons.star,
+                          color: const Color(0xFFF59E0B), size: 16.r),
+                      SizedBox(width: 3.w),
                       Text(
                         property.rating.toString(),
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Row(
                     children: [
                       Icon(Icons.location_on_outlined,
-                          color: cs.onSurfaceVariant, size: 16),
-                      const SizedBox(width: 4),
+                          color: cs.onSurfaceVariant, size: 16.r),
+                      SizedBox(width: 4.w),
                       Text(
                         property.location,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Row(
                     children: [
                       _buildSpec(Icons.bed_outlined, '${property.beds} Beds',
                           cs),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       _buildSpec(Icons.bathtub_outlined,
                           '${property.baths} Baths', cs),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       _buildSpec(Icons.square_foot_outlined,
                           '${property.sqft} sqft', cs),
                     ],
@@ -1061,13 +1062,13 @@ class _FilteredResultsScreen extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: cs.outline, size: 16),
-        const SizedBox(width: 4),
+        Icon(icon, color: cs.outline, size: 16.r),
+        SizedBox(width: 4.w),
         Text(
           text,
           style: TextStyle(
             color: cs.onSurfaceVariant,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/models/property.dart';
 import '../../services/api_service.dart';
@@ -58,10 +59,23 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
 
   Future<void> _onSendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
+    final agentUserId = p.agent?.userId;
+    if (agentUserId == null) {
+      // No linked account to message — sending would silently create a
+      // conversation with the property's id instead of a real recipient,
+      // and nobody would ever see it. Fail loudly instead.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This listing has no messageable agent yet.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     setState(() => _isSending = true);
     try {
       final conversation = await ApiService.getOrCreateConversation(
-        otherUserId: p.agent?.userId ?? p.id,
+        otherUserId: agentUserId,
         otherDisplayName: p.agent?.name ?? 'Agent',
         otherRole: 'agent',
       );
@@ -108,7 +122,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
           'CONTACT AGENT',
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
           ),
@@ -125,9 +139,9 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
                   _buildManagedProperties(),
                   _buildMessageInput(),
                   _buildQuickQuestions(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   _buildSendButton(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                 ],
               ),
             ),
@@ -145,18 +159,18 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
     final agent = p.agent;
     if (agent == null) {
       return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0.h),
         child: Text('No agent assigned', style: TextStyle(color: cs.onSurfaceVariant)),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0.h),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: cs.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: cs.outlineVariant),
           boxShadow: [
             BoxShadow(
@@ -170,8 +184,8 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
           children: [
             // Avatar
             Container(
-              width: 56,
-              height: 56,
+              width: 56.w,
+              height: 56.h,
               decoration: BoxDecoration(
                 color: cs.primaryContainer,
                 shape: BoxShape.circle,
@@ -179,15 +193,15 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
               child: Center(
                 child: Text(
                   agent.initials,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             // Info
             Expanded(
               child: Column(
@@ -197,52 +211,52 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
                     agent.name,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     agent.role.isNotEmpty ? agent.role : 'Salguri Properties',
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: Color(0xFFF59E0B), size: 14),
-                      const SizedBox(width: 3),
+                      Icon(Icons.star, color: const Color(0xFFF59E0B), size: 14.r),
+                      SizedBox(width: 3.w),
                       Text(
                         agent.rating.toString(),
                         style: TextStyle(
                           color: cs.onSurface,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4.w),
                       Text(
                         '(${agent.deals} deals)',
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ],
                   ),
                   if (agent.phone != null) ...[
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Icon(Icons.phone_outlined, color: cs.onSurfaceVariant, size: 14),
-                        const SizedBox(width: 4),
+                        Icon(Icons.phone_outlined, color: cs.onSurfaceVariant, size: 14.r),
+                        SizedBox(width: 4.w),
                         Text(
                           agent.phone!,
                           style: TextStyle(
                             color: cs.onSurfaceVariant,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                         ),
                       ],
@@ -255,13 +269,13 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
             GestureDetector(
               onTap: () {},
               child: Container(
-                width: 42,
-                height: 42,
+                width: 42.w,
+                height: 42.h,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: const Icon(Icons.phone, color: AppColors.white, size: 20),
+                child: Icon(Icons.phone, color: AppColors.white, size: 20.r),
               ),
             ),
           ],
@@ -278,7 +292,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
     final managedProperties = _isLoadingProperties ? <Property>[p] : _managedProperties;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -286,18 +300,18 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
             'MANAGED PROPERTIES',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           SizedBox(
-            height: 180,
+            height: 180.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: managedProperties.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
+              separatorBuilder: (_, _) => SizedBox(width: 12.w),
               itemBuilder: (context, index) {
                 return _buildPropertyCard(managedProperties[index]);
               },
@@ -311,10 +325,10 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
   Widget _buildPropertyCard(Property property) {
     final cs = Theme.of(context).colorScheme;
     return Container(
-      width: 220,
+      width: 220.w,
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -330,7 +344,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
         children: [
           // Property image
           SizedBox(
-            height: 100,
+            height: 100.h,
             width: double.infinity,
             child: Image.network(
               property.images.isNotEmpty ? property.images.first : '',
@@ -338,7 +352,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
               errorBuilder: (_, _, _) => Container(
                 color: cs.surfaceContainerHighest,
                 child: Center(
-                  child: Icon(Icons.home_outlined, color: cs.outline, size: 32),
+                  child: Icon(Icons.home_outlined, color: cs.outline, size: 32.r),
                 ),
               ),
               loadingBuilder: (context, child, loadingProgress) {
@@ -357,7 +371,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
           ),
           // Property info
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -365,27 +379,27 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
                   property.location,
                   style: TextStyle(
                     color: cs.onSurface,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   property.price,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   'View Listing',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -402,7 +416,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
   Widget _buildMessageInput() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -410,15 +424,15 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
             'Your Message',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Container(
             decoration: BoxDecoration(
               color: cs.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: cs.outlineVariant),
             ),
             child: TextField(
@@ -426,15 +440,15 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
               maxLines: 4,
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 14,
+                fontSize: 14.sp,
               ),
               decoration: InputDecoration(
                 hintText: 'Write your message here...',
                 hintStyle: TextStyle(
                   color: cs.onSurfaceVariant.withValues(alpha: 0.6),
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
-                contentPadding: const EdgeInsets.all(14),
+                contentPadding: EdgeInsets.all(14.r),
                 border: InputBorder.none,
               ),
             ),
@@ -449,7 +463,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
   Widget _buildQuickQuestions() {
     final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -457,15 +471,15 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
             'QUICK QUESTIONS',
             style: TextStyle(
               color: cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8.w,
+            runSpacing: 8.h,
             children: _quickQuestions.map((question) {
               return GestureDetector(
                 onTap: () {
@@ -481,17 +495,17 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
                   });
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                   decoration: BoxDecoration(
                     color: cs.surface,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(color: cs.outlineVariant),
                   ),
                   child: Text(
                     question,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -508,7 +522,7 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
 
   Widget _buildSendButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
@@ -517,21 +531,21 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 16.h),
             elevation: 2,
             shadowColor: AppColors.primary.withValues(alpha: 0.3),
-            textStyle: const TextStyle(
-              fontSize: 15,
+            textStyle: TextStyle(
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
           ),
           child: _isSending
-              ? const SizedBox(
-                  width: 22, height: 22,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+              ? SizedBox(
+                  width: 22.w, height: 22.h,
+                  child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
                 )
               : const Text('SEND MESSAGE'),
         ),
@@ -553,10 +567,10 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        0,
-        10,
-        0,
-        MediaQuery.of(context).padding.bottom + 8,
+        0.w,
+        10.h,
+        0.w,
+        MediaQuery.of(context).padding.bottom + 8.h,
       ),
       decoration: BoxDecoration(
         color: cs.surface,
@@ -583,14 +597,14 @@ class _ContactAgentScreenState extends State<ContactAgentScreen> {
                 Icon(
                   items[index].icon,
                   color: isSelected ? AppColors.primary : cs.onSurfaceVariant,
-                  size: 24,
+                  size: 24.r,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   items[index].label,
                   style: TextStyle(
                     color: isSelected ? AppColors.primary : cs.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

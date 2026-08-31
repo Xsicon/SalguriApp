@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pdfx/pdfx.dart' as pdfx;
 import 'package:signature/signature.dart';
 import 'package:http/http.dart' as http;
@@ -234,28 +235,28 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
     return showDialog<Uint8List>(
       context: context,
       builder: (dialogCtx) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Draw your signature',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 12),
+                Text('Draw your signature',
+                    style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700)),
+                SizedBox(height: 12.h),
                 Container(
-                  height: 180,
+                  height: 180.h,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14.r),
                   ),
                   child: Signature(controller: controller, backgroundColor: Colors.white),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 Row(
                   children: [
                     TextButton(onPressed: controller.clear, child: const Text('Clear')),
@@ -269,8 +270,8 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 44),
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        minimumSize: Size(0, 44.h),
+                        padding: EdgeInsets.symmetric(horizontal: 18.w),
                         shape: const StadiumBorder(),
                       ),
                       child: const Text('Use This Signature'),
@@ -298,7 +299,7 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
             : _error != null
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24.r),
                       child: Text(_error!, textAlign: TextAlign.center),
                     ),
                   )
@@ -307,16 +308,16 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                       if (_sealed)
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(14),
+                          padding: EdgeInsets.all(14.r),
                           color: AppColors.success.withValues(alpha: 0.12),
                           child: Row(
                             children: [
-                              const Icon(Icons.verified_outlined, color: AppColors.success, size: 20),
-                              const SizedBox(width: 8),
-                              const Expanded(
+                              Icon(Icons.verified_outlined, color: AppColors.success, size: 20.r),
+                              SizedBox(width: 8.w),
+                              Expanded(
                                 child: Text(
                                   'Every required signature is in — this document has been sealed.',
-                                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.success),
+                                  style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.w700, color: AppColors.success),
                                 ),
                               ),
                             ],
@@ -328,14 +329,14 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                           onChanged: (v) => setState(() => _consentGiven = v ?? false),
                           controlAffinity: ListTileControlAffinity.leading,
                           dense: true,
-                          title: const Text(
+                          title: Text(
                             'I consent to use electronic records and e-signatures for this document.',
-                            style: TextStyle(fontSize: 12.5),
+                            style: TextStyle(fontSize: 12.5.sp),
                           ),
                         ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16.r),
                           child: _pageImage == null
                               ? const Center(child: CircularProgressIndicator())
                               : Stack(
@@ -352,7 +353,12 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                                               Positioned.fill(
                                                 child: Image.memory(_pageImage!, fit: BoxFit.contain),
                                               ),
-                                              for (final f in _fields.where((f) => f.pageNumber == _currentPage))
+                                              // Only signature fields are interactive here — a role's
+                                              // date/text fields (e.g. "Date Signed", "Printed Name")
+                                              // are auto-filled from that same role's signature when
+                                              // the document is sealed, not tapped individually.
+                                              for (final f in _fields.where((f) =>
+                                                  f.pageNumber == _currentPage && f.fieldType == 'signature'))
                                                 Positioned(
                                                   left: imgRect.left + imgRect.width * f.xPercent,
                                                   top: imgRect.top + imgRect.height * f.yPercent,
@@ -395,8 +401,8 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
                                       },
                                     ),
                                     Positioned(
-                                      right: 8,
-                                      bottom: 8,
+                                      right: 8.w,
+                                      bottom: 8.h,
                                       child: ZoomBar(
                                         zoom: _zoomScale,
                                         minZoom: _minZoom,
@@ -419,13 +425,13 @@ class _DocumentSigningScreenState extends State<DocumentSigningScreen> {
               alignment: Alignment.center,
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.r),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 12),
-                      Text('Submitting signature...', style: TextStyle(fontSize: 13)),
+                    children: [
+                      const CircularProgressIndicator(),
+                      SizedBox(height: 12.h),
+                      Text('Submitting signature...', style: TextStyle(fontSize: 13.sp)),
                     ],
                   ),
                 ),
@@ -455,12 +461,12 @@ class _FieldOverlay extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.2),
           border: Border.all(color: color, width: 1.5),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(4.r),
         ),
         alignment: Alignment.center,
         child: Text(
           isSigned ? 'SIGNED' : (isMine ? 'TAP TO SIGN' : 'AWAITING OTHER SIGNER'),
-          style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: color),
+          style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w800, color: color),
           textAlign: TextAlign.center,
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../services/api_service.dart';
@@ -147,7 +148,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 20,
+            size: 20.r,
             color: cs.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -156,7 +157,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
           l.tr('confirmBooking'),
           style: TextStyle(
             color: cs.onSurface,
-            fontSize: 17,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -165,15 +166,15 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionLabel(l.tr('orderSummary'), cs),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   ...List.generate(widget.items.length, (i) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 14),
+                      padding: EdgeInsets.only(bottom: 14.h),
                       child: _buildServiceCard(
                         widget.items[i],
                         itemSlots[i],
@@ -181,9 +182,9 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                       ),
                     );
                   }),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   _buildPriceBreakdown(cs),
-                  const SizedBox(height: 100),
+                  SizedBox(height: 100.h),
                 ],
               ),
             ),
@@ -203,7 +204,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
       text,
       style: TextStyle(
         color: cs.onSurfaceVariant,
-        fontSize: 12,
+        fontSize: 12.sp,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
       ),
@@ -237,7 +238,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
     return Container(
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -252,22 +253,22 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
         children: [
           // Top row
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 48.w,
+                  height: 48.h,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Center(
-                    child: Icon(item.icon, color: AppColors.primary, size: 22),
+                    child: Icon(item.icon, color: AppColors.primary, size: 22.r),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,27 +280,27 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                               item.name,
                               style: TextStyle(
                                 color: cs.onSurface,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
                           if (isUrgent) ...[
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8.w),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 3.h,
                               ),
                               decoration: BoxDecoration(
                                 color: urgencyBg,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(6.r),
                               ),
                               child: Text(
                                 widget.urgencyLabel,
                                 style: TextStyle(
                                   color: urgencyColor,
-                                  fontSize: 11,
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -307,44 +308,44 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 3),
+                      SizedBox(height: 3.h),
                       Text(
                         provider,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
-                          fontSize: 13,
+                          fontSize: 13.sp,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.star_rounded,
-                            color: Color(0xFFF59E0B),
-                            size: 14,
+                            color: const Color(0xFFF59E0B),
+                            size: 14.r,
                           ),
-                          const SizedBox(width: 3),
+                          SizedBox(width: 3.w),
                           Text(
                             '4.8 (94 reviews)',
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6.w),
                           Text(
                             '•',
                             style: TextStyle(
                               color: cs.onSurfaceVariant,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6.w),
                           Text(
                             'ETA: $eta',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.primary,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -359,7 +360,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
           // Schedule time
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 16.h),
             decoration: BoxDecoration(
               border: Border(top: BorderSide(color: cs.outlineVariant)),
             ),
@@ -370,19 +371,19 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                   l.tr('scheduleTime'),
                   style: TextStyle(
                     color: cs.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.6,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 SizedBox(
-                  height: 40,
+                  height: 40.h,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: slots.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                     itemBuilder: (context, idx) {
                       final slot = slots[idx];
                       return GestureDetector(
@@ -394,15 +395,15 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                         }),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 10.h,
                           ),
                           decoration: BoxDecoration(
                             color: slot.isSelected
                                 ? AppColors.primary.withValues(alpha: 0.06)
                                 : cs.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.r),
                             border: Border.all(
                               color: slot.isSelected
                                   ? AppColors.primary
@@ -416,7 +417,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                               color: slot.isSelected
                                   ? AppColors.primary
                                   : cs.onSurfaceVariant,
-                              fontSize: 13,
+                              fontSize: 13.sp,
                               fontWeight: slot.isSelected
                                   ? FontWeight.w600
                                   : FontWeight.w400,
@@ -444,10 +445,10 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
     final hasUrgencySurcharge = widget.urgencySurcharge > 0;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: cs.outlineVariant),
         boxShadow: [
           BoxShadow(
@@ -464,12 +465,12 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             l.tr('priceBreakdown'),
             style: TextStyle(
               color: cs.onSurfaceVariant,
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           _priceRow(l.tr('subtotal'), '\$${_subtotal.toStringAsFixed(2)}', cs),
           if (hasUrgencySurcharge)
             _priceRow(
@@ -489,7 +490,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             '+\$${_platformFee.toStringAsFixed(2)}',
             cs,
           ),
-          Divider(color: cs.outlineVariant, height: 24),
+          Divider(color: cs.outlineVariant, height: 24.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -497,15 +498,15 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
                 l.tr('totalAmount'),
                 style: TextStyle(
                   color: cs.onSurface,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               Text(
                 '\$${_total.toStringAsFixed(2)}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -524,7 +525,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
     IconData? icon,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 12.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -532,11 +533,11 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             children: [
               Text(
                 label,
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14),
+                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 14.sp),
               ),
               if (icon != null) ...[
-                const SizedBox(width: 4),
-                Icon(icon, size: 14, color: valueColor ?? cs.onSurfaceVariant),
+                SizedBox(width: 4.w),
+                Icon(icon, size: 14.r, color: valueColor ?? cs.onSurfaceVariant),
               ],
             ],
           ),
@@ -544,7 +545,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             value,
             style: TextStyle(
               color: valueColor ?? cs.onSurface,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -560,7 +561,7 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
   Widget _buildBottomBar(ColorScheme cs) {
     final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
       decoration: BoxDecoration(
         color: cs.surface,
         boxShadow: [
@@ -622,12 +623,12 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 17),
+            padding: EdgeInsets.symmetric(vertical: 17.h),
             elevation: 0,
-            textStyle: const TextStyle(
-              fontSize: 15,
+            textStyle: TextStyle(
+              fontSize: 15.sp,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.3,
             ),
@@ -636,8 +637,8 @@ class _ServiceCheckoutScreenState extends State<ServiceCheckoutScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('${l.tr('bookNow')} \$${_total.toStringAsFixed(2)}'),
-              const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward_rounded, size: 18),
+              SizedBox(width: 8.w),
+              Icon(Icons.arrow_forward_rounded, size: 18.r),
             ],
           ),
         ),

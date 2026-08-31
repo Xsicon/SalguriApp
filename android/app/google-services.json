@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "647687811644",
+    "project_id": "salguri",
+    "storage_bucket": "salguri.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647687811644:android:6dd80aa1dda67c1aec4939",
+        "android_client_info": {
+          "package_name": "com.salguri.customer_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvDvSkCJRa__IuSpzLb_6tyz9oCuar24g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647687811644:android:c536fb45f4d3be87ec4939",
+        "android_client_info": {
+          "package_name": "com.salgury.business_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvDvSkCJRa__IuSpzLb_6tyz9oCuar24g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

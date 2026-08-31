@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/app_colors.dart';
 
 class Country {
@@ -67,65 +68,65 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
       height: height,
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
         children: [
           // Handle bar
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
+              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: cs.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
           ),
           // Title
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
             child: Text(
               'Select Country',
               style: TextStyle(
                 color: cs.onSurface,
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           // Search
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: TextField(
               controller: _searchController,
               onChanged: _onSearch,
-              style: TextStyle(fontSize: 16, color: cs.onSurface),
+              style: TextStyle(fontSize: 16.sp, color: cs.onSurface),
               decoration: InputDecoration(
                 hintText: 'Search country or code...',
-                hintStyle: TextStyle(color: cs.outline, fontSize: 15),
-                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22),
+                hintStyle: TextStyle(color: cs.outline, fontSize: 15.sp),
+                prefixIcon: Icon(Icons.search, color: cs.outline, size: 22.r),
                 filled: true,
                 fillColor: cs.surfaceContainerHighest,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                contentPadding: EdgeInsets.symmetric(vertical: 12.h),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: cs.outlineVariant),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: cs.outlineVariant),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide:
                       const BorderSide(color: AppColors.primary, width: 1.5),
                 ),
               ),
             ),
           ),
-          Divider(height: 1, color: cs.surfaceContainerHighest),
+          Divider(height: 1.h, color: cs.surfaceContainerHighest),
           // List
           Expanded(
             child: ListView.builder(
@@ -134,12 +135,12 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                 final country = _filtered[index];
                 return ListTile(
                   onTap: () => Navigator.of(context).pop(country),
-                  leading: Text(country.flag, style: const TextStyle(fontSize: 24)),
+                  leading: Text(country.flag, style: TextStyle(fontSize: 24.sp)),
                   title: Text(
                     country.name,
                     style: TextStyle(
                       color: cs.onSurface,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -147,7 +148,7 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                     country.dialCode,
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
